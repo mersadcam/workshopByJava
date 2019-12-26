@@ -1,7 +1,9 @@
 package model;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import io.vertx.core.AsyncResult;
@@ -10,6 +12,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 
 public class User {
+
+  private static final SecureRandom secureRandom = new SecureRandom(); //this is for token
+  private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //this is for token
 
 	private ArrayList<Role> roles = new ArrayList<Role>();
 	private ContactPoint information;
@@ -75,5 +80,11 @@ public class User {
 
   }
 
+
+  public static String generateNewToken(){
+	  byte[] randomBytes = new byte[24];
+	  secureRandom.nextBytes(randomBytes);
+	  return base64Encoder.encodeToString(randomBytes);
+  }
 
 }
