@@ -55,7 +55,8 @@ public class App extends AbstractVerticle {
       response.sendFile("index.html");
       if( ctx.request().method().equals(HttpMethod.POST)){
         JsonObject userJson = new JsonObject();
-        SecureRandom random = new SecureRandom();
+
+
 
 
       }
