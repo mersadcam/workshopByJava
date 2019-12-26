@@ -41,9 +41,11 @@ public class App extends AbstractVerticle {
     Route register = router.route(HttpMethod.POST,"/register");
     register.handler(ctx->{
 
+
+
       JsonObject json = ctx.getBodyAsJson();
       User user = new User(json);
-
+      user.setToken();
 
     });
 
@@ -62,7 +64,7 @@ public class App extends AbstractVerticle {
       }
     });
 
-
+    server.requestHandler(router).listen(8000);
 
   }
 }

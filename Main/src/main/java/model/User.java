@@ -77,4 +77,13 @@ public class User {
 	  return base64Encoder.encodeToString(randomBytes);
   }
 
+  public void setToken(){
+
+	  this.token = generateNewToken();
+	  for(int i = 0 ; i < 10 ; i++){
+      System.out.println(generateNewToken());
+    }
+
+  }
+
 }
