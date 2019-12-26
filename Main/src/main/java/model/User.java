@@ -15,6 +15,7 @@ public class User {
 	private ContactPoint information;
 	private String username;
 	private String hashPass;
+	private String token;
 
 	private ArrayList<LoginLogs> loginLogs = new ArrayList<LoginLogs>();
 
@@ -41,21 +42,10 @@ public class User {
 
 	}
 
-
-
-
-
-	public void setHashKey(String hashKey) {
-		this.hashPass = hashKey;
-	}
-
-	public void setUserName(String username) {
-		this.username = username;
-	}
-
 	public void setImage(File image){
 	  this.information.setImage(image);
   }
+
 
 	public void register(MongoClient client,Handler<AsyncResult<String>> handler){
 
