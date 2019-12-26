@@ -18,10 +18,32 @@ public class User {
 
 	private ArrayList<LoginLogs> loginLogs = new ArrayList<LoginLogs>();
 
-	public User(String userName, String hashKey, String firstName, String lastName, String emailAddress, ContactPoint.Gender gender,
-			File url) {
-		// not completed
+	public User(JsonObject json) {
+
+    ContactPoint.Gender gender;
+    String genderString = json.getString("male");
+    if (genderString.equals("male"))
+      gender = ContactPoint.Gender.MALE;
+    else if(genderString.equals("female"))
+      gender = ContactPoint.Gender.FEMALE;
+    else
+      gender = ContactPoint.Gender.OTHERS;
+
+
+
+	  this.username = json.getString("username");
+    this.hashPass = json.getString("hashPass");
+	  this.information = new ContactPoint(
+	    json.getString("firstname"),json.getString("lastName"),
+      gender,json.getString("emailAddress")
+      );
+
+
 	}
+
+
+
+
 
 	public void setHashKey(String hashKey) {
 		this.hashPass = hashKey;
@@ -30,6 +52,10 @@ public class User {
 	public void setUserName(String username) {
 		this.username = username;
 	}
+
+	public void setImage(File image){
+	  this.information.setImage(image);
+  }
 
 	public void register(MongoClient client,Handler<AsyncResult<String>> handler){
 
