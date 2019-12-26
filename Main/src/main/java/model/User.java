@@ -42,7 +42,8 @@ public class User {
 
 
 	  this.username = json.getString("username");
-    this.hashPass = json.getString("hashPass");
+      this.hashPass = json.getString("hashPass");
+      this.token = generateNewToken();
 	  this.information = new ContactPoint(
 	    json.getString("firstname"),json.getString("lastName"),
       gender,json.getString("emailAddress")
@@ -60,23 +61,25 @@ public class User {
   }
 
 
-	public void register(MongoClient client,Handler<AsyncResult<String>> handler){
+	public String register(MongoClient client,Handler<AsyncResult<String>> handler){
 
 	  JsonObject json = new JsonObject()
       .put("username",this.username)
       .put("hashPass",this.hashPass)
       .put("roles","")
-      .put("information",this.information);
+      .put("information","this.information")
+      .put("token",this.token);
 
 	  client.find("user",new JsonObject().put("username",this.username),ctx->{
-
-	    if( ctx.failed()){
+	    if( ctx.result().isEmpty() ){
 	      client.insert("user",json,handler);
-      }
-
+        }
     });
 
+	  return this.token;
+
   }
+
 
 
   public static String generateNewToken(){

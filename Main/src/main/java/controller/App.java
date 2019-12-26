@@ -49,19 +49,27 @@ public class App extends AbstractVerticle {
 
         JsonObject json = ctx.getBodyAsJson();
         User user = new User(json);
-        user.setToken();
-        System.out.println(user.getToken());
-        response.end();
+
+        user.register(client,handle->{
+
+          //if handle is succeeded :
+          System.out.println("register succeed ,token is " + handle.result());
+          ctx.request().headers().add("token",handle.result());//now token is in request header
+          ctx.reroute("/dashboard");
+
+
+        });
+
+        //but what we should do if username is NOT available
 
       }
 
-      response.sendFile("home.html");
+      ctx.reroute("/");
 
     });
 
 
     Route login = router.route().path("/login");
-
     login.handler(ctx ->{
       HttpServerResponse response = ctx.response();
       response.sendFile("home.html");
@@ -73,6 +81,24 @@ public class App extends AbstractVerticle {
 
       }
     });
+
+    Route home = router.route().path("/");
+    home.handler(ctx->{
+
+      HttpServerResponse response = ctx.response();
+      response.end("<h1>HOME</h1>");
+
+    });
+
+    Route dashboard = router.route().path("/dashboard");
+    dashboard.handler(ctx->{
+      System.out.println("dashboard");
+      HttpServerResponse response = ctx.response();
+      response.write("<h1>your dashboard</h1>");
+      response.write("your token is " + ctx.request().headers().get("token"));
+
+    });
+
 
     server.requestHandler(router).listen(8000);
 
