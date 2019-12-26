@@ -1,7 +1,7 @@
-package school;
+package model;
 
 public class Form {
 
-	
-	
+
+
 }

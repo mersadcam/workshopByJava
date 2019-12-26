@@ -1,4 +1,4 @@
-package school;
+package model;
 
 public interface RequestType {
 
