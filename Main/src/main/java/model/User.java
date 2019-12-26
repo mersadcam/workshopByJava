@@ -27,13 +27,17 @@ public class User {
 	public User(JsonObject json) {
 
     ContactPoint.Gender gender;
-    String genderString = json.getString("male");
-    if (genderString.equals("male"))
+    String genderString = json.getString("gender");
+
+    if(genderString == null)
+      gender = ContactPoint.Gender.NOTSET;
+    else if (genderString.equals("male"))
       gender = ContactPoint.Gender.MALE;
     else if(genderString.equals("female"))
       gender = ContactPoint.Gender.FEMALE;
     else
       gender = ContactPoint.Gender.OTHERS;
+
 
 
 
@@ -46,6 +50,10 @@ public class User {
 
 
 	}
+
+  public String getToken() {
+    return token;
+  }
 
 	public void setImage(File image){
 	  this.information.setImage(image);
@@ -78,12 +86,8 @@ public class User {
   }
 
   public void setToken(){
-
 	  this.token = generateNewToken();
-	  for(int i = 0 ; i < 10 ; i++){
-      System.out.println(generateNewToken());
-    }
-
   }
+
 
 }

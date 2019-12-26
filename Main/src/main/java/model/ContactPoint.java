@@ -63,7 +63,8 @@ public class ContactPoint {
   public enum Gender{
     MALE,
     FEMALE,
-    OTHERS
+    OTHERS,
+    NOTSET
   }
 
 

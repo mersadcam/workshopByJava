@@ -11,6 +11,7 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import model.User;
 import sun.security.provider.SecureRandom;
 import sun.security.provider.certpath.Vertex;
@@ -38,14 +39,23 @@ public class App extends AbstractVerticle {
     });
 
 
-    Route register = router.route(HttpMethod.POST,"/register");
+    Route register = router.route().path("/register");
+    register.handler(BodyHandler.create());
     register.handler(ctx->{
 
+      HttpServerResponse response = ctx.response();
 
+      if(ctx.request().method().equals(HttpMethod.POST)) {
 
-      JsonObject json = ctx.getBodyAsJson();
-      User user = new User(json);
-      user.setToken();
+        JsonObject json = ctx.getBodyAsJson();
+        User user = new User(json);
+        user.setToken();
+        System.out.println(user.getToken());
+        response.end();
+
+      }
+
+      response.sendFile("home.html");
 
     });
 
@@ -54,7 +64,7 @@ public class App extends AbstractVerticle {
 
     login.handler(ctx ->{
       HttpServerResponse response = ctx.response();
-      response.sendFile("index.html");
+      response.sendFile("home.html");
       if( ctx.request().method().equals(HttpMethod.POST)){
         JsonObject userJson = new JsonObject();
 
