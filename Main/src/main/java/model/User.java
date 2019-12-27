@@ -4,7 +4,8 @@ import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
+//import java.util.List;
+import model.ContactPoint;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -36,8 +37,9 @@ public class User {
       gender = ContactPoint.Gender.MALE;
     else if (genderString.equals("female"))
       gender = ContactPoint.Gender.FEMALE;
-    else
+    else {
       gender = ContactPoint.Gender.OTHERS;
+    }
 
 
     this.username = json.getString("username");

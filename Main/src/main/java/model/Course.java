@@ -8,4 +8,5 @@ public class Course {
 	private String description;
 	private CoursesRelationships neededCourses;
 
+
 }

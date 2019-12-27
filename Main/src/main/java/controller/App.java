@@ -7,6 +7,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+//import io.vertx.ext.auth.User;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
@@ -46,10 +47,7 @@ public class App extends AbstractVerticle {
     Route register = router.route().path("/register");
     register.handler(BodyHandler.create());
     register.handler(ctx->{
-
-
       HttpServerResponse response = ctx.response();
-
       if(ctx.request().method().equals(HttpMethod.POST)) {
 
         JsonObject json = ctx.getBodyAsJson();
@@ -86,8 +84,17 @@ public class App extends AbstractVerticle {
       HttpServerResponse response = ctx.response();
       response.sendFile("src/main/statics/fortest/login/index.html");
       if( ctx.request().method().equals(HttpMethod.POST)){
-        JsonObject userJson = new JsonObject();
-
+        JsonObject userJson = ctx.getBodyAsJson();
+        client.find("username",userJson,res ->{
+          if ( res.succeeded()){
+            //get token
+            ctx.reroute("/dashboard");
+          }
+          else{
+            response.write("your username or password not correct ");
+            //send to login page again
+          }
+        });
 
 
 
