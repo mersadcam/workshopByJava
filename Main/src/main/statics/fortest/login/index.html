@@ -16,9 +16,9 @@
 
       <div class="tabs-content">
         <div id="signup-tab-content" class="active">
-          <form class="signup-form" action="/register" method="post">
+          <form id="register" class="signup-form" method="get">
             <input
-              type="email"
+              type="text"
               name="emailAddress"
               class="input"
               id="user_email"
@@ -41,7 +41,7 @@
               autocomplete="off"
               placeholder="Password"
             />
-            <input type="submit" class="button" value="Sign Up" />
+            <input id="submitRegister" type="submit" class="button" value="Sign Up" />
           </form>
           <!--.login-form-->
           <div class="help-text">
@@ -53,7 +53,7 @@
         <!--.signup-tab-content-->
 
         <div id="login-tab-content">
-          <form class="login-form" action="/login" method="post">
+          <form id="login" class="login-form" method="post">
             <input
               type="text"
               name="userName"
@@ -73,7 +73,7 @@
             <input type="checkbox" class="checkbox" id="remember_me" />
             <label for="remember_me">Remember me</label>
 
-            <input type="submit" class="button" value="Login" />
+            <input id="submitLogin" type="submit" class="button" value="Login" />
           </form>
           <!--.login-form-->
           <div class="help-text">

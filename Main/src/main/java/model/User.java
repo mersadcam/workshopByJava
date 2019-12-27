@@ -23,7 +23,6 @@ public class User {
   private String hashPass;
   private String token;
 
-  private ArrayList<LoginLogs> loginLogs = new ArrayList<LoginLogs>();
 
   public User(JsonObject json) {
 

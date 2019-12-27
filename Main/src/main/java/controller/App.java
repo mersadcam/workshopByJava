@@ -37,22 +37,30 @@ public class App extends AbstractVerticle {
     Route statics = router.route("/statics/*");
     statics.handler( ctx ->{
       HttpServerResponse response = ctx.response();
-      System.out.println("./src/main" + ctx.request().path());
       response.sendFile("./src/main" + ctx.request().path());
       response.end();
+    });
+
+
+    Route test = router.route(HttpMethod.POST,"/test");
+    test.handler(BodyHandler.create());
+    test.handler(ctx->{
+
+      JsonObject json = ctx.getBodyAsJson();
+      System.out.println(json);
+      ctx.response().end("OK");
+
     });
 
 
     Route register = router.route().path("/register");
     register.handler(BodyHandler.create());
     register.handler(ctx->{
-
-
       HttpServerResponse response = ctx.response();
-
       if(ctx.request().method().equals(HttpMethod.POST)) {
 
         JsonObject json = ctx.getBodyAsJson();
+        System.out.println(json);
         User user = new User(json);
 
         user.register(client,handle->{
@@ -61,22 +69,16 @@ public class App extends AbstractVerticle {
             System.out.println("register succeed ,token is " + handle.result());
             ctx.request().headers().add("token", handle.result());//now token is in request header
             App.reRouteTo = "/dashboard";
-        }
-          if (handle.failed()) {
-
-            ctx.response().end("duplicate");
-            App.reRouteTo = "/login";
           }
+          else if (handle.failed())
+            ctx.response().end("duplicate");
 
         });
 
 
-      }
+      } else
+          ctx.reroute("/");
 
-      else
-        ctx.reroute("/");
-
-      ctx.reroute(App.reRouteTo);
 
     });
 
