@@ -20,6 +20,9 @@ import java.lang.invoke.MethodHandle;
 
 public class App extends AbstractVerticle {
 
+  public static String reRouteTo;
+  public static String msg;
+
   public static void main(String[] args) {
 
     Vertx vertx = Vertx.vertx();
@@ -31,9 +34,10 @@ public class App extends AbstractVerticle {
       .put("db_name" , "WorkshopDB");
     MongoClient client = MongoClient.createShared( vertx , config );
 
-    Route statics = router.route("/static/*");
+    Route statics = router.route("/statics/*");
     statics.handler( ctx ->{
       HttpServerResponse response = ctx.response();
+      System.out.println("./src/main" + ctx.request().path());
       response.sendFile("./src/main" + ctx.request().path());
       response.end();
     });
@@ -42,6 +46,7 @@ public class App extends AbstractVerticle {
     Route register = router.route().path("/register");
     register.handler(BodyHandler.create());
     register.handler(ctx->{
+
 
       HttpServerResponse response = ctx.response();
 
@@ -52,19 +57,26 @@ public class App extends AbstractVerticle {
 
         user.register(client,handle->{
 
-          //if handle is succeeded :
-          System.out.println("register succeed ,token is " + handle.result());
-          ctx.request().headers().add("token",handle.result());//now token is in request header
-          ctx.reroute("/dashboard");
+          if (handle.succeeded()) {
+            System.out.println("register succeed ,token is " + handle.result());
+            ctx.request().headers().add("token", handle.result());//now token is in request header
+            App.reRouteTo = "/dashboard";
+        }
+          if (handle.failed()) {
 
+            ctx.response().end("duplicate");
+            App.reRouteTo = "/login";
+          }
 
         });
 
-        //but what we should do if username is NOT available
 
       }
 
-      ctx.reroute("/");
+      else
+        ctx.reroute("/");
+
+      ctx.reroute(App.reRouteTo);
 
     });
 
@@ -72,7 +84,7 @@ public class App extends AbstractVerticle {
     Route login = router.route().path("/login");
     login.handler(ctx ->{
       HttpServerResponse response = ctx.response();
-      response.sendFile("home.html");
+      response.sendFile("src/main/statics/fortest/login/index.html");
       if( ctx.request().method().equals(HttpMethod.POST)){
         JsonObject userJson = new JsonObject();
 
@@ -92,7 +104,7 @@ public class App extends AbstractVerticle {
 
     Route dashboard = router.route().path("/dashboard");
     dashboard.handler(ctx->{
-      System.out.println("dashboard");
+      ctx.response().sendFile("src/main/statics/fortest/dashboard/index.html");
       HttpServerResponse response = ctx.response();
       response.write("<h1>your dashboard</h1>");
       response.write("your token is " + ctx.request().headers().get("token"));
