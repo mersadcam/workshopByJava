@@ -5,12 +5,15 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+//import java.util.List;
+//import model.ContactPoint;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.mongo.MongoClientUpdateResult;
 
 public class User {
 
@@ -35,8 +38,9 @@ public class User {
       gender = ContactPoint.Gender.MALE;
     else if (genderString.equals("female"))
       gender = ContactPoint.Gender.FEMALE;
-    else
+    else {
       gender = ContactPoint.Gender.OTHERS;
+    }
 
 
     this.username = json.getString("username");
@@ -73,7 +77,7 @@ public class User {
         client.insert("user", json, handler);
       }
       else{
-        handler.handle(Future.failedFuture("Username is duplicate"));
+        handler.handle(Future.failedFuture("403"));
       }
     });
 
@@ -91,6 +95,45 @@ public class User {
   public void setToken() {
     this.token = generateNewToken();
   }
+
+  public void login(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+
+    JsonObject query = new JsonObject()
+      .put("username",this.username)
+      .put("hashPass",this.hashPass);
+
+    client.find("user",query,ctx->{
+      if(!ctx.result().isEmpty()){
+
+        this.setToken();
+
+        JsonObject update = new JsonObject()
+          .put("$set",new JsonObject()
+            .put("token",this.token));
+
+        client.updateCollection("user",query,update,handler);
+
+      }
+      else
+        handler.handle(Future.failedFuture("401"));
+
+    });
+
+  }
+
+  public void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
+
+    client.find("user",new JsonObject().put("token",token),ctx->{
+      if (!ctx.result().isEmpty())
+        handler.handle(Future.succeededFuture());
+      else
+        handler.handle(Future.failedFuture("403"));
+
+    });
+
+  }
+
+  //signout should added
 
 
 }
