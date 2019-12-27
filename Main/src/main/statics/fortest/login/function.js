@@ -15,11 +15,21 @@ jQuery(document).ready(function($) {
     url: "/register",
   });
 
+  function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+      indexed_array[n['name']] = n['value'];
+    });
+
+    return indexed_array;
+  }
+
 
   $( "form#register" ).submit(function( event ) {
     alert("1")
-    var json = $(this).getAttribute("username");
-    console.log(json);
+    var json = getFormData($(this));
 
     $.ajax({
       url: 'http://localhost:8000/register',
@@ -28,13 +38,10 @@ jQuery(document).ready(function($) {
       headers: {
         "Content-Type": "application/json"
       },
-      data: JSON.stringify({
-        username : "ali",
-        hashPass : "123dasa"
-      }),
-      success: function(msg){
-        alert('wow' + msg);
-      }
+      data: JSON.stringify(json),
+    }).done(function(data,status){
+      console.log("data : " + data );
+      console.log("status : " + status );
     });
     event.preventDefault();
   });

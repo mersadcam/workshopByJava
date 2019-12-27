@@ -45,6 +45,7 @@ public class App extends AbstractVerticle {
     router.post("/register")
       .handler(BodyHandler.create())
       .handler(ctx->{
+
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
       System.out.println(json);
@@ -53,8 +54,11 @@ public class App extends AbstractVerticle {
       user.register(client,handle->{
 
         if (handle.succeeded()) {
-          System.out.println("register succeed ,token is " + handle.result());
-          ctx.request().headers().add("token", handle.result());//now token is in request header
+
+          ctx.response().end( new JsonObject()
+            .put("token",handle.result())
+            .toString());
+
         }
         else if (handle.failed())
           ctx.response().end("duplicate");
