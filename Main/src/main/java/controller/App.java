@@ -42,44 +42,24 @@ public class App extends AbstractVerticle {
     });
 
 
-    Route test = router.route(HttpMethod.POST,"/test");
-    test.handler(BodyHandler.create());
-    test.handler(ctx->{
-
+    router.post("/register")
+      .handler(BodyHandler.create())
+      .handler(ctx->{
+      HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
       System.out.println(json);
-      ctx.response().end("OK");
+      User user = new User(json);
 
-    });
+      user.register(client,handle->{
 
+        if (handle.succeeded()) {
+          System.out.println("register succeed ,token is " + handle.result());
+          ctx.request().headers().add("token", handle.result());//now token is in request header
+        }
+        else if (handle.failed())
+          ctx.response().end("duplicate");
 
-    Route register = router.route().path("/register");
-    register.handler(BodyHandler.create());
-    register.handler(ctx->{
-      HttpServerResponse response = ctx.response();
-      if(ctx.request().method().equals(HttpMethod.POST)) {
-
-        JsonObject json = ctx.getBodyAsJson();
-        System.out.println(json);
-        User user = new User(json);
-
-        user.register(client,handle->{
-
-          if (handle.succeeded()) {
-            System.out.println("register succeed ,token is " + handle.result());
-            ctx.request().headers().add("token", handle.result());//now token is in request header
-            App.reRouteTo = "/dashboard";
-          }
-          else if (handle.failed())
-            ctx.response().end("duplicate");
-
-        });
-
-
-      } else
-          ctx.reroute("/");
-
-
+      });
     });
 
 

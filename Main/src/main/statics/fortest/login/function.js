@@ -18,17 +18,20 @@ jQuery(document).ready(function($) {
 
   $( "form#register" ).submit(function( event ) {
     alert("1")
-    var json = $(this).serializeArray();
+    var json = $(this).getAttribute("username");
     console.log(json);
 
     $.ajax({
-      method: 'POST',
-      // make sure you respect the same origin policy with this url:
-      // http://en.wikipedia.org/wiki/Same_origin_policy
       url: 'http://localhost:8000/register',
-      contentType:"application/json",
-      dataType:"application/json",
-      data: JSON.stringify(json),
+      type: "post",
+      dataType: 'json',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({
+        username : "ali",
+        hashPass : "123dasa"
+      }),
       success: function(msg){
         alert('wow' + msg);
       }
