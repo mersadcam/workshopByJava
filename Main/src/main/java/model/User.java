@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 //import java.util.List;
-import model.ContactPoint;
+//import model.ContactPoint;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -24,7 +24,6 @@ public class User {
   private String hashPass;
   private String token;
 
-  private ArrayList<LoginLogs> loginLogs = new ArrayList<LoginLogs>();
 
   public User(JsonObject json) {
 
