@@ -11,9 +11,6 @@ jQuery(document).ready(function($) {
 		$(tab_content).addClass('active');
 	});
 
-  $.ajaxSetup({
-    url: "/register",
-  });
 
   function getFormData($form){
     var unindexed_array = $form.serializeArray();
@@ -32,7 +29,7 @@ jQuery(document).ready(function($) {
     var json = getFormData($(this));
 
     $.ajax({
-      url: 'http://localhost:8000/register',
+      url: '/register',
       type: "post",
       dataType: 'json',
       headers: {
@@ -40,7 +37,28 @@ jQuery(document).ready(function($) {
       },
       data: JSON.stringify(json),
       success:function (d) {
-        localStorage
+        localStorage.setItem("token",d["token"]);
+      }
+    });
+    event.preventDefault();
+  });
+
+  $( "form#login" ).submit(function( event ) {
+    alert("in form#login");
+    var json = getFormData($(this));
+    var token = localStorage.getItem("token");
+    console.log(json);
+    $.ajax({
+      url: '/login',
+      type: "post",
+      dataType: 'json',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify(json),
+      success:function (d) {
+        alert("nsn")
+        console.log(d);
       }
     });
     event.preventDefault();

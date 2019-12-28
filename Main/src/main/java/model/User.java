@@ -97,7 +97,7 @@ public class User {
     this.token = generateNewToken();
   }
 
-  public String login(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public void login(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject()
       .put("username",this.username)
@@ -119,8 +119,6 @@ public class User {
         handler.handle(Future.failedFuture(""));
 
     });
-
-    return this.token;
 
   }
 
