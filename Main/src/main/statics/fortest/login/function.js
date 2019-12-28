@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
 
 
   $( "form#register" ).submit(function( event ) {
-    alert("in form#register");
+
     var json = getFormData($(this));
 
     $.ajax({
@@ -38,16 +38,16 @@ jQuery(document).ready(function($) {
       data: JSON.stringify(json),
       success:function (d) {
         localStorage.setItem("token",d["token"]);
+        location.href = "/dashboard";
       }
     });
     event.preventDefault();
   });
 
   $( "form#login" ).submit(function( event ) {
-    alert("in form#login");
+
     var json = getFormData($(this));
-    var token = localStorage.getItem("token");
-    console.log(json);
+
     $.ajax({
       url: '/login',
       type: "post",
@@ -57,8 +57,8 @@ jQuery(document).ready(function($) {
       },
       data: JSON.stringify(json),
       success:function (d) {
-        alert("nsn")
-        console.log(d);
+        localStorage.setItem("token",d["token"]);
+        location.href = "/dashboard";
       }
     });
     event.preventDefault();
