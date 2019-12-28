@@ -78,20 +78,12 @@ public class App extends AbstractVerticle {
         });
       });
 
-    router.get("/login")
+    router.get("/")
       .handler(ctx ->{
         HttpServerResponse response = ctx.response();
         response.sendFile("src/main/statics/fortest/login/index.html");
         response.end();
       });
-
-
-    router.get("/")
-      .handler(ctx->{
-      HttpServerResponse response = ctx.response();
-      response.end("<h1>HOME</h1>");
-
-    });
 
 
     router.get("/dashboard")

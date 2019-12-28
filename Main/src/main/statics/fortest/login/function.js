@@ -37,8 +37,20 @@ jQuery(document).ready(function($) {
       },
       data: JSON.stringify(json),
       success:function (d) {
+
         localStorage.setItem("token",d["token"]);
-        location.href = "/dashboard";
+
+        $.get({
+
+          headers: {
+            "token": localStorage.getItem("token"),
+          },
+          url:"/dashboard",
+          success:function (data) {
+            $( "html" ).html( data );
+          }
+        });
+
       }
     });
     event.preventDefault();
@@ -62,17 +74,14 @@ jQuery(document).ready(function($) {
         $.get({
 
           headers: {
-            "token": localStorage.getItem("token")
+            "token": localStorage.getItem("token"),
           },
           url:"/dashboard",
-          type:"get",
-          success:function (d) {
-
-            location.href="/dashboard";
-
+          success:function (data) {
+            $( "html" ).html( data );
           }
+        });
 
-        })
 
       }
     });
