@@ -4,6 +4,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Route;
@@ -49,30 +50,34 @@ public class App extends AbstractVerticle {
         if (handle.succeeded()) {
 
           ctx.response().end( new JsonObject()
-            .put("token",handle.result())
-            .toString());
+            .put("token",user.getToken()).toString());
 
-          response.end();
 
         }
         else if (handle.failed())
-          ctx.response().end("403");
+          response.setStatusCode(401);
+
 
       });
-
+        response.end();
     });
 
     router.post("/login")
       .handler(BodyHandler.create())
       .handler(ctx ->{
-        HttpServerResponse response = ctx.response();
-        JsonObject userJson = ctx.getBodyAsJson();
-        client.find("username",userJson, res ->{
-          if ( res.succeeded() ){
 
+        HttpServerResponse response = ctx.response();
+        JsonObject json = ctx.getBodyAsJson();
+        User user = new User(json);
+        user.login(client, res ->{
+          System.out.println(res.failed());
+          if (!res.failed()) {
+            response.headers().add("token", (CharSequence) res.result());
+            response.end();
+            //go to dashboard
           }
           else {
-
+            response.end("401");
           }
 
         });
@@ -81,7 +86,7 @@ public class App extends AbstractVerticle {
     router.get("/login")
       .handler(ctx ->{
         HttpServerResponse response = ctx.response();
-        response.end("login page");
+        response.sendFile("src/main/statics/fortest/login/index.html");
       });
 
 
