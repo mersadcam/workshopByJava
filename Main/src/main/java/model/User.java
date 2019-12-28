@@ -43,6 +43,8 @@ public class User {
     }
 
 
+
+
     this.username = json.getString("username");
     this.hashPass = json.getString("hashPass");
     this.token = generateNewToken();
@@ -77,7 +79,7 @@ public class User {
         client.insert("user", json, handler);
       }
       else{
-        handler.handle(Future.failedFuture("403"));
+        handler.handle(Future.failedFuture("401"));
       }
     });
 
@@ -96,7 +98,7 @@ public class User {
     this.token = generateNewToken();
   }
 
-  public void login(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public String login(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject()
       .put("username",this.username)
@@ -118,6 +120,8 @@ public class User {
         handler.handle(Future.failedFuture("401"));
 
     });
+
+    return this.token;
 
   }
 
