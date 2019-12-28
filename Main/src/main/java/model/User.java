@@ -122,6 +122,24 @@ public class User {
 
   }
 
+  public void signout(MongoClient client , String token , Handler<AsyncResult<String>> handler){
+
+    JsonObject query = new JsonObject()
+      .put("token", token);
+
+    client.find("user" , query , ctx ->{
+      if(ctx.succeeded()){
+        client.removeDocument("user", query , res ->{
+          if(res.succeeded()){
+
+          }
+          else (res.failed())
+        });
+      }
+
+    });
+  }
+
   public static void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
 
     client.find("user",new JsonObject().put("token",token),ctx->{
