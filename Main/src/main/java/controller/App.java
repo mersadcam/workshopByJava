@@ -51,15 +51,15 @@ public class App extends AbstractVerticle {
 
           ctx.response().end( new JsonObject()
             .put("token",user.getToken()).toString());
-
+          response.end();
 
         }
         else if (handle.failed())
-          response.setStatusCode(401);
+          response.setStatusCode(401).end();
 
 
       });
-        response.end();
+
     });
 
     router.post("/login")
