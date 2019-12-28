@@ -65,7 +65,12 @@ jQuery(document).ready(function($) {
             "token": localStorage.getItem("token")
           },
           url:"/dashboard",
-          type:"get"
+          type:"get",
+          success:function (d) {
+
+            location.href="/dashboard";
+
+          }
 
         })
 

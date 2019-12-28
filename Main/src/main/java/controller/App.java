@@ -97,12 +97,11 @@ public class App extends AbstractVerticle {
     router.get("/dashboard")
       .handler(ctx->{
       String token = ctx.request().getHeader("token");
-        System.out.println(token);
       HttpServerResponse response = ctx.response();
       User.checkToken(client,token,res ->{
-        if(res.succeeded()){
+        if(!res.result().isEmpty()){
           response.sendFile("src/main/statics/fortest/dashboard/index.html");
-//          response.end();
+
         }
         else {
           response.end("not found");  //unauthorized

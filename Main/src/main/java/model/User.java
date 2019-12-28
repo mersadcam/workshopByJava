@@ -137,16 +137,9 @@ public class User {
   }
 
 
-  public static void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
+  public static void checkToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
 
-    client.find("user",new JsonObject().put("token",token),ctx->{
-      System.out.println(ctx.result().isEmpty());
-      if (!ctx.result().isEmpty())
-        handler.handle(Future.succeededFuture());
-      else
-        handler.handle(Future.failedFuture("403"));
-
-    });
+    client.find("user",new JsonObject().put("token",token),handler);
 
   }
 
