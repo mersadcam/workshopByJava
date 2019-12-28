@@ -125,6 +125,7 @@ public class User {
   public static void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
 
     client.find("user",new JsonObject().put("token",token),ctx->{
+      System.out.println(ctx.result().isEmpty());
       if (!ctx.result().isEmpty())
         handler.handle(Future.succeededFuture());
       else

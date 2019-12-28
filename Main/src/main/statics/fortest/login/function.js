@@ -58,7 +58,17 @@ jQuery(document).ready(function($) {
       data: JSON.stringify(json),
       success:function (d) {
         localStorage.setItem("token",d["token"]);
-        location.href = "/dashboard";
+
+        $.get({
+
+          headers: {
+            "token": localStorage.getItem("token")
+          },
+          url:"/dashboard",
+          type:"get"
+
+        })
+
       }
     });
     event.preventDefault();

@@ -43,20 +43,17 @@ public class App extends AbstractVerticle {
 
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
-      System.out.println(json);
       User user = new User(json);
 
       user.register(client,handle->{
         if (handle.succeeded()) {
 
-          ctx.response().end( new JsonObject()
+          response.end( new JsonObject()
             .put("token",user.getToken()).toString());
-          response.end();
 
         }
         else if (handle.failed())
           response.setStatusCode(401).end();
-
 
       });
     });
@@ -69,11 +66,10 @@ public class App extends AbstractVerticle {
         JsonObject json = ctx.getBodyAsJson();
         User user = new User(json);
         user.login(client, res ->{
-          //System.out.println(res.failed());
-          if (!res.failed()) {
+          if (res.succeeded()) {
             response.end(new JsonObject().put("token",user.getToken()).toString());
-            //go to dashboard
           }
+
           else {
             response.setStatusCode(401);
             response.end();
@@ -100,22 +96,19 @@ public class App extends AbstractVerticle {
 
     router.get("/dashboard")
       .handler(ctx->{
-      JsonObject token = ctx.getBodyAsJson();
+      String token = ctx.request().getHeader("token");
+        System.out.println(token);
       HttpServerResponse response = ctx.response();
-      User.checkToken(client,token.getString("token"),res ->{
+      User.checkToken(client,token,res ->{
         if(res.succeeded()){
           response.sendFile("src/main/statics/fortest/dashboard/index.html");
-          response.write("<h1>your dashboard</h1>");
-          response.write("your token is " + ctx.request().headers().get("token"));
-          response.end();
+//          response.end();
         }
         else {
-          response.setStatusCode(401).end();  //unauthorized
+          response.end("not found");  //unauthorized
         }
       });
 
-
-      response.end();
 
     });
 
