@@ -28,7 +28,7 @@ jQuery(document).ready(function($) {
 
 
   $( "form#register" ).submit(function( event ) {
-    alert("1")
+    alert("in form#register");
     var json = getFormData($(this));
 
     $.ajax({
@@ -39,9 +39,9 @@ jQuery(document).ready(function($) {
         "Content-Type": "application/json"
       },
       data: JSON.stringify(json),
-    }).done(function(data,status){
-      console.log("data : " + data );
-      console.log("status : " + status );
+      success:function (d) {
+        localStorage
+      }
     });
     event.preventDefault();
   });

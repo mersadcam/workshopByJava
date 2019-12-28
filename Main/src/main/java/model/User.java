@@ -23,7 +23,7 @@ public class User {
   private ArrayList<Role> roles = new ArrayList<Role>();
   private ContactPoint information;
   private String username;
-  private String hashPass;
+  private String password;
   private String token;
 
 
@@ -46,7 +46,7 @@ public class User {
 
 
     this.username = json.getString("username");
-    this.hashPass = json.getString("hashPass");
+    this.password = json.getString("password");
     this.token = generateNewToken();
     this.information = new ContactPoint(
       json.getString("firstname"), json.getString("lastName"),
@@ -65,11 +65,11 @@ public class User {
   }
 
 
-  public String register(MongoClient client, Handler<AsyncResult<String>> handler) {
+  public void register(MongoClient client, Handler<AsyncResult<String>> handler) {
 
     JsonObject json = new JsonObject()
       .put("username", this.username)
-      .put("hashPass", this.hashPass)
+      .put("password", this.password)
       .put("roles", "")
       .put("information", "this.information")
       .put("token", this.token);
@@ -83,7 +83,6 @@ public class User {
       }
     });
 
-    return this.token;
 
   }
 
@@ -102,7 +101,7 @@ public class User {
 
     JsonObject query = new JsonObject()
       .put("username",this.username)
-      .put("hashPass",this.hashPass);
+      .put("password",this.password);
 
     client.find("user",query,ctx->{
       if(!ctx.result().isEmpty()){
@@ -117,7 +116,7 @@ public class User {
 
       }
       else
-        handler.handle(Future.failedFuture("401"));
+        handler.handle(Future.failedFuture(""));
 
     });
 
@@ -125,7 +124,7 @@ public class User {
 
   }
 
-  public void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
+  public static void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
 
     client.find("user",new JsonObject().put("token",token),ctx->{
       if (!ctx.result().isEmpty())
