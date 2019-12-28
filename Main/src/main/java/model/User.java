@@ -11,6 +11,7 @@ import java.util.List;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
@@ -122,23 +123,19 @@ public class User {
 
   }
 
-  public void signout(MongoClient client , String token , Handler<AsyncResult<String>> handler){
+  public void signout(MongoClient client , String token , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject()
       .put("token", token);
 
-    client.find("user" , query , ctx ->{
-      if(ctx.succeeded()){
-        client.removeDocument("user", query , res ->{
-          if(res.succeeded()){
+    JsonObject update = new JsonObject()
+      .put("$set",new JsonObject()
+        .put("token",""));
 
-          }
-          else (res.failed())
-        });
-      }
+    client.updateCollection("user",query,update,handler);
 
-    });
   }
+
 
   public static void checkToken(MongoClient client, String token,Handler<AsyncResult<String>> handler){
 
@@ -153,7 +150,6 @@ public class User {
 
   }
 
-  //signout should addedgit
 
 
 }
