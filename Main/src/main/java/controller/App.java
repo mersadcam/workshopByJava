@@ -96,14 +96,22 @@ public class App extends AbstractVerticle {
 
         }
         else {
-          response.end("not found");  //unauthorized
+          response.setStatusCode(302);
+          response.putHeader("location","/");
+          response.end();  //unauthorized
         }
       });
 
 
     });
 
-
+    router.get("/*")
+      .handler(ctx ->{
+        HttpServerResponse response = ctx.response();
+        response.setStatusCode(302);
+        response.putHeader("location","/");
+        response.end();
+      });
 
 
     server.requestHandler(router).listen(8000);
