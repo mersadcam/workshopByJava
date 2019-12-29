@@ -1,5 +1,7 @@
 package controller;
 
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Template;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -12,11 +14,13 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import model.User;
 
+import java.io.IOException;
+
 
 public class App extends AbstractVerticle {
 
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
 
     Vertx vertx = Vertx.vertx();
 
@@ -27,6 +31,10 @@ public class App extends AbstractVerticle {
       .put("port" , 27017)
       .put("db_name" , "WorkshopDB");
     MongoClient client = MongoClient.createShared( vertx , config );
+
+    Handlebars handlebars = new Handlebars();
+    Template template = handlebars.compileInline("Hello {{this}}!");
+    System.out.println(template.apply("Handlebars.java"));
 
     Route statics = router.route("/statics/*");
     statics.handler( ctx ->{
