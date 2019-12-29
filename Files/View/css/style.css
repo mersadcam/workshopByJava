@@ -19,6 +19,7 @@ h1,h2,h3,h4,h5,h6 {
     font-weight: 400;
 }
 
+
 .navbar {
     z-index: 1;
     top: 6vh;
@@ -40,7 +41,7 @@ a:hover {
     text-decoration: none;
 }
 
-.btn {
+.btn:not(.btn-close) {
     font-size: 0.85em;
     padding: 5px 30px;
     font-weight: 200;
@@ -48,10 +49,18 @@ a:hover {
 }
 
 
-.btn:hover {
+.btn:hover:not(.btn-close) {
     transform: translateY(-10px);
 }
 
+.btn-close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 1.4rem;
+    padding-top: 0;
+    padding-bottom: 0;
+}
 
 .nav-item {
     margin: 0 25px;
@@ -85,7 +94,7 @@ a:hover {
 }
 
 .slideshow .item-img:hover {
-    transform: scale(1.20);
+    transform: scale(1.1) translateX(-10px);
 }
 
 #slideshow-1 .item-img {
@@ -117,7 +126,7 @@ a:hover {
     margin-top: 10px;
 }
 
-.slideshow {
+.slideshow-container {
     position: absolute;
     width: 100vw;
     top: 0;

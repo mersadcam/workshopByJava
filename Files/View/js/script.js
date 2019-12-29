@@ -1,9 +1,11 @@
 $(function() {
   $(".slideshow").hide();
-  $("#slideshow-1").show();
+  $(".slideshow:first").show();
 }) ;
 
+
 $(function() {
+  
     $(".btn-next-slide:eq(0)").click(function() {
       toggleSlide(0);
       toggleSlide(1);

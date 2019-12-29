@@ -1,0 +1,105 @@
+
+.signin-signup-frame {
+  background: linear-gradient(rgb(2, 59, 134),rgb(16, 28, 87));
+  position: absolute;
+  z-index: 1;
+  background-size: cover;
+  box-shadow: 0 70px 80px #00000060;
+  overflow: hidden;
+}
+
+
+.signin-signup-frame :focus {
+  outline: none;
+}
+
+.nav {
+  width: 100%;
+  height: 100px;
+  padding-top: 40px;
+  opacity: 1;
+  transition: all .5s ease;
+}
+
+.signin-nav-links li {
+  padding-left: 10px;
+  font-size: 18px;
+  display: inline;
+  text-transform: uppercase;
+  padding-right: 10px;
+}
+
+.signin-nav-links a:hover {
+    color: #ffffff;
+}
+
+.signin-signup-switch-active{
+  padding-bottom: 10px;
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: solid 2px #1059FF;
+}
+
+.signin-signup-switch-inactive{
+  padding-bottom: 0;
+  color: #ffffff30;
+  text-decoration: underline;
+  border-bottom: none;
+}
+
+.success {
+  width: 80%;
+  height: 150px;
+  text-align: center;
+  position: relative;
+  top: -890px;
+  left: 450px;
+  opacity: .0;
+  transition: all .8s .4s ease;
+}
+
+.successtext {
+  color: #ffffff;
+	font-size: 16px;
+	font-weight: 300;
+  margin-top: -35px;
+  padding-left: 37px;
+  padding-right: 37px;
+}
+
+.form-signin input, .form-signup input {
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.form-styling {
+  width: 100%;
+  height: 35px;
+	padding-left: 15px;
+	border: none;
+	border-radius: 20px;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,.2);
+}
+
+
+.signin-signup-frame label {
+  font-weight: 200;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: rgba(255,255,255,.7);
+}
+
+.signin-signup-frame label:not(#keepMeSignedIn) {
+  padding-left: 15px;
+  padding-bottom: 10px;
+  display: block;
+}
+
+.forget-password-btn {
+  color: rgba(255,255,255,.7);
+}
+
+.forget-password-btn:hover {
+  color: white;
+}
