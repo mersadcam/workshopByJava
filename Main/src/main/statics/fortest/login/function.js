@@ -1,4 +1,25 @@
 jQuery(document).ready(function($) {
+
+  let token = localStorage.getItem("token");
+  if (token){
+
+    $.get({
+
+
+      headers:{
+        "token":token
+      },
+      url:"/dashboard",
+      success:function (data) {
+        $("html").html(data);
+      }
+
+
+    });
+
+  }
+
+
 	tab = $('.tabs h3 a');
 
 	tab.on('click', function(event) {
