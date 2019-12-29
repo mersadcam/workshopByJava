@@ -1,14 +1,27 @@
 $(function() {
+  $(".slideshow").hide();
+  $("#slideshow-1").show();
+}) ;
 
-  btn = $(".btn-next-slide")
-	btn.click(function() {
-		$("#slideshow1").toggleClass("visible");
-    $("#slideshow1").toggleClass("invisible");
-    $("#slideshow2").addClass("fade-out");
+$(function() {
+    $(".btn-next-slide:eq(0)").click(function() {
+      toggleSlide(0);
+      toggleSlide(1);
+    }) ;
 
-    $("#slideshow2").toggleClass("invisible");
-    $("#slideshow2").toggleClass("visible");
-    $("#slideshow2").addClass("fade-in");
-    
-	});
-});
+    $(".btn-next-slide:eq(1)").click(function() {
+      toggleSlide(1);
+      toggleSlide(2);
+    }) ;
+
+    $(".btn-next-slide:eq(2)").click(function() {
+      toggleSlide(2);
+      toggleSlide(0);
+    }) ;
+
+}) ;
+
+
+function toggleSlide(slideIndex) {
+  $(".slideshow:eq("+slideIndex+")").fadeToggle(300);
+}
