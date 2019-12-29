@@ -1,7 +1,6 @@
 package controller;
 
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Template;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -32,9 +31,6 @@ public class App extends AbstractVerticle {
       .put("db_name" , "WorkshopDB");
     MongoClient client = MongoClient.createShared( vertx , config );
 
-    Handlebars handlebars = new Handlebars();
-    Template template = handlebars.compileInline("Hello {{this}}!");
-    System.out.println(template.apply("Handlebars.java"));
 
     Route statics = router.route("/statics/*");
     statics.handler( ctx ->{
