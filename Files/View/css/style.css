@@ -1,0 +1,125 @@
+:root {
+    --primary-shadow: #0077FF60;
+    --primary-shadow-dark: #0077FF80;
+    --secondary-shadow: #FF4E2B50;
+    --secondary-shadow-dark: #FF4E2B80;
+  }
+
+body {
+    background-color: var(--light);
+    font-family: Montserrat;
+    overflow: hidden;
+}
+
+p {
+    font-weight: 200;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-weight: 400;
+}
+
+.navbar {
+    z-index: 1;
+    top: 6vh;
+}
+   
+.navbar-logo {
+    height: 4.5vh;
+}
+
+.container {
+    max-width: 90%;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.btn {
+    font-size: 0.85em;
+    padding: 5px 30px;
+    font-weight: 200;
+    transition: 0.3s;
+}
+
+
+.btn:hover {
+    transform: translateY(-10px);
+}
+
+
+.nav-item {
+    margin: 0 25px;
+}
+
+.btn-primary {
+    box-shadow: 0 20px 50px var(--primary-shadow);
+}
+
+.btn-primary:focus {
+    box-shadow: 0 20px 50px var(--primary-shadow-dark) ; 
+}
+
+.btn-secondary {
+    box-shadow: 0 20px 50px var(--secondary-shadow);
+}
+
+.btn-secondary:focus {
+    background-color: var(--secondary);
+    box-shadow: 0 20px 50px var(--secondary-shadow-dark);
+}
+
+.slideshow .item-img {
+    height: 100vh;
+    display: block;
+    background-size: cover;
+    background-position: 50%;
+    transition: 0.5s;
+    transform: scale(1.05);
+
+}
+
+.slideshow .item-img:hover {
+    transform: scale(1.20);
+}
+
+#slideshow-1 .item-img {
+    background-image: url(../img/image1-mask.png);
+}
+
+#slideshow-2 .item-img {
+    background-image: url(../img/image2-mask.png);
+}
+
+#slideshow-3 .item-img {
+    background-image: url(../img/image3-mask.png);
+}
+
+.item-txt {
+    height: 50vh;
+    display: block;
+    font-size: 1.15rem;
+}
+
+.item-txt-content {
+    position: absolute;
+    top: 60%;
+    width: 70%;
+}
+
+
+.main-item-btn {
+    margin-top: 10px;
+}
+
+.slideshow {
+    position: absolute;
+    width: 100vw;
+    top: 0;
+    /* transition: 0.5s; */
+}
