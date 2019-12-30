@@ -1,19 +1,24 @@
 package controller;
 
 
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import model.User;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class App extends AbstractVerticle {
@@ -25,13 +30,39 @@ public class App extends AbstractVerticle {
 
     HttpServer server = vertx.createHttpServer();
     Router router = Router.router(vertx);
+
+    ///////////////////////////////////// by pass cross origin
+    Set<String> allowedHeaders = new HashSet<>();
+    allowedHeaders.add("x-requested-with");
+    allowedHeaders.add("Access-Control-Allow-Origin");
+    allowedHeaders.add("origin");
+    allowedHeaders.add("Content-Type");
+    allowedHeaders.add("accept");
+
+    Set<HttpMethod> allowedMethods = new HashSet<>();
+    allowedMethods.add(HttpMethod.GET);
+    allowedMethods.add(HttpMethod.POST);
+    allowedMethods.add(HttpMethod.DELETE);
+    allowedMethods.add(HttpMethod.PATCH);
+    allowedMethods.add(HttpMethod.OPTIONS);
+    router.route().handler(CorsHandler.create("*")
+      .allowedHeaders(allowedHeaders)
+      .allowedMethods(allowedMethods));
+    /////////////////////////////////////
     JsonObject config = new JsonObject()
       .put("host" , "localhost")
       .put("port" , 27017)
       .put("db_name" , "WorkshopDB");
     MongoClient client = MongoClient.createShared( vertx , config );
+    ///////////////////////////////////// this part for odm(morphia)
+    final Morphia morphia = new Morphia();
+    morphia.mapPackage("dev.morphia.example");
 
+    final Datastore datastore = morphia.createDatastore( new com.mongodb.MongoClient()
+      , "morphia_example");
+    datastore.ensureIndexes();
 
+    /////////////////////////////////////
     Route statics = router.route("/statics/*");
     statics.handler( ctx ->{
       HttpServerResponse response = ctx.response();
@@ -39,7 +70,7 @@ public class App extends AbstractVerticle {
       response.end();
     });
 
-
+    /////////////////////////////////////
 
     router.post("/register")
       .handler(BodyHandler.create())
@@ -61,6 +92,7 @@ public class App extends AbstractVerticle {
 
       });
     });
+    /////////////////////////////////////
 
     router.post("/login")
       .handler(BodyHandler.create())
@@ -82,6 +114,7 @@ public class App extends AbstractVerticle {
         });
       });
 
+    /////////////////////////////////////
     router.get("/")
       .handler(ctx ->{
         HttpServerResponse response = ctx.response();
@@ -89,7 +122,7 @@ public class App extends AbstractVerticle {
         response.end();
       });
 
-
+    /////////////////////////////////////
     router.get("/dashboard")
       .handler(ctx->{
       String token = ctx.request().getHeader("token");
@@ -109,6 +142,7 @@ public class App extends AbstractVerticle {
 
     });
 
+    /////////////////////////////////////
     router.get("/*")
       .handler(ctx ->{
         HttpServerResponse response = ctx.response();
