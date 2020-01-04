@@ -49,17 +49,17 @@ public class App extends AbstractVerticle {
       .allowedHeaders(allowedHeaders)
       .allowedMethods(allowedMethods));
     /////////////////////////////////////
-    JsonObject config = new JsonObject()
-      .put("host" , "localhost")
-      .put("port" , 27017)
-      .put("db_name" , "WorkshopDB");
-    MongoClient client = MongoClient.createShared( vertx , config );
+//    JsonObject config = new JsonObject()
+//      .put("host" , "localhost")
+//      .put("port" , 27017)
+//      .put("db_name" , "WorkshopDB");
+//    MongoClient client = MongoClient.createShared( vertx , config );
     ///////////////////////////////////// this part for odm(morphia)
     final Morphia morphia = new Morphia();
     morphia.mapPackage("dev.morphia.example");
 
     final Datastore datastore = morphia.createDatastore( new com.mongodb.MongoClient()
-      , "morphia_example");
+      , "WorkshopDB");
     datastore.ensureIndexes();
 
     /////////////////////////////////////
@@ -79,18 +79,16 @@ public class App extends AbstractVerticle {
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
       User user = new User(json);
+      Result status = user.register(datastore);
 
-      user.register(client,handle->{
-        if (handle.succeeded()) {
+      if (status.status){
 
-          response.end( new JsonObject()
-            .put("token",user.getToken()).toString());
+        response.end(status.json.toString());
 
-        }
-        else if (handle.failed())
-          response.setStatusCode(401).end();
+      }
 
-      });
+      response.end("401");
+
     });
     /////////////////////////////////////
 
@@ -101,17 +99,14 @@ public class App extends AbstractVerticle {
         HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
         User user = new User(json);
-        user.login(client, res ->{
-          if (res.succeeded()) {
-            response.end(new JsonObject().put("token",user.getToken()).toString());
-          }
+        Result result = user.login(datastore);
 
-          else {
-            response.setStatusCode(401);
-            response.end();
-          }
+        if (result.status){
+          response.end(result.json.toString());
+        }
 
-        });
+        response.end("403");
+
       });
 
     /////////////////////////////////////
@@ -123,24 +118,24 @@ public class App extends AbstractVerticle {
       });
 
     /////////////////////////////////////
-    router.get("/dashboard")
-      .handler(ctx->{
-      String token = ctx.request().getHeader("token");
-      HttpServerResponse response = ctx.response();
-      User.checkToken(client,token,res ->{
-        if(!res.result().isEmpty()){
-          response.sendFile("src/main/statics/fortest/dashboard/index.html");
-
-        }
-        else {
-          response.setStatusCode(302);
-          response.putHeader("location","/");
-          response.end();  //unauthorized
-        }
-      });
-
-
-    });
+//    router.get("/dashboard")
+//      .handler(ctx->{
+//      String token = ctx.request().getHeader("token");
+//      HttpServerResponse response = ctx.response();
+//      User.checkToken(client,token,res ->{
+//        if(!res.result().isEmpty()){
+//          response.sendFile("src/main/statics/fortest/dashboard/index.html");
+//
+//        }
+//        else {
+//          response.setStatusCode(302);
+//          response.putHeader("location","/");
+//          response.end();  //unauthorized
+//        }
+//      });
+//
+//
+//    });
 
     /////////////////////////////////////
     router.get("/*")

@@ -8,21 +8,38 @@ import java.util.List;
 //import java.util.List;
 //import model.ContactPoint;
 
+import com.mongodb.client.model.UpdateOneModel;
+import controller.Result;
+import dev.morphia.Datastore;
+import dev.morphia.UpdateOptions;
+import dev.morphia.query.*;
+import dev.morphia.query.internal.MorphiaCursor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
+import jdk.nashorn.internal.ir.annotations.Reference;
+import org.bson.types.ObjectId;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class User {
 
   private static final SecureRandom secureRandom = new SecureRandom(); //this is for token
   private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //this is for token
 
+  @Id
+  private ObjectId id;
+
+  @Reference
   private ArrayList<Role> roles = new ArrayList<Role>();
+  @Reference
   private ContactPoint information;
+
   private String username;
   private String password;
   private String token;
@@ -66,24 +83,27 @@ public class User {
   }
 
 
-  public void register(MongoClient client, Handler<AsyncResult<String>> handler) {
+  public Result register(Datastore client ) {
 
-    JsonObject json = new JsonObject()
-      .put("username", this.username)
-      .put("password", this.password)
-      .put("roles", "")
-      .put("information", "this.information")
-      .put("token", this.token);
 
-    client.find("user", new JsonObject().put("username", this.username), ctx -> {
-      if (ctx.result().isEmpty()) {
-        client.insert("user", json, handler);
-      }
-      else{
-        handler.handle(Future.failedFuture("401"));
-      }
-    });
+    try {
 
+      List<User> query = client.createQuery(User.class)
+        .field("username").equal(this.username)
+        .find().toList();
+
+    }catch (Exception e){
+
+      return new Result(false);
+
+    }
+
+
+    this.setToken();
+    client.save(this);
+
+    return new Result(true,
+      new JsonObject().put("token",this.getToken()));
 
   }
 
@@ -98,28 +118,35 @@ public class User {
     this.token = generateNewToken();
   }
 
-  public void login(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public Result login(Datastore client){
 
-    JsonObject query = new JsonObject()
-      .put("username",this.username)
-      .put("password",this.password);
+    Query<User> query = client.createQuery(User.class)
+      .field("username").equal(this.username)
+      .field("password").equal(this.password);
 
-    client.find("user",query,ctx->{
-      if(!ctx.result().isEmpty()){
 
-        this.setToken();
+    try {
+        query.find().toList();
 
-        JsonObject update = new JsonObject()
-          .put("$set",new JsonObject()
-            .put("token",this.token));
+    }catch (Exception e){
 
-        client.updateCollection("user",query,update,handler);
+      this.setToken();
+      //update and set new token to database
 
-      }
-      else
-        handler.handle(Future.failedFuture(""));
+      UpdateOperations<User> ops = client.createUpdateOperations(User.class);
+      ops.set("token",this.token);
 
-    });
+      client.update(query, ops);
+
+
+      return new Result(true,new JsonObject()
+        .put("token",this.getToken()));
+
+    }
+
+
+    return new Result(false);
+
 
   }
 
@@ -142,6 +169,7 @@ public class User {
     client.find("user",new JsonObject().put("token",token),handler);
 
   }
+
 
 
 
