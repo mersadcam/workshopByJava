@@ -3,6 +3,9 @@ package controller;
 
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
+import dev.morphia.query.Query;
+import dev.morphia.query.UpdateOperations;
+import dev.morphia.query.UpdateOperator;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -14,10 +17,12 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import model.Course;
 import model.User;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -61,6 +66,24 @@ public class App extends AbstractVerticle {
     final Datastore datastore = morphia.createDatastore( new com.mongodb.MongoClient()
       , "morphia_example");
     datastore.ensureIndexes();
+    /////////////////////////////////////test morphia
+    Course c = new Course(new JsonObject()
+      .put("name","osol")
+      .put("description","eee"));
+    datastore.save(c);
+    Course d = new Course(new JsonObject()
+    .put("name","pishrafte")
+    .put("description","ea"));
+    datastore.save(d);
+
+    Query<Course> query = datastore.createQuery(Course.class);
+    @Deprecated
+    List<Course> courses = query.asList();
+
+    UpdateOperations<Course> updateOperations = datastore.createUpdateOperations(Course.class)
+      .push("description","rr");
+
+    
 
     /////////////////////////////////////
     Route statics = router.route("/statics/*");
