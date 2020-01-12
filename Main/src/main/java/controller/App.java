@@ -8,12 +8,14 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
+import model.ContactPoint;
 import model.User;
 
 import java.io.IOException;
@@ -49,26 +51,12 @@ public class App extends AbstractVerticle {
       .allowedHeaders(allowedHeaders)
       .allowedMethods(allowedMethods));
     /////////////////////////////////////
-//    JsonObject config = new JsonObject()
-//      .put("host" , "localhost")
-//      .put("port" , 27017)
-//      .put("db_name" , "WorkshopDB");
-//    MongoClient client = MongoClient.createShared( vertx , config );
-    ///////////////////////////////////// this part for odm(morphia)
-    final Morphia morphia = new Morphia();
-    morphia.mapPackage("dev.morphia.example");
 
-    final Datastore datastore = morphia.createDatastore( new com.mongodb.MongoClient()
-      , "WorkshopDB");
-    datastore.ensureIndexes();
-
-    /////////////////////////////////////
-    Route statics = router.route("/statics/*");
-    statics.handler( ctx ->{
-      HttpServerResponse response = ctx.response();
-      response.sendFile("./src/main" + ctx.request().path());
-      response.end();
-    });
+    JsonObject config = new JsonObject()
+      .put("host" , "localhost")
+      .put("port" , 27017)
+      .put("db_name" , "workshop");
+    MongoClient client = MongoClient.createShared( vertx , config );
 
     /////////////////////////////////////
 
@@ -79,17 +67,30 @@ public class App extends AbstractVerticle {
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
       User user = new User(json);
-      Result status = user.register(datastore);
+      ContactPoint cp = new ContactPoint(json);
 
-      if (status.status){
+      cp.addCPToDB(client,res->{
 
-        response.end(status.json.toString());
+        user.setContactPointId(res.result());
 
-      }
+        user.register(client,res1->{
 
-      response.end("401");
+          if( res1.succeeded() ) {
+            response.end(res1.result());
+          }else{
+
+            response.setStatusCode(401);
+            response.end(res.result());
+
+          }
+
+
+        });
+
+      });
 
     });
+
     /////////////////////////////////////
 
     router.post("/login")
@@ -99,45 +100,43 @@ public class App extends AbstractVerticle {
         HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
         User user = new User(json);
-        Result result = user.login(datastore);
 
-        if (result.status){
-          response.end(result.json.toString());
-        }
+        user.login(client,res->{
 
-        response.end("403");
+            response.end(res.result());
+
+        });
 
       });
 
     /////////////////////////////////////
-    router.get("/")
+
+    router.get("/profile/edit")
+      .handler(BodyHandler.create())
       .handler(ctx ->{
+
+        String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
-        response.sendFile("src/main/statics/fortest/login/index.html");
-        response.end();
+        JsonObject json = ctx.getBodyAsJson();
+
+        User.checkToken(client,token,res->{
+
+          User user = new User(res.result().get(0));
+
+          user.editProfile(client,json,handle ->{
+
+            response.end(handle.result().toString());
+            //result handling {"status":"false/true"
+            //"msg":"messege" }
+
+          });
+
+        });
+
       });
 
     /////////////////////////////////////
-//    router.get("/dashboard")
-//      .handler(ctx->{
-//      String token = ctx.request().getHeader("token");
-//      HttpServerResponse response = ctx.response();
-//      User.checkToken(client,token,res ->{
-//        if(!res.result().isEmpty()){
-//          response.sendFile("src/main/statics/fortest/dashboard/index.html");
-//
-//        }
-//        else {
-//          response.setStatusCode(302);
-//          response.putHeader("location","/");
-//          response.end();  //unauthorized
-//        }
-//      });
-//
-//
-//    });
 
-    /////////////////////////////////////
     router.get("/*")
       .handler(ctx ->{
         HttpServerResponse response = ctx.response();

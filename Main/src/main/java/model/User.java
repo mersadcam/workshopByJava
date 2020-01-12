@@ -17,29 +17,29 @@ import dev.morphia.query.internal.MorphiaCursor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
+import jdk.internal.org.objectweb.asm.Handle;
 import jdk.nashorn.internal.ir.annotations.Reference;
-import org.bson.types.ObjectId;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity
 public class User {
 
   private static final SecureRandom secureRandom = new SecureRandom(); //this is for token
   private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //this is for token
 
-  @Id
-  private ObjectId id;
 
-  @Reference
+  private String _id;
+
+
   private ArrayList<Role> roles = new ArrayList<Role>();
-  @Reference
-  private ContactPoint information;
 
+  //OneToOne relationship :
+  private String contactPoint;
   private String username;
   private String password;
   private String token;
@@ -47,109 +47,133 @@ public class User {
 
   public User(JsonObject json) {
 
-    ContactPoint.Gender gender;
-    String genderString = json.getString("gender");
-
-    if (genderString == null)
-      gender = ContactPoint.Gender.NOTSET;
-    else if (genderString.equals("male"))
-      gender = ContactPoint.Gender.MALE;
-    else if (genderString.equals("female"))
-      gender = ContactPoint.Gender.FEMALE;
-    else {
-      gender = ContactPoint.Gender.OTHERS;
-    }
-
-
-
-
     this.username = json.getString("username");
     this.password = json.getString("password");
+    this.contactPoint = json.getString("contactPoint");
+    this._id = json.getString("_id");
     this.token = generateNewToken();
-    this.information = new ContactPoint(
-      json.getString("firstname"), json.getString("lastName"),
-      gender, json.getString("emailAddress")
-    );
-
 
   }
 
   public String getToken() {
     return token;
   }
-
-  public void setImage(File image) {
-    this.information.setImage(image);
-  }
-
-
-  public Result register(Datastore client ) {
-
-
-    try {
-
-      List<User> query = client.createQuery(User.class)
-        .field("username").equal(this.username)
-        .find().toList();
-
-    }catch (Exception e){
-
-      return new Result(false);
-
-    }
-
-
-    this.setToken();
-    client.save(this);
-
-    return new Result(true,
-      new JsonObject().put("token",this.getToken()));
-
-  }
-
-
   public static String generateNewToken() {
     byte[] randomBytes = new byte[24];
     secureRandom.nextBytes(randomBytes);
     return base64Encoder.encodeToString(randomBytes);
   }
-
   public void setToken() {
     this.token = generateNewToken();
   }
+  public void returnContactPoint(MongoClient client, Handler<AsyncResult<List<JsonObject>>> handler){
 
-  public Result login(Datastore client){
+    JsonObject query = new JsonObject().put("_id",this.contactPoint);
+    client.find("contactPoint",query,handler);
 
-    Query<User> query = client.createQuery(User.class)
-      .field("username").equal(this.username)
-      .field("password").equal(this.password);
+  }
+  public void login(MongoClient client , Handler<AsyncResult<String>> handler){
+
+    JsonObject query = new JsonObject()
+      .put("username",this.username)
+      .put("password",this.password);
+    client.find("user",query,res->{
+
+      if (!res.result().isEmpty()){
+        this.setToken();
+        JsonObject token =  new JsonObject()
+          .put("token", this.token);
+
+        handler.handle(Future.succeededFuture(token.toString()));
+
+      }else{
+
+        handler.handle(Future.failedFuture(""));
 
 
-    try {
-        query.find().toList();
-
-    }catch (Exception e){
-
-      this.setToken();
-      //update and set new token to database
-
-      UpdateOperations<User> ops = client.createUpdateOperations(User.class);
-      ops.set("token",this.token);
-
-      client.update(query, ops);
+      }
 
 
-      return new Result(true,new JsonObject()
-        .put("token",this.getToken()));
+    });
+
+  }
+  public void register(MongoClient client , Handler<AsyncResult<String>> handler ) {
+
+
+
+    //startTransaction :
+
+    client.find("user",new JsonObject()
+    .put("username",this.username),res->{
+
+      if(res.result().isEmpty()){
+
+        JsonObject json = new JsonObject()
+          .put("username",this.username)
+          .put("password",this.password)
+          .put("contactPoint",this.contactPoint);
+
+        client.insert("user",json,ctx->{
+
+          JsonObject token = new JsonObject()
+            .put("token",this.token);
+          handler.handle(Future.succeededFuture(token.toString()));
+
+        });
+
+      }else{
+
+        handler.handle(Future.failedFuture(""));
+
+      }
+
+
+    });
+
+    //commitTransaction
+
+  }
+  public void editProfile(MongoClient client,JsonObject editJson,Handler<AsyncResult<MongoClientUpdateResult>> handler){
+
+    String username,gender,emailAddress,firstName,lastName;
+
+    username = editJson.getString("username");
+    firstName = editJson.getString("firstName");
+    lastName = editJson.getString("lastName");
+    gender = editJson.getString("gender");
+    emailAddress = editJson.getString("emailAddress");
+
+    if ( username == null ||
+    firstName == null ||
+    lastName == null ||
+    gender == null ||
+    emailAddress == null ){
+      handler.handle(Future.failedFuture("null Field"));
+    }else {
+
+      client.find("user", new JsonObject().put("username", username), resDup -> {
+
+        if (this.username == username || resDup.result().isEmpty()) {
+
+          JsonObject updateUsername = new JsonObject().put("username",username);
+          client.updateCollection("user",new JsonObject().put("token",this.token), updateUsername , resUp->{
+
+            ContactPoint.editContactPoint(client,editJson,this.contactPoint, handler);
+
+          } );
+
+        }
+        else{
+
+          handler.handle(Future.failedFuture("duplicate Username"));
+
+        }
+
+      });
 
     }
 
-
-    return new Result(false);
-
-
   }
-
   public void signout(MongoClient client , String token , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject()
@@ -162,15 +186,16 @@ public class User {
     client.updateCollection("user",query,update,handler);
 
   }
-
-
   public static void checkToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
 
     client.find("user",new JsonObject().put("token",token),handler);
 
   }
+  public void setContactPointId(String _id){
 
+    this.contactPoint = _id;
 
+  }
 
 
 }

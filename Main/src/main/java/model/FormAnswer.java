@@ -2,7 +2,8 @@ package model;
 
 public class FormAnswer {
 
-	private Form form;
+  //form Object ids :
+	private String form;
 	private FormWriter writer;
 
 }
