@@ -117,18 +117,34 @@ public class App extends AbstractVerticle {
         String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
-
+        JsonObject toResponse = new JsonObject();
         User.checkToken(client,token,res->{
 
-          User user = new User(res.result().get(0));
 
-          user.editProfile(client,json,handle ->{
+          if(!res.result().isEmpty()) {
 
-            response.end(handle.result().toString());
-            //result handling {"status":"false/true"
-            //"msg":"messege" }
+              User user = new User(res.result().get(0));
 
-          });
+              user.editProfile(client, json, handle -> {
+
+                if (handle.succeeded())
+                  toResponse.put("status", "true");
+
+                else
+                  toResponse.put("status", "false");
+
+                response.end(toResponse.toString());
+
+              });
+
+          }else{
+
+            toResponse
+              .put("status","false")
+              .put("code","403");
+            response.setStatusCode(403).end(toResponse.toString());
+
+          }
 
         });
 

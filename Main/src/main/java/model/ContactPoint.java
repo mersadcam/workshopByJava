@@ -1,9 +1,7 @@
 package model;
-import com.mongodb.Mongo;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
@@ -108,15 +106,16 @@ public class ContactPoint {
 
   public static void editContactPoint(MongoClient client,JsonObject json,String _id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
-    JsonObject update = new JsonObject()
+    JsonObject toSet = new JsonObject()
       .put("emailAddress",json.getValue("emailAddress"))
       .put("firstName",json.getValue("firstName"))
       .put("lastName",json.getValue("lastName"))
       .put("gender",StringToGender(json.getString("gender")));
 
-    JsonObject query = new JsonObject().put("_id", new ObjectId(_id));
+    JsonObject update = new JsonObject().put("$set",toSet);
+    JsonObject query = new JsonObject().put("_id", _id);
 
-    client.updateCollection("ContactPoint",query,update,handler);
+    client.updateCollection("contactPoint",query,update,handler);
 
   }
 

@@ -51,7 +51,7 @@ public class User {
     this.password = json.getString("password");
     this.contactPoint = json.getString("contactPoint");
     this._id = json.getString("_id");
-    this.token = generateNewToken();
+    this.token = json.getString("token");
 
   }
 
@@ -84,7 +84,14 @@ public class User {
         JsonObject token =  new JsonObject()
           .put("token", this.token);
 
-        handler.handle(Future.succeededFuture(token.toString()));
+        client.updateCollection("user",query,new JsonObject().put("$set",new JsonObject()
+        .put("token",this.token)),result->{
+
+          handler.handle(Future.succeededFuture(token.toString()));
+
+        });
+
+
 
       }else{
 
@@ -148,15 +155,17 @@ public class User {
     lastName == null ||
     gender == null ||
     emailAddress == null ){
-      handler.handle(Future.failedFuture("null Field"));
+      handler.handle(Future.failedFuture(""));
     }else {
 
       client.find("user", new JsonObject().put("username", username), resDup -> {
 
         if (this.username == username || resDup.result().isEmpty()) {
 
-          JsonObject updateUsername = new JsonObject().put("username",username);
-          client.updateCollection("user",new JsonObject().put("token",this.token), updateUsername , resUp->{
+          JsonObject toSet = new JsonObject().put("username",username);
+          JsonObject update = new JsonObject().put("$set", toSet);
+
+          client.updateCollection("user",new JsonObject().put("token",this.token), update , resUp->{
 
             ContactPoint.editContactPoint(client,editJson,this.contactPoint, handler);
 
