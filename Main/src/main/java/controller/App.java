@@ -14,8 +14,7 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
-import model.ContactPoint;
-import model.User;
+import model.*;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -56,6 +55,32 @@ public class App extends AbstractVerticle {
       .put("port" , 27017)
       .put("db_name" , "workshop");
     MongoClient client = MongoClient.createShared( vertx , config );
+
+    /////////////////////////////////////
+
+    router.route("/checkUserToken").handler(ctx -> {
+
+      String token = ctx.request().getHeader("token");
+      HttpServerResponse response = ctx.response();
+      JsonObject toResponse = new JsonObject();
+      User.checkUserToken(client,token,res->{
+
+        if(!res.result().isEmpty()){
+
+          toResponse.put("status","true");
+
+        }else{
+
+          toResponse.put("status","false");
+
+        }
+
+        response.end(toResponse.toString());
+
+      });
+
+
+    });
 
     /////////////////////////////////////
 
@@ -118,7 +143,7 @@ public class App extends AbstractVerticle {
         HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
         JsonObject toResponse = new JsonObject();
-        User.checkToken(client,token,res->{
+        User.checkUserToken(client,token,res->{
 
 
           if(!res.result().isEmpty()) {
@@ -151,6 +176,62 @@ public class App extends AbstractVerticle {
       });
 
     /////////////////////////////////////
+
+    //check admin token is needed:
+    router.get("/createNewCourse")
+      .handler(BodyHandler.create())
+      .handler(ctx ->{
+
+        String token = ctx.request().getHeader("token");
+        HttpServerResponse response = ctx.response();
+        JsonObject json = ctx.getBodyAsJson();
+        JsonObject toResponse = new JsonObject();
+
+        //check "Admin" token before :
+
+        Course course = new Course(json);
+
+        course.createNewCourse(client,json,resCreate->{
+
+          if(resCreate.succeeded())
+            toResponse.put("status","true");
+          else
+            toResponse.put("status","false");
+
+          response.end(toResponse.toString());
+
+        });
+
+
+      });
+
+    ////////////////////////////////////
+
+    //check admin token is needed:
+    router.get("/enterNewWorkshop")
+      .handler(BodyHandler.create())
+      .handler(ctx ->{
+
+        HttpServerResponse response = ctx.response();
+        JsonObject json = ctx.getBodyAsJson();
+        String token = ctx.request().getHeader("token");
+        JsonObject toResponse = new JsonObject();
+
+        EnteredCourse EC = new EnteredCourse(json);
+        EC.enterNewWorkshop(client,json,resNewWorkshop->{
+
+          if (resNewWorkshop.succeeded())
+            toResponse.put("status","true");
+          else
+            toResponse.put("status","fasle");
+
+          response.end(toResponse.toString());
+
+        });
+
+      });
+
+    ///////////////////////////////////
 
     router.get("/*")
       .handler(ctx ->{

@@ -1,11 +1,20 @@
 package model;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.MongoClient;
+import org.bson.types.ObjectId;
+
 import java.util.ArrayList;
 import java.util.Date;
 
 public class EnteredCourse {
 
-	private Course course;
+  //many to one
+	private String course;
+
 	private Date startTime;
 	private Date finishTime;
 
@@ -13,24 +22,63 @@ public class EnteredCourse {
 	private int capacity;
 	private String description;
 
-	private ArrayList<Section> sections = new ArrayList<Section>();
+	public EnteredCourse(JsonObject json){
 
-	enum Section{
+	  this.startTime = (Date)json.getValue("startTime");
+	  this.finishTime = (Date)json.getValue("finishTime");
+	  this.place = json.getString("place");
+	  this.capacity = (int)json.getValue("capacity");
+	  this.description = json.getString("description");
 
-		SAT,SUN,MON,TUE,WED,THU,FRI;
+  }
 
-		private String time;
+  private void setCourse(MongoClient client,String courseName,Handler<AsyncResult<String>> handler){
 
-		public Section setTime(String time) {
-			this.time = time;
-			return this;
+	  JsonObject query = new JsonObject().put("name",courseName);
+	  client.find("course",query,resFind->{
 
-		}
+	    if (resFind.result().isEmpty())
+	      handler.handle(Future.failedFuture(""));
+	    else
+	      handler.handle(Future.succeededFuture(resFind.result().get(0).getString("_id")));
 
-		public String getTime() {
-			return this.time;
-		}
+    });
 
-	}
+  }
+
+  public void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
+
+	  String courseName = json.getString("course");
+
+	  this.setCourse(client,courseName,resSC->{
+
+
+	    if (resSC.succeeded()){
+            JsonObject toInsert = new JsonObject()
+              .put("_id", new ObjectId().toString())
+              .put("course",resSC.result())
+              .put("startTime",this.startTime)
+              .put("finishTime",this.finishTime)
+              .put("place",this.place)
+              .put("capacity",this.capacity)
+              .put("description",this.description);
+
+            client.insert("enteredCourse",toInsert,handler);
+
+
+          }else{
+
+            handler.handle(Future.failedFuture("this course name not found"));
+
+          }
+
+
+
+    });
+
+
+
+  }
+
 
 }

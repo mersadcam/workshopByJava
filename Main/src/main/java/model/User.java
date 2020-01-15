@@ -50,8 +50,6 @@ public class User {
     this.username = json.getString("username");
     this.password = json.getString("password");
     this.contactPoint = json.getString("contactPoint");
-    this._id = json.getString("_id");
-    this.token = json.getString("token");
 
   }
 
@@ -65,12 +63,6 @@ public class User {
   }
   public void setToken() {
     this.token = generateNewToken();
-  }
-  public void returnContactPoint(MongoClient client, Handler<AsyncResult<List<JsonObject>>> handler){
-
-    JsonObject query = new JsonObject().put("_id",this.contactPoint);
-    client.find("contactPoint",query,handler);
-
   }
   public void login(MongoClient client , Handler<AsyncResult<String>> handler){
 
@@ -114,10 +106,11 @@ public class User {
     .put("username",this.username),res->{
 
       if(res.result().isEmpty()){
-
+        this.setToken();
         JsonObject json = new JsonObject()
           .put("username",this.username)
           .put("password",this.password)
+          .put("token",this.token)
           .put("contactPoint",this.contactPoint);
 
         client.insert("user",json,ctx->{
@@ -195,7 +188,7 @@ public class User {
     client.updateCollection("user",query,update,handler);
 
   }
-  public static void checkToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
+  public static void checkUserToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
 
     client.find("user",new JsonObject().put("token",token),handler);
 
