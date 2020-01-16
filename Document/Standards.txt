@@ -1,0 +1,13 @@
+-> response shape :
+	{
+
+		"status" : ["true" or "false"],
+		"body" : [information as response]
+
+	}
+
+
+--------------------------------------
+
+-> Date format :
+	"dd-MM-yyyy"
