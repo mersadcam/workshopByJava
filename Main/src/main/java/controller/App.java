@@ -176,6 +176,56 @@ public class App extends AbstractVerticle {
       });
 
     /////////////////////////////////////
+    //first check token
+
+    //new added
+    router.get("/new_form")
+      .handler(ctx ->{
+        String token = ctx.request().getHeader("token");
+        HttpServerResponse response = ctx.response();
+
+        User.checkToken(client , token , res ->{
+          if(!res.result().isEmpty()){
+
+          }
+          else{
+
+          }
+        });
+
+      });
+
+    //new added
+    router.get("/grader_report")
+      .handler(ctx ->{
+        String token = ctx.request().getHeader("token");
+        HttpServerResponse response = ctx.response();
+
+        User.checkToken(client , token , res ->{
+          if(!res.result().isEmpty()){
+
+          }
+          else{
+
+          }
+        });
+      });
+
+    //new added
+    router.get("/final_report")
+      .handler(ctx ->{
+        String token = ctx.request().getHeader("token");
+        HttpServerResponse response = ctx.response();
+
+        User.checkToken(client , token , res ->{
+          if(!res.result().isEmpty()){
+
+          }
+          else{
+
+          }
+        });
+      });
 
     //check admin token is needed:
     router.get("/createNewCourse")
@@ -240,6 +290,8 @@ public class App extends AbstractVerticle {
         response.putHeader("location","/");
         response.end();
       });
+
+
 
 
     server.requestHandler(router).listen(8000);

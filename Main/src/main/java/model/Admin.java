@@ -4,11 +4,11 @@ import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 
-public class Admin extends User {
+public class sAdmin extends User {
 
 	private ArrayList<EnteredCourse> enteredCourses = new ArrayList<EnteredCourse>();
 
-  public Admin(JsonObject json) {
+  public sAdmin(JsonObject json) {
     super(json);
   }
 }

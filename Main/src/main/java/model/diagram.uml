@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="296.7222222222222" y="240.0">model.Teacher</node>
+    <node x="163.99999999999997" y="80.0">model.Course</node>
+    <node x="413.9999999999999" y="160.0">model.FormWriter</node>
+    <node x="32.0" y="160.0">model.User</node>
+    <node x="338.0" y="470.0">model.Payment</node>
+    <node x="408.66666666666663" y="320.0">model.SuperGrader</node>
+    <node x="174.99999999999986" y="320.0">model.Identity</node>
+    <node x="135.99999999999991" y="160.0">model.EnteredCourse</node>
+    <node x="0.0" y="545.0">model.Role</node>
+    <node x="0.0" y="470.0">model.SuperAdmin</node>
+    <node x="173.0" y="470.0">model.LoginLogs</node>
+    <node x="566.0" y="320.0">model.Report</node>
+    <node x="186.99999999999991" y="240.0">model.Group</node>
+    <node x="386.0" y="395.0">model.RequestType</node>
+    <node x="108.00000000000003" y="0.0">model.CoursesRelationships</node>
+    <node x="428.66666666666663" y="240.0">model.Grader</node>
+    <node x="0.0" y="395.0">model.PaymentStatus</node>
+    <node x="311.16666666666663" y="160.0">model.Form</node>
+    <node x="0.0" y="80.0">model.ContactPoint</node>
+    <node x="53.18888888888887" y="240.0">model.sAdmin</node>
+    <node x="197.0" y="395.0">model.NeededCourse</node>
+    <node x="487.0" y="470.0">model.Student</node>
+    <node x="550.6666666666666" y="240.0">model.FormAnswer</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="model.Grader" target="model.FormWriter">
+      <point x="0.0" y="-15.0" />
+      <point x="476.66666666666663" y="220.0" />
+      <point x="477.9999999999999" y="220.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="model.sAdmin" target="model.EnteredCourse">
+      <point x="12.0" y="-15.0" />
+      <point x="113.18888888888887" y="210.0" />
+      <point x="154.99999999999991" y="210.0" />
+      <point x="-57.0" y="15.0" />
+    </edge>
+    <edge source="model.Course" target="model.CoursesRelationships">
+      <point x="-31.999999999999943" y="-15.0" />
+      <point x="180.00000000000003" y="55.0" />
+      <point x="142.6666666666667" y="55.0" />
+      <point x="-69.33333333333331" y="15.0" />
+    </edge>
+    <edge source="model.Report" target="model.FormAnswer">
+      <point x="24.0" y="-15.0" />
+      <point x="638.0" y="295.0" />
+      <point x="646.6666666666666" y="295.0" />
+      <point x="32.0" y="15.0" />
+    </edge>
+    <edge source="model.Group" target="model.EnteredCourse">
+      <point x="0.0" y="-15.0" />
+      <point x="19.0" y="15.0" />
+    </edge>
+    <edge source="model.FormAnswer" target="model.FormWriter">
+      <point x="0.0" y="-15.0" />
+      <point x="614.6666666666666" y="220.0" />
+      <point x="520.6666666666665" y="220.0" />
+      <point x="42.66666666666666" y="15.0" />
+    </edge>
+    <edge source="model.Teacher" target="model.Form">
+      <point x="-13.0" y="-15.0" />
+      <point x="335.7222222222222" y="220.0" />
+      <point x="331.16666666666663" y="220.0" />
+      <point x="-20.0" y="15.0" />
+    </edge>
+    <edge source="model.CoursesRelationships" target="model.Course">
+      <point x="0.0" y="15.0" />
+      <point x="5.6843418860808015E-14" y="-15.0" />
+    </edge>
+    <edge source="model.sAdmin" target="model.User">
+      <point x="-12.0" y="-15.0" />
+      <point x="89.18888888888887" y="220.0" />
+      <point x="92.0" y="220.0" />
+      <point x="20.0" y="15.0" />
+    </edge>
+    <edge source="model.EnteredCourse" target="model.Course">
+      <point x="5.6843418860808015E-14" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="model.Teacher" target="model.EnteredCourse">
+      <point x="-39.0" y="-15.0" />
+      <point x="309.7222222222222" y="220.0" />
+      <point x="269.0" y="220.0" />
+      <point x="57.00000000000006" y="15.0" />
+    </edge>
+    <edge source="model.SuperGrader" target="model.Grader">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="model.Identity" target="model.Group">
+      <point x="5.6843418860808015E-14" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="model.User" target="model.ContactPoint">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="model.Teacher" target="model.FormWriter">
+      <point x="39.0" y="-15.0" />
+      <point x="387.7222222222222" y="220.0" />
+      <point x="435.33333333333326" y="220.0" />
+      <point x="-42.66666666666666" y="15.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.9647058823529412" x="339.5" y="287.5" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
