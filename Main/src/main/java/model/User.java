@@ -24,9 +24,6 @@ import io.vertx.ext.mongo.MongoClientUpdateResult;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.nashorn.internal.ir.annotations.Reference;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
 public class User {
 
   private static final SecureRandom secureRandom = new SecureRandom(); //this is for token
@@ -195,7 +192,7 @@ public class User {
     client.updateCollection("user",query,update,handler);
 
   }
-  public static void checkToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
+  public static void checkUserToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
 
     client.find("user",new JsonObject().put("token",token),handler);
 

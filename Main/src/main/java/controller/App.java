@@ -118,7 +118,7 @@ public class App extends AbstractVerticle {
         HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
         JsonObject toResponse = new JsonObject();
-        User.checkToken(client,token,res->{
+        User.checkUserToken(client,token,res->{
 
 
           if(!res.result().isEmpty()) {
@@ -159,7 +159,7 @@ public class App extends AbstractVerticle {
         String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
 
-        User.checkToken(client , token , res ->{
+        User.checkUserToken(client , token , res ->{
           if(!res.result().isEmpty()){
 
           }
@@ -176,7 +176,7 @@ public class App extends AbstractVerticle {
         String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
 
-        User.checkToken(client , token , res ->{
+        User.checkUserToken(client , token , res ->{
           if(!res.result().isEmpty()){
 
           }
@@ -192,7 +192,7 @@ public class App extends AbstractVerticle {
         String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
 
-        User.checkToken(client , token , res ->{
+        User.checkUserToken(client , token , res ->{
           if(!res.result().isEmpty()){
 
           }
