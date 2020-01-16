@@ -54,8 +54,10 @@
       <point x="32.0" y="15.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="0.8647058823529412" x="514.1468175971934" y="331.363409622152" />
-  <SelectedNodes />
+  <settings layout="Hierarchic Group" zoom="0.8647058823529412" x="303.9611790323919" y="309.1963921034717" />
+  <SelectedNodes>
+    <node>model.Teacher</node>
+  </SelectedNodes>
   <Categories />
   <SCOPE>All</SCOPE>
   <VISIBILITY>private</VISIBILITY>
