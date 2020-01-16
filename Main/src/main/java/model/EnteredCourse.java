@@ -15,8 +15,8 @@ public class EnteredCourse {
   //many to one
 	private String course;
 
-	private Date startTime;
-	private Date finishTime;
+	private String startTime;
+	private String finishTime;
 
 	private String place;
 	private int capacity;
@@ -24,8 +24,8 @@ public class EnteredCourse {
 
 	public EnteredCourse(JsonObject json){
 
-	  this.startTime = (Date)json.getValue("startTime");
-	  this.finishTime = (Date)json.getValue("finishTime");
+	  this.startTime = json.getString("startTime");
+	  this.finishTime = json.getString("finishTime");
 	  this.place = json.getString("place");
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
