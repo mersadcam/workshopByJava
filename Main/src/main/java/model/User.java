@@ -24,8 +24,6 @@ import io.vertx.ext.mongo.MongoClientUpdateResult;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.nashorn.internal.ir.annotations.Reference;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
 public class User {
 
