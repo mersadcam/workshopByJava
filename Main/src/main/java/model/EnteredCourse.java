@@ -41,7 +41,6 @@ public class EnteredCourse {
 	      handler.handle(Future.failedFuture(""));
 	    else
 	      handler.handle(Future.succeededFuture(resFind.result().get(0).getString("_id")));
-
     });
 
   }
