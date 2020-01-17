@@ -180,27 +180,17 @@ public class User {
   }
 
 
-  public void roleInWorkshop(MongoClient client,JsonObject userJson,String roleName,String workshopNumber,Handler<AsyncResult<List<JsonObject>>> handler){
+  public void roleInWorkshop(MongoClient client,JsonObject clientJson,Handler<AsyncResult<List<JsonObject>>> handler){
+
+    String roleName = clientJson.getString("roleName");
+    String workshopNumber = clientJson.getString("workshopNumber");
 
     JsonObject toFind = new JsonObject()
       .put("roleName",roleName)
       .put("userId",this._id)
       .put("workshopNumber",workshopNumber);
 
-    client.find(Const.role, toFind,res->{
-
-      if( res.result().isEmpty()){
-
-        handler.handle(Future.failedFuture(""));
-
-      }else {
-
-        handler.handle(Future.succeededFuture(res.result()));
-
-      }
-
-    });
-
+    client.find(Const.role, toFind,handler);
 
   }
 

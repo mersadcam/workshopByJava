@@ -10,6 +10,7 @@ public class Const {
   public static final String user = "user";
   public static final String superAdmin = "superAdmin";
   public static final String role = "role";
+  public static final String form = "form";
   private static int workshopNumber = 0 ;
 
 

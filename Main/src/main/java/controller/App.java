@@ -63,16 +63,20 @@ public class App extends AbstractVerticle {
 
         String userType = ctx.request().getHeader("userType");
         String token = ctx.request().getHeader("token");
-        JsonObject json = ctx.getBodyAsJson();
+        JsonObject clientJson = ctx.getBodyAsJson();//client json
+
+        if( token == null){
+          ctx.response().setStatusCode(503).end(new JsonObject().put("error","Access Denied").toString());
+        }
 
         User.checkUserToken(client,userType,token,res->{
 
-          if(res.succeeded() && !res.result().isEmpty()){
+          if(!res.result().isEmpty()){
 
             JsonObject user = res.result().get(0);
             ctx.put("userType",userType);
             ctx.put("user",user);
-            ctx.put("json",json);
+            ctx.put("json",clientJson);
             ctx.next();
 
           }
@@ -165,28 +169,41 @@ public class App extends AbstractVerticle {
     //first check token
 
     //new added
-    router.get("/user/new_form")
+    router.route("/user/newForm")
       .handler(ctx ->{
 
+        JsonObject userJson = ctx.get("user");   // user info in db
+        JsonObject clientJson = ctx.get("json"); //sent from user
 
+        User user = new User(userJson);
+        user.roleInWorkshop(client,clientJson,res->{
+
+          if( res.succeeded() ){
+
+            Teacher.addForm(client,res.result().get(0),clientJson,resAddForm->{
+              ctx.response().end("ok");
+            });
+
+          }else{
+
+            ctx.response().end("not ok");
+          }
+
+        });
 
       });
 
     //new added
     router.get("/user/grader_report")
       .handler(ctx ->{
-        String token = ctx.request().getHeader("token");
-        String userType = ctx.request().getHeader("userType");
+
         HttpServerResponse response = ctx.response();
+        //find student
+        //find report id in student class
+        //create answer class
+        //insert answer id to report class (answers array)
+        //
 
-        User.checkUserToken(client ,userType, token , res ->{
-          if(!res.result().isEmpty()){
-
-          }
-          else{
-
-          }
-        });
       });
 
     //new added
