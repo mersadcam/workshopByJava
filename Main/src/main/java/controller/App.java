@@ -198,6 +198,20 @@ public class App extends AbstractVerticle {
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
+        JsonObject user = ctx.get("user");
+        JsonObject clientJson = ctx.get("json");
+        String studentId = ctx.request().getHeader("studentId");
+        String formId = ctx.request().getHeader("formId");
+        JsonObject queryStdId = new JsonObject()
+          .put("_id",studentId);
+        client.find(Const.user , queryStdId , res ->{
+          if(res.succeeded()){
+
+          }
+          else{
+
+          }
+        });
         //find student
         //find report id in student class
         //create answer class
