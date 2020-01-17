@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+
 public class App extends AbstractVerticle {
 
 
@@ -65,7 +66,7 @@ public class App extends AbstractVerticle {
         String token = ctx.request().getHeader("token");
         JsonObject clientJson = ctx.getBodyAsJson();//client json
 
-        if( token == null){
+        if( token == null ){
           ctx.response().setStatusCode(503).end(new JsonObject().put("error","Access Denied").toString());
         }
 
@@ -102,7 +103,7 @@ public class App extends AbstractVerticle {
 
       cp.addCPToDB(client,res->{
 
-        user.register(client,res1->{
+        user.register(client,res.result(),res1->{
 
           if( res1.succeeded() ) {
             response.end(res1.result());
@@ -194,24 +195,22 @@ public class App extends AbstractVerticle {
       });
 
     //new added
-    router.get("/user/grader_report")
+    router.route()
+      .path("/user/grader_report")
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
         JsonObject user = ctx.get("user");
         JsonObject clientJson = ctx.get("json");
-        String studentId = ctx.request().getHeader("studentId");
-        String formId = ctx.request().getHeader("formId");
-        JsonObject queryStdId = new JsonObject()
-          .put("_id",studentId);
-        client.find(Const.user , queryStdId , res ->{
+        Grader.graderReport(client , user , clientJson , res ->{
           if(res.succeeded()){
-
+            System.out.println();
           }
           else{
-
+            System.out.println(res.result());
           }
         });
+
         //find student
         //find report id in student class
         //create answer class

@@ -51,6 +51,7 @@ public class User {
     this._id = json.getString("_id");
     this.token = json.getString("token");
 
+
   }
 
   public String getToken() {
@@ -100,7 +101,7 @@ public class User {
 
   }
 
-  public void register(MongoClient client , Handler<AsyncResult<String>> handler ) {
+  public void register(MongoClient client,String contactPointId , Handler<AsyncResult<String>> handler ) {
 
 
 
@@ -115,7 +116,7 @@ public class User {
           .put("username",this.username)
           .put("password",this.password)
           .put("token",this.token)
-          .put("contactPoint",this.contactPoint);
+          .put("contactPoint",contactPointId);
 
         client.insert("user",json,ctx->{
 
