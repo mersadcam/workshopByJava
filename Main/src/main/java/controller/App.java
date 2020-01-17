@@ -58,26 +58,29 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
-    router.route("/checkUserToken").handler(ctx -> {
 
-      String token = ctx.request().getHeader("token");
-      HttpServerResponse response = ctx.response();
-      JsonObject toResponse = new JsonObject();
-      User.checkUserToken(client,token,res->{
+    router.route().path("/user/*").handler(BodyHandler.create()).handler(ctx ->{
 
-        if(!res.result().isEmpty()){
+        String userType = ctx.request().getHeader("userType");
+        String token = ctx.request().getHeader("token");
+        JsonObject json = ctx.getBodyAsJson();
 
-          toResponse.put("status","true");
+        User.checkUserToken(client,userType,token,res->{
 
-        }else{
+          if(res.succeeded() && !res.result().isEmpty()){
 
-          toResponse.put("status","false");
+            JsonObject user = res.result().get(0);
+            ctx.put("userType",userType);
+            ctx.put("user",user);
+            ctx.put("json",json);
+            ctx.next();
 
-        }
+          }
+          else
+            ctx.response().setStatusCode(503).end(new JsonObject().put("error","Access Denied").toString());
 
-        response.end(toResponse.toString());
 
-      });
+        });
 
 
     });
@@ -94,8 +97,6 @@ public class App extends AbstractVerticle {
       ContactPoint cp = new ContactPoint(json);
 
       cp.addCPToDB(client,res->{
-
-        user.setContactPointId(res.result());
 
         user.register(client,res1->{
 
@@ -135,41 +136,26 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
-    router.get("/profile/edit")
-      .handler(BodyHandler.create())
+    router.route("/user/profile/edit")
       .handler(ctx ->{
 
-        String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
-        JsonObject json = ctx.getBodyAsJson();
         JsonObject toResponse = new JsonObject();
-        User.checkUserToken(client,token,res->{
+        JsonObject userJson = ctx.get("user");
+        JsonObject json = ctx.get("json");
+        String userType = ctx.get("userType");
+        String CP_id = userJson.getString("contactPoint");
+        User user = new User(userJson);
 
+        user.editProfile(client , json,userType,CP_id, handle -> {
 
-          if(!res.result().isEmpty()) {
+          if (handle.succeeded())
+            toResponse.put("status", "true");
 
-              User user = new User(res.result().get(0));
+          else
+            toResponse.put("status", "false");
 
-              user.editProfile(client, json, handle -> {
-
-                if (handle.succeeded())
-                  toResponse.put("status", "true");
-
-                else
-                  toResponse.put("status", "false");
-
-                response.end(toResponse.toString());
-
-              });
-
-          }else{
-
-            toResponse
-              .put("status","false")
-              .put("code","403");
-            response.setStatusCode(403).end(toResponse.toString());
-
-          }
+          response.end(toResponse.toString());
 
         });
 
@@ -179,29 +165,21 @@ public class App extends AbstractVerticle {
     //first check token
 
     //new added
-    router.get("/new_form")
+    router.get("/user/new_form")
       .handler(ctx ->{
-        String token = ctx.request().getHeader("token");
-        HttpServerResponse response = ctx.response();
 
-        User.checkUserToken(client , token , res ->{
-          if(!res.result().isEmpty()){
 
-          }
-          else{
-
-          }
-        });
 
       });
 
     //new added
-    router.get("/grader_report")
+    router.get("/user/grader_report")
       .handler(ctx ->{
         String token = ctx.request().getHeader("token");
+        String userType = ctx.request().getHeader("userType");
         HttpServerResponse response = ctx.response();
 
-        User.checkUserToken(client , token , res ->{
+        User.checkUserToken(client ,userType, token , res ->{
           if(!res.result().isEmpty()){
 
           }
@@ -212,12 +190,14 @@ public class App extends AbstractVerticle {
       });
 
     //new added
-    router.get("/final_report")
+    router.get("/user/final_report")
       .handler(ctx ->{
         String token = ctx.request().getHeader("token");
+        String userType = ctx.request().getHeader("userType");
+
         HttpServerResponse response = ctx.response();
 
-        User.checkUserToken(client , token , res ->{
+        User.checkUserToken(client ,userType, token , res ->{
           if(!res.result().isEmpty()){
 
           }
@@ -228,7 +208,7 @@ public class App extends AbstractVerticle {
       });
 
     //check admin token is needed:
-    router.get("/createNewCourse")
+    router.get("/user/createNewCourse")
       .handler(BodyHandler.create())
       .handler(ctx ->{
 
@@ -258,7 +238,7 @@ public class App extends AbstractVerticle {
     ////////////////////////////////////
 
     //check admin token is needed:
-    router.get("/enterNewWorkshop")
+    router.get("/user/enterNewWorkshop")
       .handler(BodyHandler.create())
       .handler(ctx ->{
 
@@ -280,18 +260,6 @@ public class App extends AbstractVerticle {
         });
 
       });
-
-    ///////////////////////////////////
-
-    router.get("/*")
-      .handler(ctx ->{
-        HttpServerResponse response = ctx.response();
-        response.setStatusCode(302);
-        response.putHeader("location","/");
-        response.end();
-      });
-
-
 
 
     server.requestHandler(router).listen(8000);

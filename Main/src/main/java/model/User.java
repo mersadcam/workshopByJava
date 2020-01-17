@@ -7,8 +7,10 @@ import java.util.Base64;
 import java.util.List;
 //import java.util.List;
 //import model.ContactPoint;
-
+import io.vertx.core.json.JsonArray;
+import io.vertx.ext.sync.*;
 import com.mongodb.client.model.UpdateOneModel;
+import controller.Const;
 import controller.Result;
 import dev.morphia.Datastore;
 import dev.morphia.UpdateOptions;
@@ -21,6 +23,7 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
+import io.vertx.reactivex.ext.unit.Async;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.nashorn.internal.ir.annotations.Reference;
 
@@ -32,11 +35,10 @@ public class User {
 
   private String _id;
 
-
   private ArrayList<Role> roles = new ArrayList<Role>();
 
   //OneToOne relationship :
-  private String contactPoint;
+  private ContactPoint contactPoint;
   private String username;
   private String password;
   private String token;
@@ -46,7 +48,8 @@ public class User {
 
     this.username = json.getString("username");
     this.password = json.getString("password");
-    this.contactPoint = json.getString("contactPoint");
+    this._id = json.getString("_id");
+    this.token = json.getString("token");
 
   }
 
@@ -130,7 +133,7 @@ public class User {
     //commitTransaction
 
   }
-  public void editProfile(MongoClient client,JsonObject editJson,Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public void editProfile(MongoClient client,JsonObject editJson,String collection ,String contactPoint_id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     String username,gender,emailAddress,firstName,lastName;
 
@@ -148,16 +151,18 @@ public class User {
       handler.handle(Future.failedFuture(""));
     }else {
 
-      client.find("user", new JsonObject().put("username", username), resDup -> {
+      client.find(collection , new JsonObject().put("username", username), resDup -> {
 
-        if (this.username == username || resDup.result().isEmpty()) {
+        if (this.username.equals(username) || resDup.result().isEmpty()) {
 
           JsonObject toSet = new JsonObject().put("username",username);
           JsonObject update = new JsonObject().put("$set", toSet);
 
-          client.updateCollection("user",new JsonObject().put("token",this.token), update , resUp->{
+          client.updateCollection(collection,new JsonObject().put("token",this.token), update , resUp->{
 
-            ContactPoint.editContactPoint(client,editJson,this.contactPoint, handler);
+
+
+            ContactPoint.editContactPoint(client,editJson,contactPoint_id, handler);
 
           } );
 
@@ -173,6 +178,34 @@ public class User {
     }
 
   }
+
+
+  public void roleInWorkshop(MongoClient client,JsonObject userJson,String roleName,String workshopNumber,Handler<AsyncResult<List<JsonObject>>> handler){
+
+    JsonObject toFind = new JsonObject()
+      .put("roleName",roleName)
+      .put("userId",this._id)
+      .put("workshopNumber",workshopNumber);
+
+    client.find(Const.role, toFind,res->{
+
+      if( res.result().isEmpty()){
+
+        handler.handle(Future.failedFuture(""));
+
+      }else {
+
+        handler.handle(Future.succeededFuture(res.result()));
+
+      }
+
+    });
+
+
+  }
+
+
+
   public void signout(MongoClient client , String token , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject()
@@ -185,16 +218,15 @@ public class User {
     client.updateCollection("user",query,update,handler);
 
   }
-  public static void checkUserToken(MongoClient client, String token,Handler<AsyncResult<List<JsonObject>>> handler){
 
-    client.find("user",new JsonObject().put("token",token),handler);
+  public static void checkUserToken(MongoClient client, String collection ,String token,Handler<AsyncResult<List<JsonObject>>> handler){
+
+    if( collection.equals("user") || collection.equals("admin") || collection.equals("superAdmin") )
+      client.find(collection,new JsonObject().put("token",token),handler);
+
+    else
+      handler.handle(Future.failedFuture(""));
 
   }
-  public void setContactPointId(String _id){
-
-    this.contactPoint = _id;
-
-  }
-
 
 }
