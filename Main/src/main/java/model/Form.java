@@ -6,6 +6,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import org.bson.types.ObjectId;
 
 public class Form {
 
@@ -17,7 +18,7 @@ public class Form {
 
   public void addToDB(MongoClient client ,JsonObject teacherJson, Handler<AsyncResult<String>> handler){
 
-    String teacherId = teacherJson.getString("_id");
+    String teacherId = teacherJson.getJsonObject("_id").getString("$oid");
 
     JsonObject toInsert = new JsonObject()
       .put("formBody",formJson)

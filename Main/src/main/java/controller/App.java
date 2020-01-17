@@ -174,14 +174,21 @@ public class App extends AbstractVerticle {
 
         JsonObject userJson = ctx.get("user");   // user info in db
         JsonObject clientJson = ctx.get("json"); //sent from user
+        JsonObject toResponse = new JsonObject();
 
         User user = new User(userJson);
         user.roleInWorkshop(client,clientJson,res->{
 
-          if( res.succeeded() ){
+          if( !res.result().isEmpty() ){
+
 
             Teacher.addForm(client,res.result().get(0),clientJson,resAddForm->{
-              ctx.response().end("ok");
+
+              if( resAddForm.succeeded() )
+                ctx.response().end("ok");
+              else
+                ctx.response().end("System Error ");
+
             });
 
           }else{
@@ -198,11 +205,8 @@ public class App extends AbstractVerticle {
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
-        //find student
-        //find report id in student class
-        //create answer class
-        //insert answer id to report class (answers array)
-        //
+
+
 
       });
 

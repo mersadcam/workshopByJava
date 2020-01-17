@@ -183,14 +183,14 @@ public class User {
   public void roleInWorkshop(MongoClient client,JsonObject clientJson,Handler<AsyncResult<List<JsonObject>>> handler){
 
     String roleName = clientJson.getString("roleName");
-    String workshopNumber = clientJson.getString("workshopNumber");
+    String workshopId = clientJson.getString("workshopId");
 
     JsonObject toFind = new JsonObject()
       .put("roleName",roleName)
       .put("userId",this._id)
-      .put("workshopNumber",workshopNumber);
+      .put("workshopId",workshopId);
 
-    client.find(Const.role, toFind,handler);
+    client.find(Const.teacher, toFind,handler);
 
   }
 
