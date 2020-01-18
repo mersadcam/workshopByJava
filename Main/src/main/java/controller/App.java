@@ -17,7 +17,9 @@ import io.vertx.ext.web.handler.CorsHandler;
 import model.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -75,8 +77,8 @@ public class App extends AbstractVerticle {
 
             JsonObject user = res.result().get(0);
             ctx.put("userType",userType);
-            ctx.put("user",user);
-            ctx.put("json",clientJson);
+            ctx.put("userJson",user);
+            ctx.put("clientJson",clientJson);
             ctx.next();
 
           }
@@ -145,8 +147,8 @@ public class App extends AbstractVerticle {
 
         HttpServerResponse response = ctx.response();
         JsonObject toResponse = new JsonObject();
-        JsonObject userJson = ctx.get("user");
-        JsonObject json = ctx.get("json");
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject json = ctx.get("clientJson");
         String userType = ctx.get("userType");
         String CP_id = userJson.getString("contactPoint");
         User user = new User(userJson);
@@ -168,32 +170,94 @@ public class App extends AbstractVerticle {
     /////////////////////////////////////
     //first check token
 
+    router.route("/user/workshops").handler(ctx->{
+
+      JsonObject toResponse = new JsonObject();
+
+      client.find(Const.workshop,new JsonObject(),res->{
+
+        List workshopList = res.result();
+
+        if( res.succeeded())
+          toResponse.put("status","true")
+          .put("body",workshopList);
+
+        else
+          toResponse.put("status","false");
+
+        ctx.response().end( toResponse.toString() );
+
+
+      });
+
+
+
+
+    });
+
+    router.route("/user/workshop/request").handler(ctx->{
+
+      JsonObject toResponse = new JsonObject();
+      JsonObject clientJson = ctx.get("clientJson");
+      JsonObject userJson = ctx.get("userJson");
+
+
+
+    });
+
     //new added
-    router.route("/user/newForm")
+    router.route("/user/workshop/newForm")
       .handler(ctx ->{
 
-        JsonObject userJson = ctx.get("user");   // user info in db
-        JsonObject clientJson = ctx.get("json"); //sent from user
+        JsonObject userJson = ctx.get("userJson");   // user info in db
+        JsonObject clientJson = ctx.get("clientJson"); //sent from user
         JsonObject toResponse = new JsonObject();
 
+        List rolesId;
+
+        try {
+          rolesId = userJson.getJsonArray("rolesId").getList();
+        }catch (Exception e){
+
+          rolesId = null;
+
+        }
+
+        if (rolesId == null)
+          ctx.response().end(new JsonObject()
+          .put("status","false")
+          .put("msg","you dont have any roles").toString());
+
+
         User user = new User(userJson);
-        user.roleInWorkshop(client,clientJson,res->{
+        user.returnRoles(client,new ArrayList<JsonObject>(),rolesId,0,res->{
 
-          if( !res.result().isEmpty() ){
+          JsonObject teacherJson = User.isTeacherInWorkshop(res.result(),clientJson.getString("workshopId"));
 
+          if( teacherJson != null ){
 
-            Teacher.addForm(client,res.result().get(0),clientJson,resAddForm->{
+            Teacher.addForm(client,teacherJson,clientJson,resAddForm->{
 
               if( resAddForm.succeeded() )
-                ctx.response().end("ok");
+                toResponse
+                  .put("status","true")
+                  .put("msg","added successfully");
+
               else
-                ctx.response().end("System Error ");
+                toResponse
+                  .put("status","false")
+                  .put("msg","there is problem in your input");
+
+
+              ctx.response().end(toResponse.toString());
 
             });
 
           }else{
 
-            ctx.response().end("not ok");
+            ctx.response().end(new JsonObject()
+            .put("status","false")
+            .put("msg","some things wrong happened").toString());
           }
 
         });

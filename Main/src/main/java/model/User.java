@@ -26,6 +26,7 @@ import io.vertx.ext.mongo.MongoClientUpdateResult;
 import io.vertx.reactivex.ext.unit.Async;
 import jdk.internal.org.objectweb.asm.Handle;
 import jdk.nashorn.internal.ir.annotations.Reference;
+import org.bson.types.ObjectId;
 
 public class User {
 
@@ -222,6 +223,46 @@ public class User {
 
   }
 
-  //what is the return type??
+
+  public static void returnRoles(
+    MongoClient client,
+    ArrayList<JsonObject> arr,
+    List rolesId,
+    int counter,
+    Handler<AsyncResult<ArrayList>> handler){
+
+    if( counter == rolesId.size())
+      handler.handle(Future.succeededFuture(arr));
+
+    else{
+
+
+      client.find(Const.role,new JsonObject().put("_id",new JsonObject().put("$oid",rolesId.get(counter))), res->{
+
+        arr.add(res.result().get(0));
+        returnRoles(client,arr,rolesId,counter+1,handler);
+
+      });
+
+
+    }
+
+
+  }
+
+  public static JsonObject isTeacherInWorkshop(ArrayList<JsonObject> roles,String workshopId){
+
+    JsonObject role;
+
+    for ( int i = 0 ; i < roles.size() ; i++ ){
+      role = roles.get(i);
+
+      if(role.getString("roleName").equals("Teacher") && role.getString("workshopId").equals(workshopId))
+        return role;
+
+    }
+    return null;
+
+  }
 
 }

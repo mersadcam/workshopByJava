@@ -15,6 +15,7 @@ public class Const {
   public static final String identity = "identity";
   public static final String report = "report";
   public static final String answer = "answer";
+  public static final String role = "role";
   private static int workshopNumber = 0 ;
 
 
