@@ -43,7 +43,7 @@ public class Teacher implements Role,FormWriter{
       JsonObject toSet = new JsonObject()
         .put("$set",new JsonObject().put("formsId",formsId));
 
-      client.updateCollection(Const.teacher,new JsonObject().put("_id",teacherId),toSet,handler);
+      client.updateCollection(Const.role,new JsonObject().put("_id",teacherId),toSet,handler);
 
     });
   }

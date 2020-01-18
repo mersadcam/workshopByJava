@@ -174,7 +174,7 @@ public class App extends AbstractVerticle {
 
       JsonObject toResponse = new JsonObject();
 
-      client.find(Const.workshop,new JsonObject(),res->{
+      client.find(Const.enteredCourse,new JsonObject(),res->{
 
         List workshopList = res.result();
 
