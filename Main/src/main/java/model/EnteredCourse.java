@@ -16,7 +16,6 @@ public class EnteredCourse {
   //many to one
 	private Course course;
 
-  private String workshopNumber;
 	private String startTime;
 	private String finishTime;
 
@@ -31,7 +30,6 @@ public class EnteredCourse {
 	  this.place = json.getString("place");
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
-	  this.workshopNumber = String.valueOf(Const.getWorkshopNumber());
 
   }
 
@@ -64,7 +62,7 @@ public class EnteredCourse {
               .put("place",this.place)
               .put("capacity",this.capacity)
               .put("description",this.description)
-              .put("workshopNumber",this.workshopNumber);
+              .put("workshopNumber",Const.getEnteredCourseId());
 
             client.insert("enteredCourse",toInsert,handler);
 
@@ -83,12 +81,4 @@ public class EnteredCourse {
 
   }
 
-
-  public String getWorkshopNumber() {
-    return workshopNumber;
-  }
-
-  public void setWorkshopNumber(String workshopNumber) {
-    this.workshopNumber = workshopNumber;
-  }
 }

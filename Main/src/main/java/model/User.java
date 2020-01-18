@@ -196,7 +196,7 @@ public class User {
       .put("userId",this._id)
       .put("workshopId",workshopId);
 
-    client.find(Const.teacher, toFind,handler);
+    client.find(Const.role, toFind,handler);
 
   }
 

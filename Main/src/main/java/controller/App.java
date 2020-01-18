@@ -264,11 +264,21 @@ public class App extends AbstractVerticle {
 
       });
 
-    //new added
-    router.get("/user/grader_report")
+
+    router.route("/user/graderReport")
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
+        JsonObject user = ctx.get("user");
+        JsonObject clientJson = ctx.get("json");
+        Grader.graderReport(client , user , clientJson , res ->{
+          if(res.succeeded()){
+            System.out.println("succed we win");
+          }
+          else{
+            System.out.println(res.result());
+          }
+        });
 
 
 
