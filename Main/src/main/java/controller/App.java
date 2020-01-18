@@ -257,7 +257,7 @@ public class App extends AbstractVerticle {
 
             ctx.response().end(new JsonObject()
             .put("status","false")
-            .put("msg","some things wrong happened").toString());
+            .put("msg","Access Denied").toString());
           }
 
         });
