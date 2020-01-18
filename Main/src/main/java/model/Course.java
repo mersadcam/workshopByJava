@@ -16,30 +16,10 @@ import java.util.List;
 public class Course {
 
 
-  private String _id;
 	private String name;
 	private String description;
 
-	private ArrayList<String> neededCourses = new ArrayList<String>();
-
-	private void setCourses(MongoClient client, JsonArray jsonArray){
-
-	  List<String> list = jsonArray.getList();
-	  String courseName;
-
-	  for (int i = 0 ; i < list.size() ; i++ ){
-	    courseName = list.get(i);
-
-	    client.find("course",new JsonObject().put("name",courseName),res->{
-
-	      if(!res.result().isEmpty())
-	        this.neededCourses.add(res.result().get(0).getString("_id"));
-
-      });
-
-    }
-
-  }
+	private ArrayList<Course> neededCourses = new ArrayList<Course>();
 
 	public Course(JsonObject jsonObject){
 	  this.name = jsonObject.getString("name");
@@ -56,13 +36,12 @@ public class Course {
 	    if(resFind.result().isEmpty()){
 
         JsonArray jsonArray = json.getJsonArray("neededCourses");
-        this.setCourses(client,jsonArray);
 
         JsonObject forInsert = new JsonObject()
           .put("_id",new ObjectId().toString())
-          .put("name",this.name)
-          .put("description",this.description)
-          .put("neededCourses",this.neededCourses);
+          .put("name",json.getString("name"))
+          .put("description",json.getString("description"))
+          .put("neededCourses",json.getJsonArray("neededCourse"));
 
         client.insert("course",forInsert,resInsert->{
 

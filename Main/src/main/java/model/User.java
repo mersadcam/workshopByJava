@@ -213,17 +213,6 @@ public class User {
 
   }
 
-  public static void checkUserToken(MongoClient client, String collection ,String token,Handler<AsyncResult<List<JsonObject>>> handler){
-
-    if( collection.equals("user") || collection.equals("admin") || collection.equals("superAdmin") )
-      client.find(collection,new JsonObject().put("token",token),handler);
-
-    else
-      handler.handle(Future.failedFuture(""));
-
-  }
-
-
   public static void returnRoles(
     MongoClient client,
     ArrayList<JsonObject> arr,

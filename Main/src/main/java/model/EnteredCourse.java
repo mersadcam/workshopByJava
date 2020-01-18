@@ -33,38 +33,34 @@ public class EnteredCourse {
 
   }
 
-  private void setCourse(MongoClient client,String courseName,Handler<AsyncResult<String>> handler){
 
-	  JsonObject query = new JsonObject().put("name",courseName);
-	  client.find("course",query,resFind->{
-
-	    if (resFind.result().isEmpty())
-	      handler.handle(Future.failedFuture(""));
-	    else
-	      handler.handle(Future.succeededFuture(resFind.result().get(0).getString("_id")));
-    });
-
-  }
-
-  public void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
+  public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
 
 	  String courseName = json.getString("course");
+	  String startTime = json.getString("startTime");
+	  String finishTime = json.getString("finishTime");
+	  String place = json.getString("place");
+	  String description = json.getString("description");
+	  int capacity = json.getInteger("capacity");
 
-	  this.setCourse(client,courseName,resSC->{
+	  client.find(Const.course,new JsonObject().put("name",courseName),resSC->{
 
 
 	    if (resSC.succeeded()){
             JsonObject toInsert = new JsonObject()
-              .put("_id", new ObjectId().toString())
-              .put("course",resSC.result())
-              .put("startTime",this.startTime)
-              .put("finishTime",this.finishTime)
-              .put("place",this.place)
-              .put("capacity",this.capacity)
-              .put("description",this.description)
-              .put("workshopNumber",Const.getEnteredCourseId());
+              .put("_id", String.valueOf(Const.getEnteredCourseId()))
+              .put("course",resSC.result().get(0).getString("name"))
+              .put("startTime",startTime)
+              .put("finishTime",finishTime)
+              .put("place",place)
+              .put("capacity",capacity)
+              .put("description",description);
 
-            client.insert("enteredCourse",toInsert,handler);
+            client.insert(Const.enteredCourse,toInsert,resInsert->{
+
+              handler.handle(Future.succeededFuture(toInsert.getString("_id")));
+
+            });
 
 
           }else{

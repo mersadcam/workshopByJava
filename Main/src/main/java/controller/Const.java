@@ -1,6 +1,8 @@
 package controller;
 
 
+import java.util.Random;
+
 public class Const {
 
   public static final String contactPoint = "contactPoint";
@@ -14,11 +16,17 @@ public class Const {
   public static final String report = "report";
   public static final String answer = "answer";
   public static final String group = "group";
-  private static int enteredCourseId = 0 ;
+  private static int enteredCourseId = 0;
 
 
   public static int getEnteredCourseId() {
-    enteredCourseId++;
+//    enteredCourseId++; for system we should run it
+    enteredCourseId = new Random().nextInt();
+    enteredCourseId = Math.abs(enteredCourseId);
     return enteredCourseId;
+  }
+
+  public static void setEnteredCourseId(int number){
+    enteredCourseId = number;
   }
 }

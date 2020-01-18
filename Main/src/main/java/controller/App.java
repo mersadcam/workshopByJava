@@ -8,6 +8,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Route;
@@ -15,6 +16,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import model.*;
+import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,7 +73,7 @@ public class App extends AbstractVerticle {
           ctx.response().setStatusCode(503).end(new JsonObject().put("error","Access Denied").toString());
         }
 
-        User.checkUserToken(client,userType,token,res->{
+         client.find(Const.user,new JsonObject().put("token",token).put("userType",userType),res->{
 
           if(!res.result().isEmpty()){
 
@@ -287,35 +289,58 @@ public class App extends AbstractVerticle {
     //new added
     router.get("/user/final_report")
       .handler(ctx ->{
-        String token = ctx.request().getHeader("token");
-        String userType = ctx.request().getHeader("userType");
 
-        HttpServerResponse response = ctx.response();
-
-        User.checkUserToken(client ,userType, token , res ->{
-          if(!res.result().isEmpty()){
-
-          }
-          else{
-
-          }
-        });
       });
 
     ////////////////////////////////////
 
 
+    router.route().path("/admin/*").handler(BodyHandler.create()).handler(ctx ->{
+
+      String userType = ctx.request().getHeader("userType");
+      String token = ctx.request().getHeader("token");
+      JsonObject clientJson = ctx.getBodyAsJson();//client json
+
+      if (userType.equals("user") )
+        ctx.response().setStatusCode(503).end(
+          new JsonObject()
+          .put("status","false")
+          .put("msg","Access Denied")
+          .toString());
+
+
+      if( token == null){
+        ctx.response().setStatusCode(503).end(new JsonObject().put("error","Access Denied").toString());
+      }
+
+      client.find(Const.user,new JsonObject().put("token",token).put("userType",userType),res->{
+
+        if(!res.result().isEmpty()){
+
+          JsonObject user = res.result().get(0);
+          ctx.put("userType",userType);
+          ctx.put("userJson",user);
+          ctx.put("clientJson",clientJson);
+          ctx.next();
+
+        }
+        else
+          ctx.response().setStatusCode(503).end(new JsonObject().put("error","Access Denied").toString());
+
+
+      });
+
+
+    });
+
+
     //check admin token is needed:
     router.get("/admin/createNewCourse")
-      .handler(BodyHandler.create())
       .handler(ctx ->{
 
-        String token = ctx.request().getHeader("token");
         HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
         JsonObject toResponse = new JsonObject();
-
-        //check "Admin" token before :
 
         Course course = new Course(json);
 
@@ -337,23 +362,59 @@ public class App extends AbstractVerticle {
 
     //check admin token is needed:
     router.get("/admin/enterNewWorkshop")
-      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
-        JsonObject json = ctx.getBodyAsJson();
-        String token = ctx.request().getHeader("token");
         JsonObject toResponse = new JsonObject();
+        JsonObject clientJson = ctx.get("clientJson");
+        String username = clientJson.getString("teacher");
+        EnteredCourse.enterNewWorkshop(client,clientJson,res->{
 
-        EnteredCourse EC = new EnteredCourse(json);
-        EC.enterNewWorkshop(client,json,resNewWorkshop->{
+          if (res.succeeded())
+            client.find(Const.user,new JsonObject().put("username",username),resFindUser->{
 
-          if (resNewWorkshop.succeeded())
-            toResponse.put("status","true");
-          else
-            toResponse.put("status","fasle");
+              JsonObject jsonToCreateTeacher = new JsonObject();
+              jsonToCreateTeacher.put("roleName","Teacher")
+                .put("_id",new ObjectId().toString())
+                .put("enteredCourse",res.result())
+                .put("form",new JsonArray());
 
-          response.end(toResponse.toString());
+
+              client.insert(Const.role,jsonToCreateTeacher,resInsert->{
+
+                JsonArray lastUserRoles = resFindUser.result().get(0).getJsonArray("role");
+                JsonArray newUserRoles = lastUserRoles.add(resInsert.result());
+
+                client.updateCollection(Const.user,new JsonObject().put("username",username),
+                  new JsonObject().put("$set",new JsonObject().put("role",newUserRoles)),resUpdate->{
+
+                    if (resUpdate.succeeded()) {
+                      toResponse
+                        .put("status", "true")
+                        .put("msg", "Workshop Created Successfully");
+
+                    }
+
+                    else
+                      toResponse.put("status","false").put("msg","Error");
+
+                    response.end(toResponse.toString());
+
+                  });
+
+              });
+
+            });
+
+
+
+
+          else {
+
+            toResponse.put("status", "fasle");
+            response.end(toResponse.toString());
+
+          }
 
         });
 
