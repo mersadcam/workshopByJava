@@ -102,7 +102,7 @@ public class App extends AbstractVerticle {
 
       cp.addCPToDB(client,res->{
 
-        user.register(client,res1->{
+        user.register(client,res.result(),res1->{
 
           if( res1.succeeded() ) {
             response.end(res1.result());
