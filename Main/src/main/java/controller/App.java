@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -15,6 +16,7 @@ import io.vertx.ext.web.handler.CorsHandler;
 import model.*;
 import org.bson.types.ObjectId;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -195,26 +197,46 @@ public class App extends AbstractVerticle {
 
     });
 
-    router.route(Const.userWorkshopRequest)
+    router.route(Const.userWorkshopGraderRequest)
+      .handler(ctx ->{
+
+        JsonObject toResponse = new JsonObject();
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+
+        EnteredCourse.graderRequestForWorkshop(client , clientJson , handler ->{
+          if(handler.succeeded()){
+
+          }
+          else {
+
+          }
+        });
+      });
+
+    router.route(Const.userWorkshopStudentRequest)
       .handler(ctx->{
 
       JsonObject toResponse = new JsonObject();
       JsonObject clientJson = ctx.get("clientJson");
       JsonObject userJson = ctx.get("userJson");
 
-      client.find(Const.enteredCourse , clientJson.getJsonObject("enteredCourseId") , res ->{
-        if(res.succeeded() && !res.result().isEmpty()){
+      //find workshop
+      //pishniaz ro check kon
+      //payment in data base
+
+
+      EnteredCourse.studentRequestForWorkshop(client , clientJson , handler ->{
+        if(handler.succeeded()){
 
         }
         else{
           toResponse
             .put("status","false")
             .put("msg","workshop not found.");
-        }
+          }
+        });
       });
-
-
-    });
 
     //new added
     router.route(Const.userWorkshopNewForm)
@@ -478,6 +500,7 @@ public class App extends AbstractVerticle {
             toResponse
               .put("status","true")
               .put("msg","user signed out.");
+
           }
           else{
             toResponse
@@ -485,8 +508,9 @@ public class App extends AbstractVerticle {
               .put("msg","you cannot signout.");
 
           }
+          ctx.response().end();
         });
-        ctx.response().end();
+
       });
 
     server.requestHandler(router).listen(8000);

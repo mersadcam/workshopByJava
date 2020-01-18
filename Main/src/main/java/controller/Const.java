@@ -30,7 +30,10 @@ public class Const {
   public static final String signout = "/user/signout";
   public static final String userProfileEdit ="/user/profile/edit";
   public static final String userWorkshops ="/user/workshops";
-  public static final String userWorkshopRequest ="/user/workshop/request";
+  public static final String userWorkshopStudentRequest ="/user/workshop/studentRequest";
+  public static final String userWorkshopGraderRequest = "/user/workshop/graderRequest";
+  public static final String userWorkshop = "/user/workshop";
+  public static final String userMakeGroup = "/user/workshop/makeGroup";
   public static final String userWorkshopNewForm ="/user/workshop/newForm";
   public static final String userGraderReport ="/user/graderReport";
   public static final String userFinalReport ="/user/finalReport";

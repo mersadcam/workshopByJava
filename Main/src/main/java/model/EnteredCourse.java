@@ -77,4 +77,40 @@ public class EnteredCourse {
 
   }
 
+
+  public static void studentRequestForWorkshop(MongoClient client , JsonObject clientJson , JsonObject userJson , Handler<AsyncResult<String>> handler){
+
+    client.find(Const.enteredCourse , clientJson.getJsonObject("enteredCourseId") , res ->{
+      if(res.succeeded() && !res.result().isEmpty()){
+
+        JsonObject selectedWorkshop = res.result().get(0);
+        JsonObject course = selectedWorkshop.getJsonObject("course");//course of workshop
+
+        //find course in db for pishniaz
+        client.find(Const.course , course , resCourse ->{
+          if(resCourse.succeeded() && !resCourse.result().isEmpty()){//find course in db
+            JsonObject pishniaz = resCourse.result().get(0).getJsonObject("neededCourse");//id haye pishniaz
+
+
+            User.returnRoles(client,new ArrayList<JsonObject>() , userJson.getJsonArray("role").getList() ,0 , resRoles->{
+
+              ArrayList<JsonObject> roles = resRoles.result();
+
+
+            } );
+          }
+          else{//didn't find course in db
+
+          }
+        });
+      }
+
+    });
+  }
+
+
+  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , Handler<AsyncResult<String>> handler){
+
+
+  }
 }
