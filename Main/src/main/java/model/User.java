@@ -43,7 +43,7 @@ public class User {
   private String username;
   private String password;
   private String token;
-
+  private String userType;
 
   public User(JsonObject json) {
 
@@ -51,6 +51,7 @@ public class User {
     this.password = json.getString("password");
     this._id = json.getString("_id");
     this.token = json.getString("token");
+    this.userType = json.getString("userType");
 
 
   }

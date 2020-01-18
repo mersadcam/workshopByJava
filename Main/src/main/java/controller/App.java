@@ -61,7 +61,9 @@ public class App extends AbstractVerticle {
     /////////////////////////////////////
 
 
-    router.route().path("/user/*").handler(BodyHandler.create()).handler(ctx ->{
+    router.route()
+      .path("/user/*")
+      .handler(BodyHandler.create()).handler(ctx ->{
 
         String userType = ctx.request().getHeader("userType");
         String token = ctx.request().getHeader("token");
@@ -167,10 +169,9 @@ public class App extends AbstractVerticle {
 
       });
 
-    /////////////////////////////////////
-    //first check token
 
-    router.route("/user/workshops").handler(ctx->{
+    router.route("/user/workshops")
+      .handler(ctx->{
 
       JsonObject toResponse = new JsonObject();
 
@@ -195,7 +196,8 @@ public class App extends AbstractVerticle {
 
     });
 
-    router.route("/user/workshop/request").handler(ctx->{
+    router.route("/user/workshop/request")
+      .handler(ctx->{
 
       JsonObject toResponse = new JsonObject();
       JsonObject clientJson = ctx.get("clientJson");
@@ -302,7 +304,6 @@ public class App extends AbstractVerticle {
         });
       });
 
-    ////////////////////////////////////
 
 
     //check admin token is needed:
@@ -334,7 +335,6 @@ public class App extends AbstractVerticle {
       });
 
 
-
     //check admin token is needed:
     router.get("/admin/enterNewWorkshop")
       .handler(BodyHandler.create())
@@ -356,6 +356,41 @@ public class App extends AbstractVerticle {
           response.end(toResponse.toString());
 
         });
+
+      });
+
+
+    router.route("/superAdmin/createAdmin")
+      .handler(BodyHandler.create())
+      .handler(ctx ->{
+        HttpServerResponse response = ctx.response();
+
+        JsonObject toResponse = new JsonObject();
+        JsonObject clientJson = ctx.getBodyAsJson();
+        String token = ctx.request().getHeader("token");
+
+        client.find(Const.user , new JsonObject().put("token",token).put("userType","superAdmin") , res->{
+          if(!res.result().isEmpty()){
+
+            clientJson.put("userType","admin");
+            client.insert(Const.user , clientJson , resInsert ->{
+              if(!resInsert.result().isEmpty()){
+                toResponse
+                  .put("status", "true");
+
+              }
+              else{
+                toResponse
+                  .put("msg","not added super admin");
+              }
+            });
+          }
+          else{
+            response.end("access denied.");
+          }
+        });
+
+
 
       });
 
