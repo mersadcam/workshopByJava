@@ -1,17 +1,14 @@
 package controller;
 
 
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
-import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
@@ -64,7 +61,7 @@ public class App extends AbstractVerticle {
 
 
     router.route()
-      .path("/user/*")
+      .path(Const.userStar)
       .handler(BodyHandler.create()).handler(ctx ->{
 
         String userType = ctx.request().getHeader("userType");
@@ -97,7 +94,7 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
-    router.post("/register")
+    router.post(Const.register)
       .handler(BodyHandler.create())
       .handler(ctx->{
 
@@ -128,7 +125,7 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
-    router.post("/login")
+    router.post(Const.login)
       .handler(BodyHandler.create())
       .handler(ctx ->{
 
@@ -146,7 +143,7 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
-    router.route("/user/profile/edit")
+    router.route(Const.userProfileEdit)
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
@@ -172,7 +169,7 @@ public class App extends AbstractVerticle {
       });
 
 
-    router.route("/user/workshops")
+    router.route(Const.userWorkshops)
       .handler(ctx->{
 
       JsonObject toResponse = new JsonObject();
@@ -198,19 +195,29 @@ public class App extends AbstractVerticle {
 
     });
 
-    router.route("/user/workshop/request")
+    router.route(Const.userWorkshopRequest)
       .handler(ctx->{
 
       JsonObject toResponse = new JsonObject();
       JsonObject clientJson = ctx.get("clientJson");
       JsonObject userJson = ctx.get("userJson");
 
+      client.find(Const.enteredCourse , clientJson.getJsonObject("enteredCourseId") , res ->{
+        if(res.succeeded() && !res.result().isEmpty()){
+
+        }
+        else{
+          toResponse
+            .put("status","false")
+            .put("msg","workshop not found.");
+        }
+      });
 
 
     });
 
     //new added
-    router.route("/user/workshop/newForm")
+    router.route(Const.userWorkshopNewForm)
       .handler(ctx ->{
 
         JsonObject userJson = ctx.get("userJson");   // user info in db
@@ -269,7 +276,7 @@ public class App extends AbstractVerticle {
       });
 
 
-    router.route("/user/graderReport")
+    router.route(Const.userGraderReport)
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
@@ -289,7 +296,7 @@ public class App extends AbstractVerticle {
       });
 
     //new added
-    router.get("/user/final_report")
+    router.get(Const.userFinalReport)
       .handler(ctx ->{
 
       });
@@ -337,8 +344,8 @@ public class App extends AbstractVerticle {
 
 
 
-    //check admin token is needed:
-    router.get("/admin/createNewCourse")
+    router.get(Const.adminCreateNewCourse)
+      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
@@ -363,8 +370,9 @@ public class App extends AbstractVerticle {
 
 
 
-    //check admin token is needed:
-    router.get("/admin/enterNewWorkshop")
+
+    router.get(Const.adminEnterNewWorkshop)
+      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
@@ -424,7 +432,7 @@ public class App extends AbstractVerticle {
       });
 
 
-    router.route("/superAdmin/createAdmin")
+    router.route(Const.superAdminCreateAdmin)
       .handler(BodyHandler.create())
       .handler(ctx ->{
         HttpServerResponse response = ctx.response();
@@ -458,6 +466,28 @@ public class App extends AbstractVerticle {
 
       });
 
+    router.route(Const.signout)
+      .handler(ctx ->{
+
+        JsonObject toResponse = new JsonObject();
+        JsonObject user = ctx.get("userJson");
+        User userSignOut = new User(user);
+
+        userSignOut.signout(client , userSignOut.getToken() , res ->{
+          if(res.succeeded()){
+            toResponse
+              .put("status","true")
+              .put("msg","user signed out.");
+          }
+          else{
+            toResponse
+              .put("status","false")
+              .put("msg","you cannot signout.");
+
+          }
+        });
+        ctx.response().end();
+      });
 
     server.requestHandler(router).listen(8000);
 

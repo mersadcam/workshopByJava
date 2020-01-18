@@ -1,32 +1,20 @@
 package model;
 
-import java.io.File;
+import controller.Const;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.mongo.MongoClientUpdateResult;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
 //import java.util.List;
 //import model.ContactPoint;
-import io.vertx.core.json.JsonArray;
-import io.vertx.ext.sync.*;
-import com.mongodb.client.model.UpdateOneModel;
-import controller.Const;
-import controller.Result;
-import dev.morphia.Datastore;
-import dev.morphia.UpdateOptions;
-import dev.morphia.query.*;
-import dev.morphia.query.internal.MorphiaCursor;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
-import io.vertx.ext.mongo.MongoClientUpdateResult;
-import io.vertx.reactivex.ext.unit.Async;
-import jdk.internal.org.objectweb.asm.Handle;
-import jdk.nashorn.internal.ir.annotations.Reference;
-import org.bson.types.ObjectId;
 
 public class User {
 
@@ -75,14 +63,16 @@ public class User {
     JsonObject query = new JsonObject()
       .put("username",this.username)
       .put("password",this.password);
-    client.find("user",query,res->{
+
+    client.find(Const.user,query,res->{
 
       if (!res.result().isEmpty()){
         this.setToken();
         JsonObject token =  new JsonObject()
-          .put("token", this.token);
+          .put("token", this.token)
+          .put("userType",res.result().get(0).getString("userType"));
 
-        client.updateCollection("user",query,new JsonObject().put("$set",new JsonObject()
+        client.updateCollection(Const.user , query , new JsonObject().put("$set",new JsonObject()
         .put("token",this.token)),result->{
 
           handler.handle(Future.succeededFuture(token.toString()));
@@ -109,7 +99,7 @@ public class User {
 
     //startTransaction :
 
-    client.find("user",new JsonObject()
+    client.find(Const.user,new JsonObject()
     .put("username",this.username),res->{
 
       if(res.result().isEmpty()){
@@ -118,7 +108,8 @@ public class User {
           .put("username",this.username)
           .put("password",this.password)
           .put("token",this.token)
-          .put("contactPoint",contactPointId);
+          .put("contactPoint",contactPointId)
+          .put("userType","user");
 
         client.insert("user",json,ctx->{
 
@@ -210,7 +201,7 @@ public class User {
       .put("$set",new JsonObject()
         .put("token",""));
 
-    client.updateCollection("user",query,update,handler);
+    client.updateCollection(Const.user,query,update,handler);
 
   }
 
