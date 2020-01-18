@@ -228,8 +228,11 @@ public class App extends AbstractVerticle {
         });
       });
 
+    ////////////////////////////////////
+
+
     //check admin token is needed:
-    router.get("/user/createNewCourse")
+    router.get("/admin/createNewCourse")
       .handler(BodyHandler.create())
       .handler(ctx ->{
 
@@ -256,10 +259,10 @@ public class App extends AbstractVerticle {
 
       });
 
-    ////////////////////////////////////
+
 
     //check admin token is needed:
-    router.get("/user/enterNewWorkshop")
+    router.get("/admin/enterNewWorkshop")
       .handler(BodyHandler.create())
       .handler(ctx ->{
 

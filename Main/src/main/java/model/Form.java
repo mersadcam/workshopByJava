@@ -16,15 +16,14 @@ public class Form {
     this.formJson = formJson;
   }
 
-  public void addToDB(MongoClient client ,JsonObject teacherJson, Handler<AsyncResult<String>> handler){
-
-    String teacherId = teacherJson.getJsonObject("_id").getString("$oid");
+  public void addToDB(MongoClient client , Handler<AsyncResult<String>> handler){
 
     JsonObject toInsert = new JsonObject()
-      .put("formBody",formJson)
-      .put("Teacher",teacherId);
+      .put("formBody",formJson);
 
-    client.insert(Const.form,toInsert,handler);
+    client.insert(Const.form,toInsert,res->{
+      handler.handle(Future.succeededFuture(res.result()));
+    });
 
   }
 

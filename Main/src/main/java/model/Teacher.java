@@ -29,10 +29,15 @@ public class Teacher implements Role,FormWriter{
     Handler<AsyncResult<MongoClientUpdateResult>> handler) {
 
     Form form = new Form(jsonForm.getJsonObject("formBody"));
-    form.addToDB(client,jsonTeacher,resAddToDB ->{
+    form.addToDB(client,resAddToDB ->{
 
+      String formId = resAddToDB.result();
       JsonArray formsId = jsonTeacher.getJsonArray("formsId");
-      formsId.add(resAddToDB.result());
+
+      if( formsId == null)
+        formsId = new JsonArray();
+
+      formsId.add(formId);
 
       JsonObject teacherId = jsonTeacher.getJsonObject("_id");
       JsonObject toSet = new JsonObject()
