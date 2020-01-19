@@ -117,8 +117,10 @@ public class EnteredCourse {
       .put("_id",clientJson.getString("enteredCourseId"));
 
 	  client.find(Const.enteredCourse , enteredCourseId , res ->{
+
 	    if(res.succeeded() && !res.result().isEmpty()){//find workshop in db
-        ObjectId id = new ObjectId();
+
+	      ObjectId id = new ObjectId();
 	      JsonObject grader = new JsonObject()
           .put("_id", id.toString())
           .put("requestDate",clientJson.getString("requestDate"))
@@ -127,28 +129,23 @@ public class EnteredCourse {
 
 	      JsonArray userRoles = userJson.getJsonArray("roles");
 
-
-	      JsonObject userRolesPrevious = new JsonObject()
-          .put("roles",userRoles);
-
 	      userRoles.add(grader.getString("_id"));
 
         JsonObject graderNew = new JsonObject().put("roles",userRoles);
 	      JsonObject userRolesNew = new JsonObject().put( "$set", graderNew );
 
-	      client.updateCollection(Const.user , userRolesPrevious , userRolesNew , resRolesUpdate ->{
+	      client.updateCollection(Const.user , new JsonObject().put("token",userJson.getString("token")) , userRolesNew , resRolesUpdate ->{
 	        if(resRolesUpdate.succeeded()){
-	          JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
 
-            JsonObject workshopGroupJsonPrevious = new JsonObject()
-              .put("group",workshopGroup);
+	          JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
 
             workshopGroup.add(grader.getString("_id"));
 
             JsonObject workshopGroupJsonNew = new JsonObject()
               .put("$set", new JsonObject().put("group",workshopGroup));
 
-            client.updateCollection(Const.enteredCourse , workshopGroupJsonPrevious , workshopGroupJsonNew , resGroupUpdate ->{
+            client.updateCollection(Const.enteredCourse , enteredCourseId , workshopGroupJsonNew , resGroupUpdate ->{
+
               if(resGroupUpdate.succeeded()){
                 handler.handle(Future.succeededFuture("succeeded"));
               }
