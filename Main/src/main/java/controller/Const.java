@@ -26,9 +26,11 @@ public class Const {
 
   //Routes
   public static final String userStar = "/user/*";
+  public static final String adminStar = "/admin/*";
   public static final String register = "/register";
   public static final String login = "/login" ;
   public static final String signout = "/user/signout";
+  public static final String workshopStar = "/user/workshop/*";
   public static final String userProfileEdit ="/user/profile/edit";
   public static final String userWorkshops ="/user/workshops";
   public static final String userWorkshopStudentRequest ="/user/workshop/studentRequest";

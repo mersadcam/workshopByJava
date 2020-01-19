@@ -32,7 +32,7 @@ public class PaymentStatus {
 
 	  this._id = new ObjectId().toString();
 	  this.paymentStatus = Status.IN_PAYMENT;
-	  this.totalValue = value;
+	  this.notPaid = this.totalValue = value;
 
   }
 

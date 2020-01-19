@@ -11,7 +11,7 @@ public class Report {
 	private Status studentCourseStatus;
 	private String finalNumber;
 	private Performance performance;
-	private ArrayList<FormAnswer> data = new ArrayList<FormAnswer>();
+	private ArrayList<FormAnswer> answer = new ArrayList<FormAnswer>();
 
 
 	enum Status{

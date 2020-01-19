@@ -57,35 +57,38 @@ public class Grader implements RequestType , FormWriter {
   }
 
 
-  public static void graderReport(MongoClient client , JsonObject user , JsonObject clientJson , Handler<AsyncResult<String>> handler){
+  public static void graderReport(MongoClient client , JsonObject userJson , JsonObject clientJson , Handler<AsyncResult<String>> handler){
 
 
 	  JsonObject studentId = new JsonObject()
-    .put("requestType",clientJson.getString("studentId"));
+    .put("_id",clientJson.getString("studentId"));
+    //#Change
 
     client.find(Const.role , studentId , res ->{
       if(res.succeeded() && !res.result().isEmpty()){
 
-        FormAnswer answer = new FormAnswer(clientJson.getJsonObject("answerBody"));
+        FormAnswer answer = new FormAnswer(clientJson.getJsonArray("answerBody"));
 
 
-        client.insert(Const.answer , clientJson.getJsonObject("answerBody")
-        .put("formId",clientJson.getString("formId")) , resInsert->{
+        client.insert(Const.answer , new JsonObject().put("answerBody",clientJson.getJsonArray("answerBody"))
+        .put("form",clientJson.getString("formId")).put("writer",clientJson.getString("graderId")) , resInsert->{
 
           JsonObject report = new JsonObject()
-            .put("_id",res.result().get(0).getString("reportId") );
+            .put("_id",res.result().get(0).getString("report") );
 
           client.find(Const.report , report , resReport ->{
 //            if(resReport.succeeded() && !resReport.result().isEmpty()){
-            if(resReport.succeeded()){
 
+
+            if(resReport.succeeded()){
+              //there is no report atfirst : Error
               JsonArray answersId = resReport.result().get(0).getJsonArray("answersId");
               JsonObject query = new JsonObject()
-                .put("answerId",answersId);
+                .put("answer",answersId);
               JsonArray ans = answersId.add(resInsert.result());
               JsonObject update = new JsonObject()
                 .put("$set", new JsonObject()
-                .put("answerId",ans));
+                .put("answer",ans));
               client.updateCollection(Const.report , query , update , resUpdate ->{
                 handler.handle(Future.succeededFuture());
               } );

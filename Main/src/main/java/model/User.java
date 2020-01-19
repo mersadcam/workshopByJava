@@ -269,7 +269,7 @@ public class User {
     else{
 
 
-      client.find(Const.role,new JsonObject().put("_id",new JsonObject().put("$oid",rolesId.get(counter))), res->{
+      client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)), res->{
 
         arr.add(res.result().get(0));
         returnRoles(client,arr,rolesId,counter+1,handler);
@@ -289,7 +289,7 @@ public class User {
     for ( int i = 0 ; i < roles.size() ; i++ ){
       role = roles.get(i);
 
-      if(role.getString("roleName").equals("Teacher") && role.getString("workshopId").equals(workshopId))
+      if(role.getString("roleName").equals("Teacher") && role.getString("enteredCourse").equals(workshopId))
         return role;
 
     }
@@ -302,7 +302,12 @@ public class User {
     JsonObject userJson,
     Handler<AsyncResult<ArrayList<String>>> handler){
 
-    User.returnRoles(client,new ArrayList<JsonObject>(),userJson.getJsonArray("role").getList(),0,res->{
+    //#Delete
+    if(userJson.getJsonArray("role") == null)
+      userJson.put("roles",new JsonArray());
+
+
+    User.returnRoles(client,new ArrayList<JsonObject>(),userJson.getJsonArray("roles").getList(),0,res->{
 
       ArrayList<JsonObject> studentRoles = filterByRoleName("Student",res.result());
 
@@ -370,6 +375,10 @@ public class User {
   }
 
   public static boolean preCoursesPassed(JsonArray neededCourses,ArrayList<String> passedCourses){
+
+    //#Delete
+    if( neededCourses == null)
+      return true;
 
     for( int i = 0 ; i < neededCourses.size() ; i++){
 

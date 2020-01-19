@@ -8,8 +8,6 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import org.bson.types.ObjectId;
 
-import java.io.File;
-
 public class ContactPoint {
 
   private String _id;
@@ -17,7 +15,6 @@ public class ContactPoint {
 	private String lastName;
 	private String emailAddress;
   private Gender gender;
-	private File image;
 
 	public ContactPoint(JsonObject json){
 
@@ -28,6 +25,7 @@ public class ContactPoint {
     this.gender = StringToGender(json.getString("gender"));
 
   }
+
 
   public JsonObject toJson(){
 
