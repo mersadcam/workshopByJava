@@ -14,6 +14,10 @@ import java.util.List;
 public class Grader implements RequestType , FormWriter {
 
 	private Date requestDate;
+	private String startRole;
+	private String endRole;
+
+
 
 	public static void graderReport(MongoClient client , JsonObject user , JsonObject clientJson , Handler<AsyncResult<String>> handler){
 

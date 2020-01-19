@@ -204,13 +204,19 @@ public class App extends AbstractVerticle {
         JsonObject clientJson = ctx.get("clientJson");
         JsonObject userJson = ctx.get("userJson");
 
-        EnteredCourse.graderRequestForWorkshop(client , clientJson , handler ->{
+        EnteredCourse.graderRequestForWorkshop(client , clientJson , userJson , handler ->{
           if(handler.succeeded()){
-
+            toResponse
+              .put("status","true");
+            ctx.response().end("your request is added");
           }
           else {
-
+            toResponse
+              .put("status","false")
+              .put("msg","cannot add grader request");
+            ctx.response().end("your request isn't added");
           }
+
         });
       });
 
@@ -226,16 +232,16 @@ public class App extends AbstractVerticle {
       //payment in data base
 
 
-      EnteredCourse.studentRequestForWorkshop(client , clientJson , handler ->{
-        if(handler.succeeded()){
-
-        }
-        else{
-          toResponse
-            .put("status","false")
-            .put("msg","workshop not found.");
-          }
-        });
+//      EnteredCourse.studentRequestForWorkshop(client , clientJson , handler ->{
+//        if(){
+//
+//        }
+//        else{
+//          toResponse
+//            .put("status","false")
+//            .put("msg","workshop not found.");
+//          }
+//        });
       });
 
     //new added
@@ -391,8 +397,6 @@ public class App extends AbstractVerticle {
       });
 
 
-
-
     router.get(Const.adminEnterNewWorkshop)
       .handler(BodyHandler.create())
       .handler(ctx ->{
@@ -487,6 +491,7 @@ public class App extends AbstractVerticle {
 
 
       });
+
 
     router.route(Const.signout)
       .handler(ctx ->{
