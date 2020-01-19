@@ -4,18 +4,21 @@ import controller.Const;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.mongo.MongoClientUpdateResult;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class EnteredCourse {
 
   //many to one
 	private Course course;
-
+  private String _id;
 	private String startTime;
 	private String finishTime;
 
@@ -30,8 +33,59 @@ public class EnteredCourse {
 	  this.place = json.getString("place");
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
+	  this._id = String.valueOf(Const.getEnteredCourseId());
 
   }
+
+  public void addCourse(Course course){
+
+	  this.course =course;
+
+  }
+
+  public String get_id() {
+    return _id;
+  }
+
+  public JsonObject toJson(){
+
+	  JsonObject json = new JsonObject()
+      .put("_id",this._id)
+      .put("startTime",this.startTime)
+      .put("finishTime",this.finishTime)
+      .put("place",this.place)
+      .put("capacity",this.capacity)
+      .put("description",this.description)
+      .put("course",this.course.getName());
+
+	  return json;
+  }
+
+  public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
+
+    client.insert(Const.enteredCourse,this.toJson(),handler);
+
+  }
+
+  public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.enteredCourse,query,update,handler);
+
+  }
+
+
+
+
+
+
+
+
+
+
+
 
 
   public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
@@ -78,34 +132,63 @@ public class EnteredCourse {
   }
 
 
-  public static void studentRequestForWorkshop(MongoClient client , JsonObject clientJson , JsonObject userJson , Handler<AsyncResult<String>> handler){
+  public static void studentRequestStatus(
+    MongoClient client ,
+    JsonObject clientJson ,
+    JsonObject userJson ,
+    Handler<AsyncResult<String>> handler){
 
-    client.find(Const.enteredCourse , clientJson.getJsonObject("enteredCourseId") , res ->{
-      if(res.succeeded() && !res.result().isEmpty()){
+	  String courseName = clientJson.getString("course");
 
-        JsonObject selectedWorkshop = res.result().get(0);
-        JsonObject course = selectedWorkshop.getJsonObject("course");//course of workshop
+	  client.find(Const.course,new JsonObject().put("name",courseName),resFind->{
 
-        //find course in db for pishniaz
-        client.find(Const.course , course , resCourse ->{
-          if(resCourse.succeeded() && !resCourse.result().isEmpty()){//find course in db
-            JsonObject pishniaz = resCourse.result().get(0).getJsonObject("neededCourse");//id haye pishniaz
+	    JsonObject course = resFind.result().get(0);
+        JsonArray courseList = course.getJsonArray("neededCourse");
 
+        User.passedCourses(client,userJson,resPassedCourses->{
 
-            User.returnRoles(client,new ArrayList<JsonObject>() , userJson.getJsonArray("role").getList() ,0 , resRoles->{
-
-              ArrayList<JsonObject> roles = resRoles.result();
+          if (User.preCoursesPassed(courseList,resPassedCourses.result()))
+              handler.handle(Future.succeededFuture(""));
+          else
+            handler.handle(Future.failedFuture("your need pass some courses"));
 
 
-            } );
-          }
-          else{//didn't find course in db
 
-          }
         });
-      }
+
+
+
+
+
 
     });
+
+
+  }
+
+  public static void returnCourses(
+    MongoClient client,
+    ArrayList<JsonObject> arr,
+    List neededCourse ,
+    int counter ,
+    Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+
+
+	  if( counter == neededCourse.size())
+	    handler.handle(Future.succeededFuture(arr));
+
+	  else{
+
+	    client.find(Const.course,new JsonObject().put("name",neededCourse.get(counter)),res->{
+
+	      arr.add(res.result().get(0));
+	      returnCourses(client,arr,neededCourse,counter+1,handler);
+
+      });
+
+    }
+
+
   }
 
 

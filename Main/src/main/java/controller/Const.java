@@ -18,6 +18,7 @@ public class Const {
   public static final String answer = "answer";
   public static final String group = "group";
   public static final String payment = "payment";
+  public static final String paymentStatus = "paymentStatus";
 
 
 

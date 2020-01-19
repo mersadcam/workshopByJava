@@ -4,9 +4,11 @@ import controller.Const;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
+import io.vertx.reactivex.ext.unit.Async;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -21,9 +23,6 @@ public class User {
   private static final SecureRandom secureRandom = new SecureRandom(); //this is for token
   private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); //this is for token
 
-
-  private String _id;
-
   private ArrayList<Role> roles = new ArrayList<Role>();
 
   //OneToOne relationship :
@@ -37,11 +36,27 @@ public class User {
 
     this.username = json.getString("username");
     this.password = json.getString("password");
-    this._id = json.getString("_id");
     this.token = json.getString("token");
     this.userType = json.getString("userType");
 
+  }
 
+  public void setContactPoint(ContactPoint contactPoint) {
+    this.contactPoint = contactPoint;
+  }
+
+  public void addRole(Role role){
+
+    this.roles.add(role);
+
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public String getToken() {
@@ -57,6 +72,54 @@ public class User {
   public void setToken() {
     this.token = generateNewToken();
   }
+
+  public JsonObject toJson(){
+
+    JsonObject json = new JsonObject();
+    json.put("username",this.username)
+      .put("password",this.password)
+      .put("token",this.token)
+      .put("userType",this.userType)
+      .put("contactPoint",this.contactPoint.get_id());
+
+    return json;
+
+  }
+
+  public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
+
+    client.insert(Const.user,this.toJson(),handler);
+
+  }
+
+  public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+
+    JsonObject query = new JsonObject().put("token",this.token);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.user,query,update,handler);
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public void login(MongoClient client , Handler<AsyncResult<String>> handler){
 
@@ -178,21 +241,9 @@ public class User {
 
   }
 
-  public void roleInWorkshop(MongoClient client,JsonObject clientJson,Handler<AsyncResult<List<JsonObject>>> handler){
 
-    String roleName = clientJson.getString("roleName");
-    String workshopId = clientJson.getString("workshopId");
 
-    JsonObject toFind = new JsonObject()
-      .put("roleName",roleName)
-      .put("userId",this._id)
-      .put("workshopId",workshopId);
-
-    client.find(Const.role, toFind,handler);
-
-  }
-
-  public void signout(MongoClient client , String token , Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public static void signout(MongoClient client , String token , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject()
       .put("token", token);
@@ -245,5 +296,107 @@ public class User {
     return null;
 
   }
+
+  public static void passedCourses(
+    MongoClient client,
+    JsonObject userJson,
+    Handler<AsyncResult<ArrayList<String>>> handler){
+
+    User.returnRoles(client,new ArrayList<JsonObject>(),userJson.getJsonArray("role").getList(),0,res->{
+
+      ArrayList<JsonObject> studentRoles = filterByRoleName("Student",res.result());
+
+      passedStudent(client,new ArrayList<JsonObject>(),studentRoles,0,resPassedStudent->{
+
+        ArrayList<JsonObject> passedStudents = resPassedStudent.result();
+        ArrayList<String> passedCourses = new ArrayList<>();
+
+        passedStudents.forEach(student->{
+
+          passedCourses.add(student.getString("course"));
+
+        });
+
+        handler.handle(Future.succeededFuture(passedCourses));
+
+      });
+
+
+    });
+
+  }
+
+  public static ArrayList<JsonObject> filterByRoleName(String roleName,ArrayList<JsonObject> arrayList){
+
+    ArrayList<JsonObject> toReturn = new ArrayList<JsonObject>();
+
+    arrayList.forEach(json->{
+
+      if(json.getString("roleName").equals(roleName))
+        toReturn.add(json);
+
+    });
+
+    return toReturn;
+
+  }
+  public static void passedStudent(
+    MongoClient client,
+    ArrayList<JsonObject> arr,
+    ArrayList<JsonObject> students,
+    int counter,
+    Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+
+      if (counter == students.size()){
+
+        handler.handle(Future.succeededFuture(arr));
+
+      }
+
+      else{
+
+        client.find(Const.report,new JsonObject().put("report",students.get(counter).getString("report")),res->{
+
+          if(res.result().get(0).getString("studentCourseStatus").equals("PASSED"))
+            arr.add(students.get(counter));
+
+          passedStudent(client,arr,students,counter+1,handler);
+
+        });
+
+      }
+
+
+  }
+
+  public static boolean preCoursesPassed(JsonArray neededCourses,ArrayList<String> passedCourses){
+
+    for( int i = 0 ; i < neededCourses.size() ; i++){
+
+      if( !passedCourses.contains(neededCourses.getString(i)))
+        return false;
+    }
+    return true;
+
+  }
+
+
+
+
+
+
+  //  public void roleInWorkshop(MongoClient client,JsonObject clientJson,Handler<AsyncResult<List<JsonObject>>> handler){
+//
+//    String roleName = clientJson.getString("roleName");
+//    String workshopId = clientJson.getString("workshopId");
+//
+//    JsonObject toFind = new JsonObject()
+//      .put("roleName",roleName)
+//      .put("userId",this._id)
+//      .put("workshopId",workshopId);
+//
+//    client.find(Const.role, toFind,handler);
+//
+//  }
 
 }

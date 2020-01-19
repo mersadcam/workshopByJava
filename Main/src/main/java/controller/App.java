@@ -226,15 +226,75 @@ public class App extends AbstractVerticle {
       //payment in data base
 
 
-      EnteredCourse.studentRequestForWorkshop(client , clientJson , handler ->{
-        if(handler.succeeded()){
+      EnteredCourse.studentRequestStatus(client , clientJson,userJson , res ->{
+        if(res.succeeded()) {
 
+          client.find(Const.enteredCourse, new JsonObject().put("_id", clientJson.getString("workshopId")), resFind -> {
+
+            if (!resFind.result().isEmpty()) {
+
+              JsonObject workshop = resFind.result().get(0);
+              JsonArray payments = workshop.getJsonArray("paymentParts");
+              int workshopValue = workshop.getInteger("value");
+
+              PaymentStatus paymentStatus = new PaymentStatus(workshopValue);
+
+              if (clientJson.getString("paymentType").equals("cash")) {
+
+                Payment payment = new Payment(payments.getJsonObject(0).getString("name"),
+                  payments.getJsonObject(0).getString("time"),
+                  workshopValue);
+
+                payment.saveToDB(client, resSavePayment -> {
+
+                  paymentStatus.addPayment(payment);
+                  paymentStatus.saveToDB(client, resSavePaymentStatus -> {
+
+                    Student student = new Student(new Course(workshop.getString("course"), ""), paymentStatus);
+                    student.saveToDB(client, resSaveStudent -> {
+
+                      ctx.response().end(new JsonObject()
+                        .put("status", "true")
+                        .put("msg", "your request entered successfully")
+                        .toString());
+
+                    });
+
+
+                  });
+
+                });
+
+
+              } else {
+
+
+                JsonArray listOfJson = workshop.getJsonArray("paymentParts");
+                for (int i = 0; i < listOfJson.size(); i++)
+                  paymentStatus.addPayment(new Payment(listOfJson.getJsonObject(i).getString("name"),
+                    listOfJson.getJsonObject(i).getString("time"), listOfJson.getJsonObject(i).getInteger("value")));
+
+                Student student = new Student(new Course(workshop.getString("course"), ""), paymentStatus);
+                student.saveToDB(client, resSaveStudent -> {
+
+                  ctx.response().end(new JsonObject()
+                    .put("status", "true")
+                    .put("msg", "your request entered successfully")
+                    .toString());
+
+                });
+
+              }
+
+
+            } else {
+
+              ctx.response().end("Access Denied");
+
+            }
+          });
         }
-        else{
-          toResponse
-            .put("status","false")
-            .put("msg","workshop not found.");
-          }
+
         });
       });
 
@@ -269,7 +329,7 @@ public class App extends AbstractVerticle {
 
           if( teacherJson != null ){
 
-            Teacher.addForm(client,teacherJson,clientJson,resAddForm->{
+            Teacher.addNewForm(client,teacherJson,clientJson,resAddForm->{
 
               if( resAddForm.succeeded() )
                 toResponse
@@ -374,7 +434,7 @@ public class App extends AbstractVerticle {
         JsonObject json = ctx.getBodyAsJson();
         JsonObject toResponse = new JsonObject();
 
-        Course course = new Course(json);
+        Course course = new Course(json.getString("name"),json.getString("description"));
 
         course.createNewCourse(client,json,resCreate->{
 

@@ -1,4 +1,5 @@
 package model;
+import controller.Const;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -23,8 +24,36 @@ public class ContactPoint {
     this.firstName = json.getString("firstName");
     this.lastName = json.getString("lastName");
     this.emailAddress = json.getString("emailAddress");
-    this._id = ObjectId.get().toString();
+    this._id = new ObjectId().toString();
     this.gender = StringToGender(json.getString("gender"));
+
+  }
+
+  public JsonObject toJson(){
+
+	  JsonObject json = new JsonObject()
+      .put("firstname",this.firstName)
+      .put("lastname",this.lastName)
+      .put("emailAddress",this.emailAddress)
+      .put("_id",this._id)
+      .put("gender",this.gender);
+
+	  return json;
+
+  }
+
+  public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
+
+    client.insert(Const.contactPoint,this.toJson(),handler);
+
+  }
+
+  public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.contactPoint,query,update,handler);
 
   }
 
@@ -49,48 +78,6 @@ public class ContactPoint {
 
   }
 
-
-
-  public File getImage() {
-    return image;
-  }
-
-  public void setImage(File image) {
-    this.image = image;
-  }
-
-  public Gender getGender() {
-    return gender;
-  }
-
-  public void setGender(Gender gender) {
-    this.gender = gender;
-  }
-
-  public String getEmailAddress() {
-    return emailAddress;
-  }
-
-  public void setEmailAddress(String emailAddress) {
-    this.emailAddress = emailAddress;
-  }
-
-  public String getLastName() {
-    return lastName;
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-  public String getFirstName() {
-    return firstName;
-  }
-
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
   public enum Gender{
     MALE,
     FEMALE,
@@ -103,6 +90,13 @@ public class ContactPoint {
 	  return this._id;
 
   }
+
+
+
+
+
+
+
 
   public static void editContactPoint(MongoClient client,JsonObject json,String _id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
 

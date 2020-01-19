@@ -7,15 +7,57 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.mongo.MongoClientUpdateResult;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 import java.util.List;
 
 public class Grader implements RequestType , FormWriter {
 
-	private Date requestDate;
+  private String _id;
+  private String roleName;
+	private String requestDate;
 
-	public static void graderReport(MongoClient client , JsonObject user , JsonObject clientJson , Handler<AsyncResult<String>> handler){
+	public Grader( String requestDate ){
+
+	  this._id = new ObjectId().toString();
+	  this.roleName = "Grader";
+	  this.requestDate = requestDate;
+
+  }
+
+  public String get_id() {
+    return _id;
+  }
+
+  public JsonObject toJson(){
+
+	  JsonObject json = new JsonObject()
+      .put("roleName",this.roleName)
+      .put("_id",this._id)
+      .put("requestDate",this.requestDate);
+
+	  return json;
+  }
+
+  public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
+
+    client.insert(Const.role,this.toJson(),handler);
+
+  }
+
+  public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.role,query,update,handler);
+
+  }
+
+
+  public static void graderReport(MongoClient client , JsonObject user , JsonObject clientJson , Handler<AsyncResult<String>> handler){
 
 
 	  JsonObject studentId = new JsonObject()
