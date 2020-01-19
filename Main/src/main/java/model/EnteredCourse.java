@@ -192,8 +192,57 @@ public class EnteredCourse {
   }
 
 
-  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , Handler<AsyncResult<String>> handler){
+  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , JsonObject userJson , Handler<AsyncResult<String>> handler){
 
+	  JsonObject enteredCourseId = new JsonObject()
+      .put("_id",clientJson.getString("enteredCourseId"));
 
+	  client.find(Const.enteredCourse , enteredCourseId , res ->{
+
+	    if(res.succeeded() && !res.result().isEmpty()){//find workshop in db
+
+	      ObjectId id = new ObjectId();
+	      JsonObject grader = new JsonObject()
+          .put("_id", id.toString())
+          .put("requestDate",clientJson.getString("requestDate"))
+          .put("roleName","grader")
+          .put("course",res.result().get(0).getString("course"));
+
+	      JsonArray userRoles = userJson.getJsonArray("roles");
+
+	      userRoles.add(grader.getString("_id"));
+
+        JsonObject graderNew = new JsonObject().put("roles",userRoles);
+	      JsonObject userRolesNew = new JsonObject().put( "$set", graderNew );
+
+	      client.updateCollection(Const.user , new JsonObject().put("token",userJson.getString("token")) , userRolesNew , resRolesUpdate ->{
+	        if(resRolesUpdate.succeeded()){
+
+	          JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
+
+            workshopGroup.add(grader.getString("_id"));
+
+            JsonObject workshopGroupJsonNew = new JsonObject()
+              .put("$set", new JsonObject().put("group",workshopGroup));
+
+            client.updateCollection(Const.enteredCourse , enteredCourseId , workshopGroupJsonNew , resGroupUpdate ->{
+
+              if(resGroupUpdate.succeeded()){
+                handler.handle(Future.succeededFuture("succeeded"));
+              }
+              else{//cannot add group to enterd course collection
+                handler.handle(Future.failedFuture("cannot add group to enterd course collection"));
+              }
+            });
+          }
+	        else{//cannot update roles id in the user collection
+            handler.handle(Future.failedFuture("cannot update roles id in the user collection"));
+          }
+        });
+      }
+	    else{//didn't find workshop in db
+	      handler.handle(Future.failedFuture("cannot find workshop in database"));
+      }
+    });
   }
 }
