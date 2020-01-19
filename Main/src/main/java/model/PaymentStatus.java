@@ -35,6 +35,18 @@ public class PaymentStatus {
 	  this.totalValue = value;
 
   }
+  public PaymentStatus(JsonObject jsonObject){
+	  this._id = jsonObject.getString("_id");
+	  JsonArray jsonArray = jsonObject.getJsonArray("payments");
+
+	  for(int i = 0 ; i < jsonArray.size() ; i++){
+	    this.payments.add(new Payment(jsonArray.getString(i)));
+    }
+  }
+
+  public PaymentStatus(String _id){
+	  this._id = _id;
+  }
 
   public void addPayment(Payment payment){
 
@@ -62,7 +74,8 @@ public class PaymentStatus {
 	  json.put("paymentStatus",paymentStatus)
       .put("totalValue",this.totalValue)
       .put("paid",this.paid)
-      .put("notPaind",this.notPaid)
+      .put("_id",this._id)
+      .put("notPaid",this.notPaid)
       .put("payments",paymentsId);
 
     return json;
@@ -70,7 +83,7 @@ public class PaymentStatus {
   }
 
   public String get_id() {
-    return _id;
+    return this._id;
   }
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){

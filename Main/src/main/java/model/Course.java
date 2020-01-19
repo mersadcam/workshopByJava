@@ -24,9 +24,14 @@ public class Course {
 
 
 	public Course(String name , String description){
-	  this.name = name;
+	  this.name = name.toUpperCase();
 	  this.description = description;
   }
+
+  public Course(String name){
+	  this.name = name.toUpperCase();
+  }
+
 
   public void addToNeededCourses(Course course){
 
@@ -71,7 +76,6 @@ public class Course {
 
   }
 
-
   public void createNewCourse(MongoClient client, JsonObject json, Handler<AsyncResult<String>> handler){
 
 	  JsonObject toFind = new JsonObject()
@@ -104,7 +108,5 @@ public class Course {
     });
 
   }
-
-
 
 }

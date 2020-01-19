@@ -27,6 +27,22 @@ public class Teacher implements Role,FormWriter{
 
   }
 
+  public Teacher(String _id){
+	  this._id = _id;
+  }
+
+  public Teacher(JsonObject jsonObject){
+	  this._id = jsonObject.getString("_id");
+	  this.roleName = jsonObject.getString("roleName");
+	  this.enteredCourse = new EnteredCourse(jsonObject.getString("enteredCourse"));
+
+	  JsonArray formsArray = jsonObject.getJsonArray("forms");
+
+	  for(int i = 0 ; i < formsArray.size() ; i++){
+	    this.forms.add(new Form(formsArray.getString(i)));
+    }
+  }
+
   public void addForm(Form form){
 
 	  this.forms.add(form);
@@ -38,9 +54,16 @@ public class Teacher implements Role,FormWriter{
 
   public JsonObject toJson(){
 
+	  JsonArray formsTeacher = new JsonArray();
+
+    for (int i = 0 ; i < this.forms.size() ; i++ ){
+      formsTeacher.add(this.forms.get(i).get_id());
+    }
+
 	  JsonObject json = new JsonObject()
       .put("roleName",this.roleName)
       .put("_id",this._id)
+      .put("form", formsTeacher)
       .put("enteredCourse",enteredCourse.get_id());
 
 	  return json;
@@ -61,9 +84,6 @@ public class Teacher implements Role,FormWriter{
     client.updateCollection(Const.role,query,update,handler);
 
   }
-
-
-
 
 
   public static void addNewForm(
@@ -92,4 +112,8 @@ public class Teacher implements Role,FormWriter{
     });
   }
 
+  @Override
+  public String get_id() {
+    return this._id;
+  }
 }

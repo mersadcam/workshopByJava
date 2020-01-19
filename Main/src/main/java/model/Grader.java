@@ -16,15 +16,17 @@ import java.util.List;
 public class Grader implements RequestType , FormWriter {
 
   private String _id;
-  private String roleName;
 	private String requestDate;
 
 	public Grader( String requestDate ){
 
 	  this._id = new ObjectId().toString();
-	  this.roleName = "Grader";
 	  this.requestDate = requestDate;
 
+  }
+  public Grader(JsonObject jsonObject){
+	  this._id = jsonObject.getString("_id");
+	  this.requestDate = jsonObject.getString("requestDate");
   }
 
   public String get_id() {
@@ -34,7 +36,6 @@ public class Grader implements RequestType , FormWriter {
   public JsonObject toJson(){
 
 	  JsonObject json = new JsonObject()
-      .put("roleName",this.roleName)
       .put("_id",this._id)
       .put("requestDate",this.requestDate);
 
@@ -55,7 +56,6 @@ public class Grader implements RequestType , FormWriter {
     client.updateCollection(Const.role,query,update,handler);
 
   }
-
 
   public static void graderReport(MongoClient client , JsonObject user , JsonObject clientJson , Handler<AsyncResult<String>> handler){
 

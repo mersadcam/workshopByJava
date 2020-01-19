@@ -2,6 +2,8 @@ package controller;
 
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
@@ -208,15 +210,15 @@ public class App extends AbstractVerticle {
           if(handler.succeeded()){
             toResponse
               .put("status","true");
-            ctx.response().end("your request is added");
+
           }
           else {
             toResponse
               .put("status","false")
               .put("msg","cannot add grader request");
-            ctx.response().end("your request isn't added");
-          }
 
+          }
+          ctx.response().end(toResponse.toString());
         });
       });
 

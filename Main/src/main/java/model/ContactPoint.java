@@ -19,13 +19,39 @@ public class ContactPoint {
   private Gender gender;
 	private File image;
 
+	public ContactPoint(String firstName, String lastName, String emailAddress, Gender gender , File image){
+	  this._id = new ObjectId().toString();
+	  this.firstName = firstName;
+	  this.lastName = lastName;
+	  this.emailAddress = emailAddress;
+	  this.gender = gender;
+	  this.image = image;
+  }
+
+  public ContactPoint(String _id){
+	  this._id = _id;
+  }
+
 	public ContactPoint(JsonObject json){
 
     this.firstName = json.getString("firstName");
     this.lastName = json.getString("lastName");
     this.emailAddress = json.getString("emailAddress");
-    this._id = new ObjectId().toString();
+    this._id = json.getString("_id");
     this.gender = StringToGender(json.getString("gender"));
+
+  }
+
+  public enum Gender{
+    MALE,
+    FEMALE,
+    OTHERS,
+    NOTSET
+  }
+
+  public String get_id(){
+
+    return this._id;
 
   }
 
@@ -57,7 +83,6 @@ public class ContactPoint {
 
   }
 
-
   public void addCPToDB(MongoClient client , Handler<AsyncResult<String>> handler){
 
 	  JsonObject query = new JsonObject()
@@ -77,26 +102,6 @@ public class ContactPoint {
 
 
   }
-
-  public enum Gender{
-    MALE,
-    FEMALE,
-    OTHERS,
-    NOTSET
-  }
-
-  public String get_id(){
-
-	  return this._id;
-
-  }
-
-
-
-
-
-
-
 
   public static void editContactPoint(MongoClient client,JsonObject json,String _id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
 

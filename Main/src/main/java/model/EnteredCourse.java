@@ -25,6 +25,22 @@ public class EnteredCourse {
 	private String place;
 	private int capacity;
 	private String description;
+  //id
+  //json
+  //kolli
+  public  EnteredCourse(String _id){
+    this._id = _id;
+  }
+
+	public EnteredCourse(Course course ,String startTime, String finishTime , String place , String description ,int capacity){
+	  this._id = new ObjectId().toString();
+	  this.course = course;
+	  this.startTime = startTime;
+	  this.finishTime = finishTime;
+	  this.capacity = capacity;
+	  this.description = description;
+	  this.place = place;
+  }
 
 	public EnteredCourse(JsonObject json){
 
@@ -33,11 +49,15 @@ public class EnteredCourse {
 	  this.place = json.getString("place");
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
-	  this._id = String.valueOf(Const.getEnteredCourseId());
-
+	  this._id = json.getString("_id");
+    this.course = new Course(json.getString("_id"));
   }
 
-  public void addCourse(Course course){
+  public String getCourseName() {
+    return this.course.getName();
+  }
+
+  public void setCourse(Course course){
 
 	  this.course =course;
 
@@ -77,17 +97,6 @@ public class EnteredCourse {
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
   public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
 
 	  String courseName = json.getString("course");
@@ -123,11 +132,7 @@ public class EnteredCourse {
 
           }
 
-
-
     });
-
-
 
   }
 
@@ -152,14 +157,7 @@ public class EnteredCourse {
           else
             handler.handle(Future.failedFuture("your need pass some courses"));
 
-
-
         });
-
-
-
-
-
 
     });
 
@@ -199,44 +197,52 @@ public class EnteredCourse {
 
 	  client.find(Const.enteredCourse , enteredCourseId , res ->{
 
-	    if(res.succeeded() && !res.result().isEmpty()){//find workshop in db
+	    if(res.succeeded() && !res.result().isEmpty()) {//find workshop in db
 
-	      ObjectId id = new ObjectId();
-	      JsonObject grader = new JsonObject()
+	      EnteredCourse workshop = new EnteredCourse(res.result().get(0));
+        ObjectId id = new ObjectId();
+
+        JsonObject grader = new JsonObject()
           .put("_id", id.toString())
-          .put("requestDate",clientJson.getString("requestDate"))
-          .put("roleName","grader")
-          .put("course",res.result().get(0).getString("course"));
+          .put("requestDate", clientJson.getString("requestDate"))
+          .put("roleName", "grader")
+          .put("course", workshop.getCourseName());
 
-	      JsonArray userRoles = userJson.getJsonArray("roles");
+        client.insert(Const.role, grader, resInsertGrader -> {
+          if (resInsertGrader.succeeded()) {
+            JsonArray userRoles = userJson.getJsonArray("roles");
 
-	      userRoles.add(grader.getString("_id"));
+            userRoles.add(grader.getString("_id"));
 
-        JsonObject graderNew = new JsonObject().put("roles",userRoles);
-	      JsonObject userRolesNew = new JsonObject().put( "$set", graderNew );
+            JsonObject graderNew = new JsonObject().put("roles", userRoles);
+            JsonObject userRolesNew = new JsonObject().put("$set", graderNew);
 
-	      client.updateCollection(Const.user , new JsonObject().put("token",userJson.getString("token")) , userRolesNew , resRolesUpdate ->{
-	        if(resRolesUpdate.succeeded()){
+            client.updateCollection(Const.user, new JsonObject().put("token", userJson.getString("token")), userRolesNew, resRolesUpdate -> {
+              if (resRolesUpdate.succeeded()) {
 
-	          JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
 
-            workshopGroup.add(grader.getString("_id"));
 
-            JsonObject workshopGroupJsonNew = new JsonObject()
-              .put("$set", new JsonObject().put("group",workshopGroup));
+                JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
 
-            client.updateCollection(Const.enteredCourse , enteredCourseId , workshopGroupJsonNew , resGroupUpdate ->{
+                workshopGroup.add(grader.getString("_id"));
 
-              if(resGroupUpdate.succeeded()){
-                handler.handle(Future.succeededFuture("succeeded"));
-              }
-              else{//cannot add group to enterd course collection
-                handler.handle(Future.failedFuture("cannot add group to enterd course collection"));
+                JsonObject workshopGroupJsonNew = new JsonObject()
+                  .put("$set", new JsonObject().put("group", workshopGroup));
+
+                client.updateCollection(Const.enteredCourse, enteredCourseId, workshopGroupJsonNew, resGroupUpdate -> {
+
+                  if (resGroupUpdate.succeeded()) {
+                    handler.handle(Future.succeededFuture("succeeded"));
+                  } else {//cannot add group to enterd course collection
+                    handler.handle(Future.failedFuture("cannot add group to enterd course collection"));
+                  }
+                });
+              } else {//cannot update roles id in the user collection
+                handler.handle(Future.failedFuture("cannot update roles id in the user collection"));
               }
             });
-          }
-	        else{//cannot update roles id in the user collection
-            handler.handle(Future.failedFuture("cannot update roles id in the user collection"));
+          } else {
+            handler.handle(Future.failedFuture("cannot add grader to role in db "));
           }
         });
       }
@@ -244,5 +250,8 @@ public class EnteredCourse {
 	      handler.handle(Future.failedFuture("cannot find workshop in database"));
       }
     });
-  }
+	}
+
+
 }
+

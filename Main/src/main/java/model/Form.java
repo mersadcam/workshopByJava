@@ -11,9 +11,19 @@ import org.bson.types.ObjectId;
 public class Form {
 
   private JsonObject formJson;
+  private String _id;
+
 
   public Form(JsonObject formJson){
     this.formJson = formJson;
+  }
+
+  public Form(String _id){
+    this._id = _id;
+  }
+
+  public String get_id(){
+    return this._id;
   }
 
   public void addToDB(MongoClient client , Handler<AsyncResult<String>> handler){
