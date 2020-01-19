@@ -16,6 +16,7 @@ public class FormAnswer {
 	private JsonObject jsonAnswer;
 	private FormWriter writer;
 
+
 	public FormAnswer(Form form , JsonObject jsonAnswer , FormWriter formWriter){
 	  this._id = new ObjectId().toString();
 	  this.form = form;
@@ -23,12 +24,14 @@ public class FormAnswer {
 	  this.writer = formWriter;
   }
 	public FormAnswer(JsonObject jsonObject ){
+	  //to in constructor jsonobject json answer hast ya chiz dige??
 	  this.jsonAnswer = jsonObject;
 	  this._id = new ObjectId().toString();
   }
   public FormAnswer(String _id){
 	  this._id = _id;
   }
+
   public JsonObject getJsonAnswer() {
     return jsonAnswer;
   }

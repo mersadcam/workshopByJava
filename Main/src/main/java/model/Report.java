@@ -26,6 +26,7 @@ public class Report {
 	  this.performance = performance;
   }
 	public Report(JsonObject jsonObject){
+  //enum haeii ke comment shode ro dorost kon
 
 	  this._id = jsonObject.getString("_id");
 //	  this.studentCourseStatus = jsonObject.getBinary("studentCourseStatus"); mersad check
