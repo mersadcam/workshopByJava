@@ -1,0 +1,19 @@
+.slideshow .slide-img {
+  height: 100vh;
+  display: block;
+  background-size: cover;
+  background-position: 50%;
+}
+
+.slide-txt {
+  height: 50vh;
+  display: block;
+  font-size: 1.15rem;
+}
+
+.slideshow-container {
+  position: absolute;
+  width: 98vw;
+  top: 0;
+  z-index: 1;
+}

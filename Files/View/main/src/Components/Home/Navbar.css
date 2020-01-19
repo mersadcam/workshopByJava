@@ -1,0 +1,18 @@
+.navbar {
+    position: absolute;
+    top: 6vh;
+    z-index: 2;
+}
+
+.navbar-logo {
+    height: 4.5vh;
+    transition: 0.5s;
+}
+
+.navbar-logo:hover {
+    transform: translateY(-5px);
+}
+
+.nav-item {
+    margin: 0 25px;
+}
