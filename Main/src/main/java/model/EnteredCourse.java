@@ -282,7 +282,9 @@ public class EnteredCourse {
         user.addRole(identity);
         user.update(client);
 
-        String _id = workshop.getGroups().get(0).get_id();
+        Group et = workshop.getGroups().get(0);
+        String _id = et.get_id();
+        System.out.println(_id);
         JsonObject searchGroup = new JsonObject().put("_id",_id);
 
         client.find(Const.group , searchGroup , resFindGroup ->{
