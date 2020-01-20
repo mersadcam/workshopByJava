@@ -258,11 +258,7 @@ public class EnteredCourse {
   }
 
 
-  public static void graderRequestForWorkshop(
-    MongoClient client ,
-    JsonObject clientJson ,
-    User user ,
-    Handler<AsyncResult<String>> handler){
+  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , User user , Handler<AsyncResult<String>> handler){
 
 	  JsonObject enteredCourseId = new JsonObject()
       .put("_id",clientJson.getString("enteredCourseId"));

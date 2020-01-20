@@ -242,7 +242,8 @@ public class App extends AbstractVerticle {
         EnteredCourse.graderRequestForWorkshop(client , clientJson , user , handler ->{
           if(handler.succeeded()){
             toResponse
-              .put("status","true");
+              .put("status","true")
+              .put("msg",handler.cause());
 
           }
           else {
