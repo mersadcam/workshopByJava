@@ -220,19 +220,17 @@ public class EnteredCourse {
 
 	    if(res.succeeded() && !res.result().isEmpty()) {//find workshop in db
 
-	      EnteredCourse workshop = new EnteredCourse(res.result().get(0));
+        EnteredCourse workshop = new EnteredCourse(res.result().get(0));
 
-	      ObjectId id = new ObjectId();
         JsonObject grader = new JsonObject()
-          .put("_id", id.toString())
+          .put("_id", new ObjectId().toString())
           .put("requestDate", clientJson.getString("requestDate"))
           .put("roleName", "grader")
           .put("course", workshop.getCourseName());
 
-
-
         client.insert(Const.role, grader, resInsertGrader -> {
           if (resInsertGrader.succeeded()) {
+
             JsonArray userRoles = userJson.getJsonArray("roles");
 
             userRoles.add(grader.getString("_id"));
@@ -242,8 +240,6 @@ public class EnteredCourse {
 
             client.updateCollection(Const.user, new JsonObject().put("token", userJson.getString("token")), userRolesNew, resRolesUpdate -> {
               if (resRolesUpdate.succeeded()) {
-
-
 
                 JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
 
