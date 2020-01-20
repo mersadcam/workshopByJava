@@ -4,7 +4,7 @@ import {Button, Card, Icon, Table, Text, Dropdown, StampCard} from 'tabler-react
 class MyWorkshops extends React.Component {
     render() {
         return (
-            <Card title="My Profile">
+            <Card title="My Workshops">
                 <Table
                     responsive
                     className="card-table table-vcenter"

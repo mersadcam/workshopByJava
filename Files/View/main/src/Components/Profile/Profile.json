@@ -1,10 +1,13 @@
 {
   "username": "mahdian888",
   "avatarURL": "demo/faces/male/44.jpg",
+  "coverURL": "/demo/photos/cover-default.png",
   "userType": "admin",
   "firstName": "Mohammad",
   "lastName": "Mahdian",
   "email": "mohammadmahdian888@gmail.com",
-  "gender": "Male"
+  "gender": "Male",
+  "subtitle": "Graphic Designer, Front-End Developer",
+  "bio": "4 Years Experience in Branding Design, Advertisement and Marketing."
 }
 
