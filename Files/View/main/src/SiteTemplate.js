@@ -11,7 +11,7 @@ import type, {
 
 import "tabler-react/dist/Tabler.css";
 import {NavLink, withRouter} from "react-router-dom";
-import Search from "./Components/WorkshopsPage/Search";
+import Search from "./Components/Workshops/Search";
 
 
 class SiteTemplate extends React.Component {

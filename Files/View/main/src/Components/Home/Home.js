@@ -4,8 +4,7 @@ import Slideshow from "./Slideshow";
 import Login from "./Login";
 import {Button, Form, Grid} from "tabler-react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {Animated} from "react-animated-css";
-import Search from "../WorkshopsPage/Search";
+import Search from "../Workshops/Search";
 
 class Home extends React.Component {
     constructor(props) {
