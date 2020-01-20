@@ -200,13 +200,15 @@ public class EnteredCourse {
 	    if(res.succeeded() && !res.result().isEmpty()) {//find workshop in db
 
 	      EnteredCourse workshop = new EnteredCourse(res.result().get(0));
-        ObjectId id = new ObjectId();
 
+	      ObjectId id = new ObjectId();
         JsonObject grader = new JsonObject()
           .put("_id", id.toString())
           .put("requestDate", clientJson.getString("requestDate"))
           .put("roleName", "grader")
           .put("course", workshop.getCourseName());
+
+
 
         client.insert(Const.role, grader, resInsertGrader -> {
           if (resInsertGrader.succeeded()) {

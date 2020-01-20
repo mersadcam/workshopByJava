@@ -35,6 +35,7 @@ public class PaymentStatus {
 	  this.totalValue = value;
 
   }
+
   public PaymentStatus(JsonObject jsonObject){
 	  this._id = jsonObject.getString("_id");
 	  JsonArray jsonArray = jsonObject.getJsonArray("payments");
