@@ -51,6 +51,7 @@ public class User {
 
   }
 
+
   public User(String _id){
     this._id = _id;
   }
@@ -411,6 +412,61 @@ public class User {
         return false;
     }
     return true;
+
+  }
+
+  public void searchInRoleId(MongoClient client , String roleId , Handler<AsyncResult<String>> handler){
+    boolean isExist = false;
+    for(int i = 0 ; i < roles.size() ; i++){
+      if(roles.get(i).equals(roleId)){
+        isExist = true;
+      }
+    }
+
+    if (isExist){
+      handler.handle(Future.succeededFuture("This role id is exist in user roles."));
+    }
+    else {
+      handler.handle(Future.failedFuture("Don't find role id in user roles."));
+    }
+  }
+
+  public void findRoleId(MongoClient client , EnteredCourse enteredCourse , Handler<AsyncResult<String>> handler){
+
+    client.find(Const.role , new JsonObject().put("roleName","teacher").put("_id",enteredCourse.getGroups().get(0).get_id()) , res->{
+      if(res.succeeded() && !res.result().isEmpty()){
+        JsonArray teachers = res.result().get(0).getJsonArray("teacher");
+
+        for(int i = 0 ; i < teachers.size() ; i++){
+          if(this._id.equals(teachers.getString(i))){
+            handler.handle(Future.succeededFuture(this._id));//output
+          }
+        }
+      }
+      else {
+        client.find(Const.group,new JsonObject().put("_id",enteredCourse.getGroups().get(0).get_id()), resFind ->{
+
+          if(resFind.succeeded() && !resFind.result().isEmpty()){
+            JsonArray identities = resFind.result().get(0).getJsonArray("identities");
+            boolean test = false;
+            for( int j = 0 ; j < identities.size() ; j++){
+              if(this._id.equals(identities.getString(j))){
+                test = true;
+              }
+            }
+            if(test){
+              handler.handle(Future.succeededFuture(this._id));//output
+            }
+            else {
+              handler.handle(Future.failedFuture("You are not in the workshop."));//output
+            }
+          }
+          else {
+            handler.handle(Future.failedFuture("workshop don't have group."));//output
+          }
+        });
+      }
+    });
 
   }
 
