@@ -74,7 +74,7 @@ public class Course {
 
     json.put("name",this.getName())
       .put("description",description)
-      .put("neededCourse",CoursesName);
+      .put("neededCourses",CoursesName);
 
     return json;
 
