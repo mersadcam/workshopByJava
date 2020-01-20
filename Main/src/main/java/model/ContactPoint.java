@@ -15,6 +15,9 @@ public class ContactPoint {
 	private String lastName;
 	private String emailAddress;
   private Gender gender;
+  private String subTitle;
+  private String bio;
+
 
 	public ContactPoint(String firstName, String lastName, String emailAddress, String gender){
 	  this._id = new ObjectId().toString();

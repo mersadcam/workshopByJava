@@ -43,10 +43,13 @@ public class Const {
   public static final String userWorkshopNewForm ="/user/workshop/newForm";//tamiz
   public static final String userGraderReport ="/user/graderReport";//nazadeh
   public static final String userFinalReport ="/user/finalReport";//nazadeh
-
   public static final String adminCreateNewCourse ="/admin/createNewCourse";
   public static final String adminEnterNewWorkshop ="/admin/enterNewWorkshop";
   public static final String superAdminCreateAdmin ="/superAdmin/createAdmin";
+
+  public static final String uploadBackgroundImage = "/img/profile/background";
+  public static final String uploadProfileImage = "/img/profile/main";
+  public static final String uploadWorkshopImage = "/img/workshop";
 
 
   public static String generateWorkshopId() {
