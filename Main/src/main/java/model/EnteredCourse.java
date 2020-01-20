@@ -56,6 +56,7 @@ public class EnteredCourse {
 	  this.paymentParts = paymentParts;
 	  this.place = place;
 
+
   }
 
 	public EnteredCourse(JsonObject json){
@@ -68,7 +69,7 @@ public class EnteredCourse {
 	  this.value = json.getInteger("value");
 	  this.paymentParts = json.getJsonArray("paymentParts");
 	  this._id = json.getString("_id");
-    this.course = new Course(json.getString("course"));
+    this.course = new Course(json.getString("course").toUpperCase());
 
     JsonArray groupsId = json.getJsonArray("groups");
 
@@ -84,7 +85,7 @@ public class EnteredCourse {
   }
 
   public String getCourseName() {
-    return this.course.getName();
+    return this.course.getName().toUpperCase();
   }
 
   public void setCourse(Course course){
@@ -118,7 +119,7 @@ public class EnteredCourse {
       .put("description",this.description)
       .put("value",this.value)
       .put("paymentParts",this.paymentParts)
-      .put("course",this.course.getName())
+      .put("course",this.course.getName().toUpperCase())
       .put("groups",jsonArray);
 
 	  return json;
@@ -162,14 +163,13 @@ public class EnteredCourse {
 
   }
 
-
   public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
 
 
 
 	  int value = json.getInteger("value");
 	  JsonArray paymentParts = json.getJsonArray("paymentParts");
-	  String courseName = json.getString("course");
+	  String courseName = json.getString("course").toUpperCase();
 	  String startTime = json.getString("startTime");
 	  String finishTime = json.getString("finishTime");
 	  String place = json.getString("place");
@@ -179,24 +179,21 @@ public class EnteredCourse {
 	  client.find(Const.course,new JsonObject().put("name",courseName),resSC->{
 
 
-	    if (resSC.succeeded()){
-            JsonObject toInsert = new JsonObject()
-              .put("_id", String.valueOf(Const.getEnteredCourseId()))
-              .put("course",resSC.result().get(0).getString("name"))
-              .put("startTime",startTime)
-              .put("finishTime",finishTime)
-              .put("place",place)
-              .put("capacity",capacity)
-              .put("description",description)
-              .put("value",value)
-              .put("paymentParts",paymentParts);
-
-            client.insert(Const.enteredCourse,toInsert,resInsert->{
-
-              handler.handle(Future.succeededFuture(toInsert.getString("_id")));
-
-            });
-
+	    if (!resSC.result().isEmpty()){
+	      Course course = new Course(resSC.result().get(0));
+            EnteredCourse newWorkshop = new EnteredCourse(course ,
+              startTime,
+              finishTime ,
+              place ,
+              description ,
+              capacity,
+              value ,
+              paymentParts);
+            Group gp = new Group();
+            gp.saveToDB(client);
+            newWorkshop.addGroup(gp);
+            newWorkshop.saveToDB(client);
+            handler.handle(Future.succeededFuture());
 
           }else{
 
@@ -215,7 +212,7 @@ public class EnteredCourse {
     User user ,
     Handler<AsyncResult<String>> handler){
 
-	  String courseName = clientJson.getString("course");
+	  String courseName = clientJson.getString("course").toUpperCase();
 
 	  client.find(Const.course,new JsonObject().put("name",courseName),resFind->{
 
@@ -261,7 +258,11 @@ public class EnteredCourse {
   }
 
 
-  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , User user , Handler<AsyncResult<String>> handler){
+  public static void graderRequestForWorkshop(
+    MongoClient client ,
+    JsonObject clientJson ,
+    User user ,
+    Handler<AsyncResult<String>> handler){
 
 	  JsonObject enteredCourseId = new JsonObject()
       .put("_id",clientJson.getString("enteredCourseId"));
@@ -277,12 +278,12 @@ public class EnteredCourse {
         grader.saveToDB(client);
         Report report = new Report();
         report.saveToDB(client);
-        Identity identity = new Identity(report ,grader , new Course(workshop.getCourseName()),"Grader");
+        Identity identity = new Identity(report ,grader , new Course(workshop.getCourseName().toUpperCase()),"Grader");
         identity.saveToDB(client);
         user.addRole(identity);
         user.update(client);
 
-        Group et = workshop.getGroups().get(0);
+        Group et = workshop.getGroups().get(0);//these parts for test
         String _id = et.get_id();
         System.out.println(_id);
         JsonObject searchGroup = new JsonObject().put("_id",_id);
