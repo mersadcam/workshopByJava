@@ -1,5 +1,6 @@
 package model;
 
+
 import controller.Const;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -8,6 +9,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import org.bson.types.ObjectId;
+
+import java.io.Writer;
 
 public class FormAnswer {
 
@@ -23,13 +26,20 @@ public class FormAnswer {
 	  this.jsonAnswer = jsonAnswer;
 	  this.writer = formWriter;
   }
+
 	public FormAnswer(JsonObject jsonObject ){
-	  //to in constructor jsonobject json answer hast ya chiz dige??
-	  this.jsonAnswer = jsonObject;
-	  this._id = new ObjectId().toString();
+
+	  this._id = jsonObject.getString("_id");
+	  this.jsonAnswer = jsonObject.getJsonObject("form");
+	  this.form = new Form(jsonObject.getString("form"));
+
   }
   public FormAnswer(String _id){
 	  this._id = _id;
+  }
+
+  public void setWriter(FormWriter writer) {
+    this.writer = writer;
   }
 
   public JsonObject getJsonAnswer() {

@@ -8,8 +8,6 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import org.bson.types.ObjectId;
 
-import java.io.File;
-
 public class ContactPoint {
 
   private String _id;
@@ -17,15 +15,13 @@ public class ContactPoint {
 	private String lastName;
 	private String emailAddress;
   private Gender gender;
-	private File image;
 
-	public ContactPoint(String firstName, String lastName, String emailAddress, Gender gender , File image){
+	public ContactPoint(String firstName, String lastName, String emailAddress, Gender gender){
 	  this._id = new ObjectId().toString();
 	  this.firstName = firstName;
 	  this.lastName = lastName;
 	  this.emailAddress = emailAddress;
 	  this.gender = gender;
-	  this.image = image;
   }
 
   public ContactPoint(String _id){

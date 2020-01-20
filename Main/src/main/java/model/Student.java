@@ -21,19 +21,19 @@ public class Student implements RequestType{
 	  this.paymentStatus = paymentStatus;
 
   }
+  public Student(){}
   public Student(String _id){
 	  this._id = _id;
   }
   public Student(JsonObject jsonObject){
 	  //payment status ham inja dorost kon
 	  this._id = jsonObject.getString("_id");
-	  this.paymentStatus = new paymentStatus(jsonObject.getString("paymentStatus"));
+	  this.paymentStatus = new PaymentStatus(jsonObject.getString("paymentStatus"));
   }
 
   public String get_id() {
     return _id;
   }
-
 
   public void setPaymentStatus(PaymentStatus paymentStatus) {
     this.paymentStatus = paymentStatus;

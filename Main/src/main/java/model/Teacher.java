@@ -26,6 +26,7 @@ public class Teacher implements Role,FormWriter{
 	  this._id = new ObjectId().toString();
 
   }
+  public Teacher(){}
 
   public Teacher(String _id){
 	  this._id = _id;
@@ -103,9 +104,9 @@ public class Teacher implements Role,FormWriter{
 
       formsId.add(formId);
 
-      JsonObject teacherId = jsonTeacher.getJsonObject("_id");
+      String teacherId = jsonTeacher.getString("_id");
       JsonObject toSet = new JsonObject()
-        .put("$set",new JsonObject().put("formsId",formsId));
+        .put("$set",new JsonObject().put("form",formsId));
 
       client.updateCollection(Const.role,new JsonObject().put("_id",teacherId),toSet,handler);
 

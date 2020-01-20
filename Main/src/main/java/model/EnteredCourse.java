@@ -21,25 +21,36 @@ public class EnteredCourse {
   private String _id;
 	private String startTime;
 	private String finishTime;
-
+  private JsonArray paymentParts;
+  private int value;
 	private String place;
 	private int capacity;
 	private String description;
-  //id
-  //json
-  //kolli
+
   public  EnteredCourse(String _id){
     this._id = _id;
   }
 
-	public EnteredCourse(Course course ,String startTime, String finishTime , String place , String description ,int capacity){
+	public EnteredCourse(
+	  Course course ,
+    String startTime,
+    String finishTime ,
+    String place ,
+    String description ,
+    int capacity,
+    int value ,
+    JsonArray paymentParts){
+
+    this.value = value;
 	  this._id = new ObjectId().toString();
 	  this.course = course;
 	  this.startTime = startTime;
 	  this.finishTime = finishTime;
 	  this.capacity = capacity;
 	  this.description = description;
+	  this.paymentParts = paymentParts;
 	  this.place = place;
+
   }
 
 	public EnteredCourse(JsonObject json){
@@ -49,9 +60,12 @@ public class EnteredCourse {
 	  this.place = json.getString("place");
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
+	  this.value = json.getInteger("value");
+	  this.paymentParts = json.getJsonArray("paymentParts");
 	  this._id = json.getString("_id");
     this.course = new Course(json.getString("_id"));
   }
+
 
   public String getCourseName() {
     return this.course.getName();
@@ -76,6 +90,8 @@ public class EnteredCourse {
       .put("place",this.place)
       .put("capacity",this.capacity)
       .put("description",this.description)
+      .put("value",this.value)
+      .put("paymentParts",this.paymentParts)
       .put("course",this.course.getName());
 
 	  return json;
@@ -99,6 +115,10 @@ public class EnteredCourse {
 
   public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
 
+
+
+	  int value = json.getInteger("value");
+	  JsonArray paymentParts = json.getJsonArray("paymentParts");
 	  String courseName = json.getString("course");
 	  String startTime = json.getString("startTime");
 	  String finishTime = json.getString("finishTime");
@@ -117,7 +137,9 @@ public class EnteredCourse {
               .put("finishTime",finishTime)
               .put("place",place)
               .put("capacity",capacity)
-              .put("description",description);
+              .put("description",description)
+              .put("value",value)
+              .put("paymentParts",paymentParts);
 
             client.insert(Const.enteredCourse,toInsert,resInsert->{
 
@@ -155,12 +177,11 @@ public class EnteredCourse {
           if (User.preCoursesPassed(courseList,resPassedCourses.result()))
               handler.handle(Future.succeededFuture(""));
           else
-            handler.handle(Future.failedFuture("your need pass some courses"));
+            handler.handle(Future.failedFuture("you need pass some courses"));
 
         });
 
     });
-
 
   }
 

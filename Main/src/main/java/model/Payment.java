@@ -9,6 +9,7 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import io.vertx.ext.mongo.UpdateOptions;
 import io.vertx.reactivex.ext.unit.Async;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 
@@ -26,21 +27,33 @@ public class Payment {
 	}
 
 	public Payment(String paymentName,String time,int value){
-	  this._id = new Object().toString();
+
+	  this._id = new ObjectId().toString();
 	  this.paymentName = paymentName;
 	  this.time = time;
 	  this.value = value;
 	  this.paymentStatus = Status.NOTPAID;
   }
+
   public Payment(String _id){
 	  this._id = _id;
   }
+
   public Payment(JsonObject jsonObject){
 	  this._id = jsonObject.getString("_id");
 	  this.paymentName = jsonObject.getString("paymentName");
 	  this.time = jsonObject.getString("time");
 	  this.value = jsonObject.getInteger("value");
-	  this.paymentName = jsonObject.getString("paymentStatus");
+	  this.paymentStatus = StringToStatus(jsonObject.getString("paymentStatus"));
+  }
+
+  public Status StringToStatus(String status){
+
+	  if(status.equals("PAID"))
+	    return Status.PAID;
+
+	  return Status.NOTPAID;
+
   }
 
   public int getValue() {

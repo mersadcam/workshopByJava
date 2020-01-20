@@ -32,7 +32,7 @@ public class PaymentStatus {
 
 	  this._id = new ObjectId().toString();
 	  this.paymentStatus = Status.IN_PAYMENT;
-	  this.totalValue = value;
+	  this.notPaid = this.totalValue = value;
 
   }
 
@@ -40,9 +40,9 @@ public class PaymentStatus {
 	  this._id = jsonObject.getString("_id");
 	  JsonArray jsonArray = jsonObject.getJsonArray("payments");
 
-	  for(int i = 0 ; i < jsonArray.size() ; i++){
+	  for(int i = 0 ; i < jsonArray.size() ; i++)
 	    this.payments.add(new Payment(jsonArray.getString(i)));
-    }
+
   }
 
   public PaymentStatus(String _id){

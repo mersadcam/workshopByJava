@@ -252,7 +252,7 @@ public class App extends AbstractVerticle {
                 Payment payment = new Payment(payments.getJsonObject(0).getString("name"),
                   payments.getJsonObject(0).getString("time"),
                   workshopValue);
-
+                //#we should make report empty class here
                 payment.saveToDB(client, resSavePayment -> {
 
                   paymentStatus.addPayment(payment);
@@ -326,24 +326,24 @@ public class App extends AbstractVerticle {
         JsonObject clientJson = ctx.get("clientJson"); //sent from user
         JsonObject toResponse = new JsonObject();
 
-        List rolesId;
+        List roles;
 
         try {
-          rolesId = userJson.getJsonArray("rolesId").getList();
+          roles = userJson.getJsonArray("roles").getList();
         }catch (Exception e){
 
-          rolesId = null;
+          roles = null;
 
         }
 
-        if (rolesId == null)
+        if (roles == null)
           ctx.response().end(new JsonObject()
           .put("status","false")
-          .put("msg","you dont have any roles").toString());
+          .put("msg","Access Denied").toString());
 
 
         User user = new User(userJson);
-        user.returnRoles(client,new ArrayList<JsonObject>(),rolesId,0,res->{
+        user.returnRoles(client,new ArrayList<JsonObject>(),roles,0,res->{
 
           JsonObject teacherJson = User.isTeacherInWorkshop(res.result(),clientJson.getString("workshopId"));
 
@@ -381,15 +381,14 @@ public class App extends AbstractVerticle {
     router.route(Const.userGraderReport)
       .handler(ctx ->{
 
-        HttpServerResponse response = ctx.response();
-        JsonObject user = ctx.get("user");
-        JsonObject clientJson = ctx.get("json");
+        JsonObject user = ctx.get("userJson");
+        JsonObject clientJson = ctx.get("clientJson");
         Grader.graderReport(client , user , clientJson , res ->{
           if(res.succeeded()){
             System.out.println("succed we win");
           }
           else{
-            System.out.println(res.result());
+            System.out.println(res.cause());
           }
         });
 
@@ -406,7 +405,7 @@ public class App extends AbstractVerticle {
     ////////////////////////////////////
 
 
-    router.route().path("/admin/*").handler(BodyHandler.create()).handler(ctx ->{
+    router.route().path(Const.adminStar).handler(BodyHandler.create()).handler(ctx ->{
 
       String userType = ctx.request().getHeader("userType");
       String token = ctx.request().getHeader("token");
@@ -447,16 +446,15 @@ public class App extends AbstractVerticle {
 
 
     router.get(Const.adminCreateNewCourse)
-      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
-        JsonObject json = ctx.getBodyAsJson();
+        JsonObject clientJson = ctx.get("clientJson");
         JsonObject toResponse = new JsonObject();
 
-        Course course = new Course(json.getString("name"),json.getString("description"));
+        Course course = new Course(clientJson.getString("name"),clientJson.getString("description"));
 
-        course.createNewCourse(client,json,resCreate->{
+        course.createNewCourse(client,clientJson,resCreate->{
 
           if(resCreate.succeeded())
             toResponse.put("status","true");
@@ -472,50 +470,53 @@ public class App extends AbstractVerticle {
 
 
     router.get(Const.adminEnterNewWorkshop)
-      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
         JsonObject toResponse = new JsonObject();
+        JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
         String username = clientJson.getString("teacher");
-        EnteredCourse.enterNewWorkshop(client,clientJson,res->{
+        EnteredCourse.enterNewWorkshop(client,clientJson,res-> {
 
-          if (res.succeeded())
-            client.find(Const.user,new JsonObject().put("username",username),resFindUser->{
+          if (res.succeeded()){
 
               JsonObject jsonToCreateTeacher = new JsonObject();
-              jsonToCreateTeacher.put("roleName","Teacher")
-                .put("_id",new ObjectId().toString())
-                .put("enteredCourse",res.result())
-                .put("form",new JsonArray());
+              jsonToCreateTeacher.put("roleName", "Teacher")
+                .put("_id", new ObjectId().toString())
+                .put("enteredCourse", res.result())
+                .put("form", new JsonArray());
 
 
-              client.insert(Const.role,jsonToCreateTeacher,resInsert->{
+              client.insert(Const.role, jsonToCreateTeacher, resInsert -> {
 
-                JsonArray lastUserRoles = resFindUser.result().get(0).getJsonArray("role");
-                JsonArray newUserRoles = lastUserRoles.add(resInsert.result());
+                JsonArray lastUserRoles = userJson.getJsonArray("roles");
 
-                client.updateCollection(Const.user,new JsonObject().put("username",username),
-                  new JsonObject().put("$set",new JsonObject().put("role",newUserRoles)),resUpdate->{
+                if (lastUserRoles == null) {
+                  //#Delete
+                  lastUserRoles = new JsonArray();
+
+                }
+
+                JsonArray newUserRoles = lastUserRoles.add(jsonToCreateTeacher.getString("_id"));
+
+                client.updateCollection(Const.user, new JsonObject().put("username", username),
+                  new JsonObject().put("$set", new JsonObject().put("roles", newUserRoles)), resUpdate -> {
 
                     if (resUpdate.succeeded()) {
                       toResponse
                         .put("status", "true")
                         .put("msg", "Workshop Created Successfully");
 
-                    }
-
-                    else
-                      toResponse.put("status","false").put("msg","Error");
+                    } else
+                      toResponse.put("status", "false").put("msg", "Error");
 
                     response.end(toResponse.toString());
 
                   });
 
               });
-
-            });
+        }
 
 
 

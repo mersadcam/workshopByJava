@@ -31,7 +31,13 @@ public class Identity implements Role {
   public Identity(JsonObject jsonObject){
     // inja baadesh namidanam che konam ???
     this._id = jsonObject.getString("_id");
-    //this part????
+    this.roleName = jsonObject.getString("roleName");
+    this.report = new Report(jsonObject.getString("report"));
+    this.course = new Course(jsonObject.getString("course"));
+  }
+
+  public void setType(RequestType type) {
+    this.type = type;
   }
 
   //need find or json or update for data base??

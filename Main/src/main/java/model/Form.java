@@ -16,6 +16,19 @@ public class Form {
 // mersad : bebin dige constructor nadere???
   public Form(JsonObject formJson){
     this.formJson = formJson;
+    this._id = new ObjectId().toString();
+  }
+
+  public Form(){
+
+  }
+
+  public void setFormJson(JsonObject formJson) {
+    this.formJson = formJson;
+  }
+
+  public void set_id(String _id) {
+    this._id = _id;
   }
 
   public Form(String _id){

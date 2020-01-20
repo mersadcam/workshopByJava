@@ -39,6 +39,12 @@ public class Group {
 
   }
 
+  public Group(String _id){
+
+    this._id = _id;
+
+  }
+
   public void addIdentity(Identity identity){
     this.identities.add(identity);
   }

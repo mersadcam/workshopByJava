@@ -17,7 +17,7 @@ public class Report {
 	private Status studentCourseStatus;
 	private String finalNumber;
 	private Performance performance;
-	private ArrayList<FormAnswer> data = new ArrayList<FormAnswer>();
+	private ArrayList<FormAnswer> answer = new ArrayList<FormAnswer>();
 
 	public Report(Status studentCourseStatus , String finalNumber , Performance performance ){
 	  this._id = new ObjectId().toString();
@@ -25,25 +25,51 @@ public class Report {
 	  this.finalNumber = finalNumber;
 	  this.performance = performance;
   }
+
 	public Report(JsonObject jsonObject){
   //enum haeii ke comment shode ro dorost kon
 
 	  this._id = jsonObject.getString("_id");
-//	  this.studentCourseStatus = jsonObject.getBinary("studentCourseStatus"); mersad check
+	  this.studentCourseStatus = stringToStatus(jsonObject.getString("studentCourseStatus"));
 	  this.finalNumber = jsonObject.getString("finalNumber");
-//	  this.performance = new Performance(jsonObject.getString("_id")); mersad check
-    JsonArray jsonArray = jsonObject.getJsonArray("data");
+	  this.performance = stringToPerformance(jsonObject.getString("performance"));
+    JsonArray jsonArray = jsonObject.getJsonArray("answer");
 
     for(int i = 0 ; i < jsonArray.size() ; i++){
-      data.add(new FormAnswer(jsonArray.getString(i)));
+      answer.add(new FormAnswer(jsonArray.getString(i)));
     }
   }
+
 	public Report(String _id){
     this._id = _id;
   }
 
   public String get_id() {
     return _id;
+  }
+
+  public Status stringToStatus(String status){
+
+	  if(status.equals("PASSED"))
+	    return Status.PASSED;
+
+	  return Status.NOTPASSED;
+
+  }
+
+  public Performance stringToPerformance(String performance){
+
+	  if(performance.equals("BAD"))
+	    return Performance.BAD;
+
+	  if(performance.equals("NOTBAD"))
+	    return Performance.NOTBAD;
+
+	  if(performance.equals("GOOD"))
+	    return Performance.GOOD;
+
+	  return Performance.EXCELLENT;
+
   }
 
   public void set_id(String _id) {
@@ -62,16 +88,16 @@ public class Report {
 		EXCELLENT
 	}
 
-	public void addData(FormAnswer formAnswer){
-	  this.data.add(formAnswer);
+	public void addAnswer(FormAnswer formAnswer){
+	  this.answer.add(formAnswer);
   }
 
   public JsonObject toJson(){
 	  JsonArray jsonArray = new JsonArray();
 	  JsonObject jsonObject = new JsonObject();
 
-	  for(int i = 0 ; i < data.size() ; i++){
-	    jsonArray.add(data.get(i).get_id());
+	  for(int i = 0 ; i < answer.size() ; i++){
+	    jsonArray.add(answer.get(i).get_id());
     }
 
 	  jsonObject
@@ -79,7 +105,7 @@ public class Report {
       .put("studentStatusCourse",this.studentCourseStatus)
       .put("finalNumber",this.finalNumber)
       .put("performance",this.performance)
-      .put("data",jsonArray);
+      .put("answer",jsonArray);
 
 	  return jsonObject;
   }
