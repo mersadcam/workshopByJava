@@ -279,21 +279,16 @@ public class EnteredCourse {
         user.addRole(identity);
         user.update(client);
 
-        Group et = workshop.getGroups().get(0);//these parts for test
-        String _id = et.get_id();
-        System.out.println(_id);
-        JsonObject searchGroup = new JsonObject().put("_id",_id);
-
-        client.find(Const.group , searchGroup , resFindGroup ->{
+        client.find(Const.group , new JsonObject().put("_id",workshop.getGroups().get(0).get_id()) , resFindGroup ->{
           Group group = new Group(resFindGroup.result().get(0));
           group.addIdentity(identity);
           group.update(client , resUpdate->{
-            handler.handle(Future.succeededFuture());
+            handler.handle(Future.succeededFuture("succeeded."));
           });
         });
       }
 	    else{//didn't find workshop in db
-	      handler.handle(Future.failedFuture("cannot find workshop in database"));
+	      handler.handle(Future.failedFuture("cannot find workshop in database."));
       }
     });
 	}
