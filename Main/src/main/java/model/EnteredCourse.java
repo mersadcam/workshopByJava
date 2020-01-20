@@ -83,10 +83,6 @@ public class EnteredCourse {
     this.groups.add(group);
   }
 
-  public ArrayList<Group> getGroups(){
-    return this.groups;
-  }
-
   public String getCourseName() {
     return this.course.getName();
   }
@@ -101,11 +97,6 @@ public class EnteredCourse {
     return value;
   }
 
-  public void addGroup(Group group){
-
-    groups.add(group);
-
-  }
 
   public String get_id() {
     return _id;
