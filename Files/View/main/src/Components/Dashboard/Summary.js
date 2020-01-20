@@ -10,7 +10,7 @@ class Summary extends React.Component {
                         <StampCard
                             color="green"
                             icon="book"
-                            header={"3 Workshops"}
+                            header={"3 Profile"}
                             footer={"You Enrolled"}
                         />
                     </Grid.Col>
