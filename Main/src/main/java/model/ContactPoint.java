@@ -54,8 +54,8 @@ public class ContactPoint {
   public JsonObject toJson(){
 
 	  JsonObject json = new JsonObject()
-      .put("firstname",this.firstName)
-      .put("lastname",this.lastName)
+      .put("firstName",this.firstName)
+      .put("lastName",this.lastName)
       .put("emailAddress",this.emailAddress)
       .put("_id",this._id)
       .put("gender",this.gender);

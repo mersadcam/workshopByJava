@@ -1,0 +1,78 @@
+.login-container {
+    position: absolute;
+    z-index: 3;
+    background-color: #00000050;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login-frame {
+    background-color: var(--light);
+    box-shadow: 0 70px 80px #00000060;
+    overflow: hidden;
+}
+
+.login-frame :focus {
+    outline: none;
+}
+
+.login-nav {
+    /*width: 100%;*/
+    padding-top: 40px;
+    opacity: 1;
+    transition: all .5s ease;
+}
+
+.login-nav-links {
+    font-size: 20px;
+    display: inline;
+    text-transform: uppercase;
+}
+
+.switch-active{
+    padding-bottom: 10px;
+    text-decoration: none;
+    border-bottom: solid 1px #1059FF;
+}
+
+.switch-inactive{
+    padding-bottom: 0;
+    text-decoration: underline;
+    border-bottom: none;
+}
+
+.form-login input, .form-signup input {
+    font-size: 13px;
+}
+
+.form-styling {
+    width: 100%;
+    height: 35px;
+    padding-left: 15px;
+    border: solid 1px #00000020;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+
+.login-frame label {
+    font-weight: 200;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.login-frame label:not(#keepMeSignedInLabel) {
+    padding-left: 15px;
+    padding-bottom: 10px;
+    display: block;
+}
+
+#keepMeSignedInLabel {
+    padding-left: 5px;
+}
+
+#forgetPasswordButton {
+
+}
