@@ -9,6 +9,8 @@ import "tabler-react/dist/Tabler.css";
 import Home from "./Components/Home/Home";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Workshops from "./Components/Workshops/Workshops";
+import Profile from "./Components/Profile/Profile";
+import EditProfile from "./Components/Profile/EditProfile";
 
 function App() {
     return (
@@ -17,6 +19,8 @@ function App() {
                 <Route exact path="/" component={Home}/>
                 <Route path="/dashboard" component={Dashboard}/>
                 <Route path="/workshops" component={Workshops}/>
+                <Route path="/profile" component={Profile}/>
+                <Route path="/editprofile" component={EditProfile}/>
             </Switch>
         </Router>
     );

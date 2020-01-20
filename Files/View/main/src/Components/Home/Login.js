@@ -92,8 +92,11 @@ class Login extends React.Component {
 
                         {this.state.signupShow &&
                         <form className="form-signup px-5 pb-5" action="" method="post" name="form-signup">
-                            <label htmlFor="fullname">Full name</label>
-                            <input className="form-styling" type="text" name="fullname" placeholder=""/>
+                            <label htmlFor="firstName">Full name</label>
+                            <input className="form-styling" type="text" name="firstName" placeholder=""/>
+
+                            <label htmlFor="lastName">Full name</label>
+                            <input className="form-styling" type="text" name="lastName" placeholder=""/>
 
                             <label htmlFor="email">Email</label>
                             <input className="form-styling" type="text" name="email" placeholder=""/>

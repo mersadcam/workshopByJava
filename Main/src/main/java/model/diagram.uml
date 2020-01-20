@@ -3,56 +3,83 @@
   <ID>JAVA</ID>
   <OriginalElement />
   <nodes>
-    <node x="149.0" y="385.0">model.Course</node>
-    <node x="116.0" y="80.0">model.Teacher</node>
-    <node x="31.0" y="0.0">model.FormWriter</node>
-    <node x="24.0" y="155.0">model.User</node>
-    <node x="240.0" y="80.0">model.Identity</node>
-    <node x="173.0" y="155.0">model.EnteredCourse</node>
-    <node x="205.0" y="0.0">model.Role</node>
-    <node x="0.0" y="235.0">model.SuperAdmin</node>
-    <node x="290.0" y="385.0">model.Report</node>
-    <node x="0.0" y="460.0">model.Group</node>
-    <node x="0.0" y="80.0">model.Grader</node>
-    <node x="0.0" y="310.0">model.PaymentStatus</node>
-    <node x="197.0" y="310.0">model.ContactPoint</node>
-    <node x="133.0" y="460.0">model.Form</node>
-    <node x="386.0" y="310.0">model.FormAnswer</node>
-    <node x="0.0" y="385.0">model.Student</node>
+    <node x="0.0" y="545.0">model.Course</node>
+    <node x="268.0" y="80.0">model.Teacher</node>
+    <node x="188.0" y="0.0">model.FormWriter</node>
+    <node x="20.0" y="315.0">model.Admin</node>
+    <node x="24.0" y="235.0">model.User</node>
+    <node x="362.0" y="470.0">model.Payment</node>
+    <node x="109.0" y="160.0">model.SuperGrader</node>
+    <node x="173.0" y="235.0">model.EnteredCourse</node>
+    <node x="392.0" y="80.0">model.Identity</node>
+    <node x="357.0" y="0.0">model.Role</node>
+    <node x="399.0" y="545.0">controller.App</node>
+    <node x="0.0" y="395.0">model.SuperAdmin</node>
+    <node x="141.0" y="545.0">model.Group</node>
+    <node x="511.0" y="470.0">model.Report</node>
+    <node x="32.0" y="0.0">model.RequestType</node>
+    <node x="129.0" y="80.0">model.Grader</node>
+    <node x="370.0" y="235.0">model.PaymentStatus</node>
+    <node x="0.0" y="470.0">model.ContactPoint</node>
+    <node x="274.0" y="545.0">model.Form</node>
+    <node x="189.0" y="470.0">model.FormAnswer</node>
+    <node x="0.0" y="80.0">model.Student</node>
   </nodes>
   <notes />
   <edges>
-    <edge source="model.SuperAdmin" target="model.User">
+    <edge source="model.Teacher" target="model.Role">
+      <point x="26.0" y="-15.0" />
+      <point x="346.0" y="55.0" />
+      <point x="377.0" y="55.0" />
+      <point x="-20.0" y="15.0" />
+    </edge>
+    <edge source="model.Admin" target="model.User">
       <point x="0.0" y="-15.0" />
       <point x="0.0" y="15.0" />
     </edge>
-    <edge source="model.Teacher" target="model.Role">
-      <point x="26.0" y="-15.0" />
-      <point x="194.0" y="55.0" />
-      <point x="225.0" y="55.0" />
-      <point x="-20.0" y="15.0" />
-    </edge>
     <edge source="model.Grader" target="model.FormWriter">
-      <point x="0.0" y="-15.0" />
-      <point x="48.0" y="55.0" />
-      <point x="63.0" y="55.0" />
+      <point x="24.0" y="-15.0" />
+      <point x="201.0" y="55.0" />
+      <point x="220.0" y="55.0" />
       <point x="-32.0" y="15.0" />
+    </edge>
+    <edge source="model.Grader" target="model.RequestType">
+      <point x="-24.0" y="-15.0" />
+      <point x="153.0" y="55.0" />
+      <point x="134.0" y="55.0" />
+      <point x="34.0" y="15.0" />
+    </edge>
+    <edge source="model.Student" target="model.RequestType">
+      <point x="0.0" y="-15.0" />
+      <point x="52.0" y="55.0" />
+      <point x="66.0" y="55.0" />
+      <point x="-34.0" y="15.0" />
+    </edge>
+    <edge source="model.SuperAdmin" target="model.Admin">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="model.SuperGrader" target="model.Grader">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="15.0" />
     </edge>
     <edge source="model.Identity" target="model.Role">
       <point x="0.0" y="-15.0" />
-      <point x="296.0" y="55.0" />
-      <point x="265.0" y="55.0" />
+      <point x="448.0" y="55.0" />
+      <point x="417.0" y="55.0" />
       <point x="20.0" y="15.0" />
     </edge>
     <edge source="model.Teacher" target="model.FormWriter">
       <point x="-26.0" y="-15.0" />
-      <point x="142.0" y="55.0" />
-      <point x="127.0" y="55.0" />
+      <point x="294.0" y="55.0" />
+      <point x="284.0" y="55.0" />
       <point x="32.0" y="15.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="1.0647058823529412" x="552.2831966212815" y="301.8283941857603" />
-  <SelectedNodes />
+  <settings layout="Hierarchic Group" zoom="0.6000000000000001" x="583.7635873611483" y="387.99725274725216" />
+  <SelectedNodes>
+    <node>model.EnteredCourse</node>
+  </SelectedNodes>
   <Categories />
   <SCOPE>All</SCOPE>
   <VISIBILITY>private</VISIBILITY>

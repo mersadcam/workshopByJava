@@ -429,8 +429,23 @@ public class App extends AbstractVerticle {
         JsonObject clientJson = ctx.get("clientJson");
         JsonObject userJson = ctx.get("userJson");
         User user = new User(userJson);
+        JsonObject toResponse = new JsonObject();
+        String roleId = ctx.request().getHeader("roleId");
 
-
+        EnteredCourse.workshopStar(client , clientJson , roleId , user , handler ->{
+          if(handler.succeeded()){
+            toResponse
+              .put("status","true")
+              .put("msg",handler.cause().toString());
+          }
+          else{
+            toResponse
+              .put("status","false")
+              .put("msg",handler.cause().toString());
+          }
+          //what should i do ( ctx.next or ctx.end )
+          ctx.response().end(toResponse.toString());
+        });
 
       });
 

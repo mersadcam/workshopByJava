@@ -6,6 +6,7 @@ import json from "./Workshops.json";
 import Search from "./Search";
 
 class Workshops extends React.Component {
+
     options =
         <React.Fragment>
             <Form.Select className="w-auto mr-2">
