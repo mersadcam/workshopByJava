@@ -429,12 +429,12 @@ public class App extends AbstractVerticle {
           if(handler.succeeded()){
             toResponse
               .put("status","true")
-              .put("msg",handler.cause());
+              .put("msg",handler.cause().toString());
           }
           else{
             toResponse
               .put("status","false")
-              .put("msg",handler.cause());
+              .put("msg",handler.cause().toString());
           }
           //what should i do ( ctx.next or ctx.end )
           ctx.response().end(toResponse.toString());

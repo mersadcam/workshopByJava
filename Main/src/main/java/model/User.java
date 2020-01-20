@@ -448,11 +448,17 @@ public class User {
 
           if(resFind.succeeded() && !resFind.result().isEmpty()){
             JsonArray identities = resFind.result().get(0).getJsonArray("identities");
-
+            boolean test = false;
             for( int j = 0 ; j < identities.size() ; j++){
               if(this._id.equals(identities.getString(j))){
-                handler.handle(Future.succeededFuture(this._id));//output
+                test = true;
               }
+            }
+            if(test){
+              handler.handle(Future.succeededFuture(this._id));//output
+            }
+            else {
+              handler.handle(Future.failedFuture("You are not in the workshop."));//output
             }
           }
           else {
