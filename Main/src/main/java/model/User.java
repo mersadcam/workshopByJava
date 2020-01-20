@@ -137,6 +137,17 @@ public class User {
     return roles;
   }
 
+  public ArrayList<String> getRolesId(){
+
+    ArrayList<String> ids = new ArrayList<String>();
+
+    for (int i = 0 ; i < this.roles.size() ; i++ )
+      ids.add(this.roles.get(i).get_id());
+
+    return ids;
+
+  }
+
   public void login(MongoClient client , Handler<AsyncResult<String>> handler){
 
     JsonObject query = new JsonObject()

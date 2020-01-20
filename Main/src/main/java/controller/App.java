@@ -320,24 +320,9 @@ public class App extends AbstractVerticle {
         JsonObject clientJson = ctx.get("clientJson"); //sent from user
         JsonObject toResponse = new JsonObject();
 
-        List roles;
-
-        try {
-          roles = userJson.getJsonArray("roles").getList();
-        }catch (Exception e){
-
-          roles = null;
-
-        }
-
-        if (roles == null)
-          ctx.response().end(new JsonObject()
-          .put("status","false")
-          .put("msg","Access Denied").toString());
-
-
         User user = new User(userJson);
-        user.returnRoles(client,new ArrayList<JsonObject>(),roles,0,res->{
+
+        user.returnRoles(client,new ArrayList<JsonObject>(),user.getRolesId(),0,res->{
 
           JsonObject teacherJson = User.isTeacherInWorkshop(res.result(),clientJson.getString("workshopId"));
 
