@@ -63,6 +63,12 @@ public class Identity implements Role {
 
   }
 
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.role, this.toJson() ,handler->{});
+
+  }
+
   public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject().put("_id",this._id);

@@ -151,6 +151,23 @@ public class User {
     return roles;
   }
 
+
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.user,this.toJson(),handler->{});
+
+  }
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("token",this.token);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.user,query,update,handler->{});
+
+  }
+
+
   public ArrayList<String> getRolesId(){
 
     ArrayList<String> ids = new ArrayList<String>();
@@ -432,9 +449,6 @@ public class User {
     return true;
 
   }
-
-
-
 
 
 

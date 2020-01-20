@@ -45,6 +45,10 @@ public class Group {
 
   }
 
+  public ArrayList<Identity> getIdentities() {
+    return identities;
+  }
+
   public void addIdentity(Identity identity){
     this.identities.add(identity);
   }

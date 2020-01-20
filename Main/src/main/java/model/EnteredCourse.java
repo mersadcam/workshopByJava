@@ -97,6 +97,16 @@ public class EnteredCourse {
 
   }
 
+  public int getValue() {
+    return value;
+  }
+
+  public void addGroup(Group group){
+
+    groups.add(group);
+
+  }
+
   public String get_id() {
     return _id;
   }
@@ -121,6 +131,14 @@ public class EnteredCourse {
       .put("groups",jsonArray);
 
 	  return json;
+  }
+
+  public JsonArray getPaymentParts() {
+    return paymentParts;
+  }
+
+  public ArrayList<Group> getGroups() {
+    return groups;
   }
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){

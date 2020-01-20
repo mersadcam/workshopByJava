@@ -243,17 +243,17 @@ public class App extends AbstractVerticle {
 
             if (!resFind.result().isEmpty()) {
 
-              JsonObject workshop = resFind.result().get(0);
-              JsonArray payments = workshop.getJsonArray("paymentParts");
-              int workshopValue = workshop.getInteger("value");
+              EnteredCourse workshop = new EnteredCourse(resFind.result().get(0));
+              JsonArray paymentParts = workshop.getPaymentParts();
+              int workshopValue = workshop.getValue();
 
               Payment payment;
               PaymentStatus paymentStatus = new PaymentStatus(workshopValue);
 
               if (clientJson.getString("paymentType").equals("cash")) {
 
-                payment = new Payment(payments.getJsonObject(0).getString("name"),
-                  payments.getJsonObject(0).getString("time"),
+                payment = new Payment(paymentParts.getJsonObject(0).getString("name"),
+                  paymentParts.getJsonObject(0).getString("time"),
                   workshopValue);
                 payment.saveToDB(client,save->{});
                 paymentStatus.addPayment(payment);
@@ -262,7 +262,7 @@ public class App extends AbstractVerticle {
               } else {
 
 
-                JsonArray listOfJson = workshop.getJsonArray("paymentParts");
+                JsonArray listOfJson = workshop.getPaymentParts();
                 for (int i = 0; i < listOfJson.size(); i++) {
 
                   payment = new Payment(listOfJson.getJsonObject(i).getString("name"),
@@ -278,12 +278,24 @@ public class App extends AbstractVerticle {
               report.saveToDB(client);
               Student student = new Student(paymentStatus);
               student.saveToDB(client);
-              Identity identity = new Identity(report,student,new Course(workshop.getString("course"), ""), "Student");
+              Identity identity = new Identity(report,student,new Course(workshop.getCourseName()), "Student");
+              user.addRole(identity);
+              user.update(client);
+              identity.saveToDB(client);
 
-              identity.saveToDB(client,resIden->{
+              client.find(Const.group,new JsonObject().put("_id",workshop.getGroups().get(0).get_id()),resFindGroup->{
 
-                if(resIden.succeeded())
-                  ctx.response().end(new JsonObject().put("status","true").put("msg","you are added in this workshop").toString());
+                Group group = new Group(resFindGroup.result().get(0));
+                group.addIdentity(identity);
+                group.update(client,resUpdateGroup->{
+
+                  if(resUpdateGroup.succeeded())
+                    ctx.response().end(new JsonObject().put("status","true").put("msg","you are added in this course").toString());
+
+                  else
+                    ctx.response().end(new JsonObject().put("status","false").put("msg","there is a problem").toString());
+
+                });
 
               });
 
@@ -300,16 +312,6 @@ public class App extends AbstractVerticle {
 
         });
 
-//      EnteredCourse.studentRequestForWorkshop(client , clientJson , handler ->{
-//        if(){
-//
-//        }
-//        else{
-//          toResponse
-//            .put("status","false")
-//            .put("msg","workshop not found.");
-//          }
-//        });
 
       });
 
@@ -319,11 +321,10 @@ public class App extends AbstractVerticle {
 
         JsonObject userJson = ctx.get("userJson");   // user info in db
         JsonObject clientJson = ctx.get("clientJson"); //sent from user
+        User user = new User(userJson);
         JsonObject toResponse = new JsonObject();
 
-        User user = new User(userJson);
-
-        user.returnRoles(client,new ArrayList<JsonObject>(),user.getRolesId(),0,res->{
+        User.returnRoles(client,new ArrayList<JsonObject>(),user.getRolesId(),0,res->{
 
           JsonObject teacherJson = User.isTeacherInWorkshop(res.result(),clientJson.getString("workshopId"));
 
