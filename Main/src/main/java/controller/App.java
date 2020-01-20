@@ -2,6 +2,8 @@ package controller;
 
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
@@ -102,26 +104,56 @@ public class App extends AbstractVerticle {
 
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
-      User user = new User(json);
-      ContactPoint cp = new ContactPoint(json);
-
-      cp.addCPToDB(client,res->{
-
-        user.register(client,res.result(),res1->{
-
-          if( res1.succeeded() ) {
-            response.end(res1.result());
-          }else{
-
-            response.setStatusCode(401);
-            response.end(res.result());
-
-          }
 
 
-        });
+
+      client.find(Const.user,new JsonObject().put("username",json.getString("username")),res->{
+
+        if(res.result().isEmpty()){
+
+          String firstName = json.getString("firstName");
+          String lastName = json.getString("lastName");
+          String emailAddress = json.getString("emailAddress");
+          String gender  = json.getString("gender");
+
+
+          ContactPoint cp = new ContactPoint(
+            firstName,
+            lastName,
+            emailAddress,
+            gender
+          );
+
+          cp.saveToDB(client);
+
+          String username  = json.getString("username");
+          String password = json.getString("password");
+          String userType = "user";
+
+
+          User user = new User( cp , username , password , userType);
+          user.setToken();
+          user.saveToDB(client);
+
+          ctx.response().end(new JsonObject()
+            .put("status","true")
+            .put("body",
+              new JsonObject()
+                .put("token",user.getToken())
+                .put("userType",user.getUserType())
+                ).toString());
+
+        }
+
+        else{
+
+          ctx.response().end(new JsonObject().put("status","false").put("msg","this User have saved before").toString());
+
+        }
 
       });
+
+
 
     });
 
@@ -131,13 +163,15 @@ public class App extends AbstractVerticle {
       .handler(BodyHandler.create())
       .handler(ctx ->{
 
-        HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
-        User user = new User(json);
 
-        user.login(client,res->{
 
-            response.end(res.result());
+        User.login(client,json,res->{
+
+          if (res.succeeded())
+            ctx.response().end(res.result().toString());
+          else
+            ctx.response().end(new JsonObject().put("status","false").put("msg","username or password is wrong").toString());
 
         });
 
@@ -156,7 +190,7 @@ public class App extends AbstractVerticle {
         String CP_id = userJson.getString("contactPoint");
         User user = new User(userJson);
 
-        user.editProfile(client , json,userType,CP_id, handle -> {
+        user.editProfile(client , user ,json , CP_id , handle -> {
 
           if (handle.succeeded())
             toResponse.put("status", "true");
@@ -203,39 +237,113 @@ public class App extends AbstractVerticle {
         JsonObject toResponse = new JsonObject();
         JsonObject clientJson = ctx.get("clientJson");
         JsonObject userJson = ctx.get("userJson");
+        User user = new User(userJson);
 
-        EnteredCourse.graderRequestForWorkshop(client , clientJson , handler ->{
+        EnteredCourse.graderRequestForWorkshop(client , clientJson , user , handler ->{
           if(handler.succeeded()){
+            toResponse
+              .put("status","true");
 
           }
           else {
+            toResponse
+              .put("status","false")
+              .put("msg",handler.cause());
 
           }
+          ctx.response().end(toResponse.toString());
         });
       });
 
     router.route(Const.userWorkshopStudentRequest)
       .handler(ctx->{
 
-      JsonObject toResponse = new JsonObject();
       JsonObject clientJson = ctx.get("clientJson");
       JsonObject userJson = ctx.get("userJson");
+      User user = new User(userJson);
 
       //find workshop
       //pishniaz ro check kon
       //payment in data base
 
 
-      EnteredCourse.studentRequestForWorkshop(client , clientJson , handler ->{
-        if(handler.succeeded()){
+      EnteredCourse.studentRequestStatus(client , clientJson,user , res ->{
+        if(res.succeeded()) {
 
+          client.find(Const.enteredCourse, new JsonObject().put("_id", clientJson.getString("workshopId")), resFind -> {
+
+            if (!resFind.result().isEmpty()) {
+
+              EnteredCourse workshop = new EnteredCourse(resFind.result().get(0));
+              JsonArray paymentParts = workshop.getPaymentParts();
+              int workshopValue = workshop.getValue();
+
+              Payment payment;
+              PaymentStatus paymentStatus = new PaymentStatus(workshopValue);
+
+              if (clientJson.getString("paymentType").equals("cash")) {
+
+                payment = new Payment(paymentParts.getJsonObject(0).getString("name"),
+                  paymentParts.getJsonObject(0).getString("time"),
+                  workshopValue);
+                payment.saveToDB(client,save->{});
+                paymentStatus.addPayment(payment);
+                paymentStatus.saveToDB(client);
+
+              } else {
+
+
+                JsonArray listOfJson = workshop.getPaymentParts();
+                for (int i = 0; i < listOfJson.size(); i++) {
+
+                  payment = new Payment(listOfJson.getJsonObject(i).getString("name"),
+                    listOfJson.getJsonObject(i).getString("time"), listOfJson.getJsonObject(i).getInteger("value"));
+                  payment.saveToDB(client,save->{});
+                  paymentStatus.addPayment(payment);
+
+                }
+                paymentStatus.saveToDB(client);
+              }
+
+              Report report = new Report();
+              report.saveToDB(client);
+              Student student = new Student(paymentStatus);
+              student.saveToDB(client);
+              Identity identity = new Identity(report,student,new Course(workshop.getCourseName()), "Student");
+              user.addRole(identity);
+              user.update(client);
+              identity.saveToDB(client);
+
+              client.find(Const.group,new JsonObject().put("_id",workshop.getGroups().get(0).get_id()),resFindGroup->{
+
+                Group group = new Group(resFindGroup.result().get(0));
+                group.addIdentity(identity);
+                group.update(client,resUpdateGroup->{
+
+                  if(resUpdateGroup.succeeded())
+                    ctx.response().end(new JsonObject().put("status","true").put("msg","you are added in this course").toString());
+
+                  else
+                    ctx.response().end(new JsonObject().put("status","false").put("msg","there is a problem").toString());
+
+                });
+
+              });
+
+
+
+
+            } else {
+
+              ctx.response().end("Access Denied");
+
+            }
+          });
         }
-        else{
-          toResponse
-            .put("status","false")
-            .put("msg","workshop not found.");
-          }
+
         });
+
+
       });
 
     //new added
@@ -244,32 +352,16 @@ public class App extends AbstractVerticle {
 
         JsonObject userJson = ctx.get("userJson");   // user info in db
         JsonObject clientJson = ctx.get("clientJson"); //sent from user
+        User user = new User(userJson);
         JsonObject toResponse = new JsonObject();
 
-        List rolesId;
-
-        try {
-          rolesId = userJson.getJsonArray("rolesId").getList();
-        }catch (Exception e){
-
-          rolesId = null;
-
-        }
-
-        if (rolesId == null)
-          ctx.response().end(new JsonObject()
-          .put("status","false")
-          .put("msg","you dont have any roles").toString());
-
-
-        User user = new User(userJson);
-        user.returnRoles(client,new ArrayList<JsonObject>(),rolesId,0,res->{
+        User.returnRoles(client,new ArrayList<JsonObject>(),user.getRolesId(),0,res->{
 
           JsonObject teacherJson = User.isTeacherInWorkshop(res.result(),clientJson.getString("workshopId"));
 
           if( teacherJson != null ){
 
-            Teacher.addForm(client,teacherJson,clientJson,resAddForm->{
+            Teacher.addNewForm(client,teacherJson,clientJson,resAddForm->{
 
               if( resAddForm.succeeded() )
                 toResponse
@@ -301,15 +393,14 @@ public class App extends AbstractVerticle {
     router.route(Const.userGraderReport)
       .handler(ctx ->{
 
-        HttpServerResponse response = ctx.response();
-        JsonObject user = ctx.get("user");
-        JsonObject clientJson = ctx.get("json");
+        JsonObject user = ctx.get("userJson");
+        JsonObject clientJson = ctx.get("clientJson");
         Grader.graderReport(client , user , clientJson , res ->{
           if(res.succeeded()){
             System.out.println("succed we win");
           }
           else{
-            System.out.println(res.result());
+            System.out.println(res.cause());
           }
         });
 
@@ -326,7 +417,7 @@ public class App extends AbstractVerticle {
     ////////////////////////////////////
 
 
-    router.route().path("/admin/*").handler(BodyHandler.create()).handler(ctx ->{
+    router.route().path(Const.adminStar).handler(BodyHandler.create()).handler(ctx ->{
 
       String userType = ctx.request().getHeader("userType");
       String token = ctx.request().getHeader("token");
@@ -367,16 +458,15 @@ public class App extends AbstractVerticle {
 
 
     router.get(Const.adminCreateNewCourse)
-      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
-        JsonObject json = ctx.getBodyAsJson();
+        JsonObject clientJson = ctx.get("clientJson");
         JsonObject toResponse = new JsonObject();
 
-        Course course = new Course(json);
+        Course course = new Course(clientJson.getString("name"),clientJson.getString("description"));
 
-        course.createNewCourse(client,json,resCreate->{
+        course.createNewCourse(client,clientJson,resCreate->{
 
           if(resCreate.succeeded())
             toResponse.put("status","true");
@@ -391,53 +481,54 @@ public class App extends AbstractVerticle {
       });
 
 
-
-
     router.get(Const.adminEnterNewWorkshop)
-      .handler(BodyHandler.create())
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();
         JsonObject toResponse = new JsonObject();
+        JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
         String username = clientJson.getString("teacher");
-        EnteredCourse.enterNewWorkshop(client,clientJson,res->{
+        EnteredCourse.enterNewWorkshop(client,clientJson,res-> {
 
-          if (res.succeeded())
-            client.find(Const.user,new JsonObject().put("username",username),resFindUser->{
+          if (res.succeeded()){
 
               JsonObject jsonToCreateTeacher = new JsonObject();
-              jsonToCreateTeacher.put("roleName","Teacher")
-                .put("_id",new ObjectId().toString())
-                .put("enteredCourse",res.result())
-                .put("form",new JsonArray());
+              jsonToCreateTeacher.put("roleName", "Teacher")
+                .put("_id", new ObjectId().toString())
+                .put("enteredCourse", res.result())
+                .put("form", new JsonArray());
 
 
-              client.insert(Const.role,jsonToCreateTeacher,resInsert->{
+              client.insert(Const.role, jsonToCreateTeacher, resInsert -> {
 
-                JsonArray lastUserRoles = resFindUser.result().get(0).getJsonArray("role");
-                JsonArray newUserRoles = lastUserRoles.add(resInsert.result());
+                JsonArray lastUserRoles = userJson.getJsonArray("roles");
 
-                client.updateCollection(Const.user,new JsonObject().put("username",username),
-                  new JsonObject().put("$set",new JsonObject().put("role",newUserRoles)),resUpdate->{
+                if (lastUserRoles == null) {
+                  //#Delete
+                  lastUserRoles = new JsonArray();
+
+                }
+
+                JsonArray newUserRoles = lastUserRoles.add(jsonToCreateTeacher.getString("_id"));
+
+                client.updateCollection(Const.user, new JsonObject().put("username", username),
+                  new JsonObject().put("$set", new JsonObject().put("roles", newUserRoles)), resUpdate -> {
 
                     if (resUpdate.succeeded()) {
                       toResponse
                         .put("status", "true")
                         .put("msg", "Workshop Created Successfully");
 
-                    }
-
-                    else
-                      toResponse.put("status","false").put("msg","Error");
+                    } else
+                      toResponse.put("status", "false").put("msg", "Error");
 
                     response.end(toResponse.toString());
 
                   });
 
               });
-
-            });
+        }
 
 
 
@@ -488,14 +579,14 @@ public class App extends AbstractVerticle {
 
       });
 
+
     router.route(Const.signout)
       .handler(ctx ->{
 
         JsonObject toResponse = new JsonObject();
-        JsonObject user = ctx.get("userJson");
-        User userSignOut = new User(user);
+        JsonObject userJson = ctx.get("userJson");
 
-        userSignOut.signout(client , userSignOut.getToken() , res ->{
+        User.signout(client , userJson.getString("token") , res ->{
           if(res.succeeded()){
             toResponse
               .put("status","true")
