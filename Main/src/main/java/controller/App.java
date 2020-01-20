@@ -415,6 +415,18 @@ public class App extends AbstractVerticle {
 
       });
 
+    //new added
+    router.route(Const.workshopStar)
+      .handler(ctx ->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        User user = new User(userJson);
+
+
+
+      });
+
     ////////////////////////////////////
 
 
@@ -455,7 +467,6 @@ public class App extends AbstractVerticle {
 
 
     });
-
 
 
     router.get(Const.adminCreateNewCourse)

@@ -40,7 +40,7 @@ public class Const {
   public static final String userMakeGroup = "/user/workshop/makeGroup";//nazadeh
   public static final String userWorkshopNewForm ="/user/workshop/newForm";//tamiz
   public static final String userGraderReport ="/user/graderReport";
-  public static final String userFinalReport ="/user/finalReport";
+  public static final String userFinalReport ="/user/finalReport";//nazadeh
   public static final String adminCreateNewCourse ="/admin/createNewCourse";
   public static final String adminEnterNewWorkshop ="/admin/enterNewWorkshop";
   public static final String superAdminCreateAdmin ="/superAdmin/createAdmin";
