@@ -165,8 +165,6 @@ public class EnteredCourse {
 
   public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
 
-
-
 	  int value = json.getInteger("value");
 	  JsonArray paymentParts = json.getJsonArray("paymentParts");
 	  String courseName = json.getString("course").toUpperCase();
@@ -204,7 +202,6 @@ public class EnteredCourse {
     });
 
   }
-
 
   public static void studentRequestStatus(
     MongoClient client ,
@@ -297,7 +294,33 @@ public class EnteredCourse {
     });
 	}
 
-//  public
+  public static void workshopStar(MongoClient client , JsonObject clientJson , String roleId ,
+                                  User user , Handler<AsyncResult<String>> handler){
+
+    EnteredCourse workshopId = new EnteredCourse(clientJson.getString("enteredCourseId"));
+    JsonObject searchWorkshop = new JsonObject().put("_id" , workshopId.get_id());
+
+    client.find(Const.enteredCourse , searchWorkshop , resSearchWorkshop ->{
+      if(resSearchWorkshop.succeeded() && !resSearchWorkshop.result().isEmpty()){//if we find workshop
+
+        EnteredCourse findedWorkshop = new EnteredCourse(resSearchWorkshop.result().get(0));
+        System.out.println(roleId);
+        if(roleId.equals("")){ //we don't have role id
+          //should find it
+          user.findRoleId(client , findedWorkshop , handler);
+
+        }
+        else{ //we have role id
+          user.searchInRoleId(client , roleId , handler);
+          //check and search between user roles if exist do nothing if don't exist send response
+        }
+      }
+      else{ //if we don't find workshop
+        handler.handle(Future.failedFuture("Don't find workshop."));
+      }
+    });
+  }
+
 
 }
 
