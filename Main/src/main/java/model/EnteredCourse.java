@@ -162,7 +162,7 @@ public class EnteredCourse {
   public static void studentRequestStatus(
     MongoClient client ,
     JsonObject clientJson ,
-    JsonObject userJson ,
+    User user ,
     Handler<AsyncResult<String>> handler){
 
 	  String courseName = clientJson.getString("course");
@@ -172,7 +172,7 @@ public class EnteredCourse {
 	    JsonObject course = resFind.result().get(0);
         JsonArray courseList = course.getJsonArray("neededCourse");
 
-        User.passedCourses(client,userJson,resPassedCourses->{
+        User.passedCourses(client,user,resPassedCourses->{
 
           if (User.preCoursesPassed(courseList,resPassedCourses.result()))
               handler.handle(Future.succeededFuture(""));

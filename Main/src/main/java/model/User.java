@@ -133,25 +133,9 @@ public class User {
 
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  public ArrayList<Role> getRoles() {
+    return roles;
+  }
 
   public void login(MongoClient client , Handler<AsyncResult<String>> handler){
 
@@ -291,9 +275,9 @@ public class User {
   public static void returnRoles(
     MongoClient client,
     ArrayList<JsonObject> arr,
-    List rolesId,
+    ArrayList<String> rolesId,
     int counter,
-    Handler<AsyncResult<ArrayList>> handler){
+    Handler<AsyncResult<ArrayList<JsonObject>>> handler){
 
     if( counter == rolesId.size())
       handler.handle(Future.succeededFuture(arr));
@@ -331,15 +315,17 @@ public class User {
 
   public static void passedCourses(
     MongoClient client,
-    JsonObject userJson,
+    User user,
     Handler<AsyncResult<ArrayList<String>>> handler){
 
-    //#Delete
-    if(userJson.getJsonArray("role") == null)
-      userJson.put("roles",new JsonArray());
+    ArrayList<String> rolesId = new ArrayList<>();
+
+    for(int i = 0 ; i < user.getRoles().size() ; i++ ){
+      rolesId.add(user.getRoles().get(i).get_id());
+    }
 
 
-    User.returnRoles(client,new ArrayList<JsonObject>(),userJson.getJsonArray("roles").getList(),0,res->{
+    User.returnRoles(client,new ArrayList<JsonObject>(),rolesId,0,res->{
 
       ArrayList<JsonObject> studentRoles = filterByRoleName("Student",res.result());
 
