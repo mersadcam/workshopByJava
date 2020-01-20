@@ -19,11 +19,8 @@ public class Report {
 	private Performance performance;
 	private ArrayList<FormAnswer> answer = new ArrayList<FormAnswer>();
 
-	public Report(Status studentCourseStatus , String finalNumber , Performance performance ){
+	public Report(){
 	  this._id = new ObjectId().toString();
-	  this.studentCourseStatus = studentCourseStatus;
-	  this.finalNumber = finalNumber;
-	  this.performance = performance;
   }
 
 	public Report(JsonObject jsonObject){
@@ -46,6 +43,18 @@ public class Report {
 
   public String get_id() {
     return _id;
+  }
+
+  public void setFinalNumber(String finalNumber) {
+    this.finalNumber = finalNumber;
+  }
+
+  public void setPerformance(Performance performance) {
+    this.performance = performance;
+  }
+
+  public void setStudentCourseStatus(Status studentCourseStatus) {
+    this.studentCourseStatus = studentCourseStatus;
   }
 
   public Status stringToStatus(String status){
@@ -113,6 +122,12 @@ public class Report {
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
 
     client.insert(Const.report,this.toJson(),handler);
+
+  }
+
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.report,this.toJson(),handler->{});
 
   }
 

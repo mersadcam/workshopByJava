@@ -21,7 +21,11 @@ public class Student implements RequestType{
 	  this.paymentStatus = paymentStatus;
 
   }
-  public Student(){}
+  public Student(){
+
+	  this._id = new ObjectId().toString();
+
+  }
   public Student(String _id){
 	  this._id = _id;
   }
@@ -53,6 +57,12 @@ public class Student implements RequestType{
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
 
 	  client.insert(Const.role, this.toJson() ,handler);
+
+  }
+
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.role, this.toJson() ,handler->{});
 
   }
 

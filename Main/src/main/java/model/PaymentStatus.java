@@ -93,6 +93,12 @@ public class PaymentStatus {
 
   }
 
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.paymentStatus,this.toJson(),handler->{});
+
+  }
+
   public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject().put("_id",this._id);
