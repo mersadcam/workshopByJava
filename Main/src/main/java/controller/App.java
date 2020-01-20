@@ -460,22 +460,34 @@ public class App extends AbstractVerticle {
     router.get(Const.adminCreateNewCourse)
       .handler(ctx ->{
 
-        HttpServerResponse response = ctx.response();
         JsonObject clientJson = ctx.get("clientJson");
-        JsonObject toResponse = new JsonObject();
+        String name = clientJson.getString("name").toUpperCase();
+        String description = clientJson.getString("description");
+        client.find(Const.course,new JsonObject().put("name",name),resFind->{
+
+          if(resFind.result().isEmpty()){
+
+            Course course = new Course(name,description);
+            course.saveToDB(client);
+
+            ctx.response().end(new JsonObject()
+            .put("status","true")
+            .put("msg","New course added successfully")
+            .put("body",course.toJson()).toString());
+
+          }else{
+
+            ctx.response().end(new JsonObject()
+              .put("status","false")
+              .put("msg","This course has already saved")
+              .toString());
+
+          }
+
+        });
 
         Course course = new Course(clientJson.getString("name"),clientJson.getString("description"));
 
-        course.createNewCourse(client,clientJson,resCreate->{
-
-          if(resCreate.succeeded())
-            toResponse.put("status","true");
-          else
-            toResponse.put("status","false");
-
-          response.end(toResponse.toString());
-
-        });
 
 
       });
