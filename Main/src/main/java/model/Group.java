@@ -83,4 +83,20 @@ public class Group {
 
 
   }
+
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.group,this.toJson(),handler->{});
+
+  }
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.group,query,update,handler->{});
+
+
+  }
 }

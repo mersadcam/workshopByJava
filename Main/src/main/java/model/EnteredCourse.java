@@ -1,6 +1,7 @@
 package model;
 
 import controller.Const;
+import dev.morphia.annotations.Id;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -10,9 +11,12 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import org.bson.types.ObjectId;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.SimpleTimeZone;
 
 public class EnteredCourse {
 
@@ -26,6 +30,7 @@ public class EnteredCourse {
 	private String place;
 	private int capacity;
 	private String description;
+	private ArrayList<Group> groups = new ArrayList<Group>();
 
   public  EnteredCourse(String _id){
     this._id = _id;
@@ -64,8 +69,23 @@ public class EnteredCourse {
 	  this.paymentParts = json.getJsonArray("paymentParts");
 	  this._id = json.getString("_id");
     this.course = new Course(json.getString("_id"));
+
+    JsonArray groupsId = json.getJsonArray("groups");
+
+    for (int i = 0 ; i < groupsId.size() ; i++){
+      this.groups.add(new Group(groupsId.getString(i)));
+    }
+
+
   }
 
+  public void addGroup(Group group){
+    this.groups.add(group);
+  }
+
+  public ArrayList<Group> getGroups(){
+    return this.groups;
+  }
 
   public String getCourseName() {
     return this.course.getName();
@@ -82,6 +102,11 @@ public class EnteredCourse {
   }
 
   public JsonObject toJson(){
+    JsonArray jsonArray = new JsonArray();
+
+    for (int i = 0 ; i < this.groups.size() ; i++ ){
+      jsonArray.add(this.groups.get(i).get_id());
+    }
 
 	  JsonObject json = new JsonObject()
       .put("_id",this._id)
@@ -92,7 +117,8 @@ public class EnteredCourse {
       .put("description",this.description)
       .put("value",this.value)
       .put("paymentParts",this.paymentParts)
-      .put("course",this.course.getName());
+      .put("course",this.course.getName())
+      .put("groups",jsonArray);
 
 	  return json;
   }
@@ -109,6 +135,21 @@ public class EnteredCourse {
     JsonObject update = new JsonObject().put("$set",this.toJson());
 
     client.updateCollection(Const.enteredCourse,query,update,handler);
+
+  }
+
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.enteredCourse,this.toJson(),handler->{});
+
+  }
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.enteredCourse,query,update,handler->{});
 
   }
 
@@ -211,7 +252,7 @@ public class EnteredCourse {
   }
 
 
-  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , JsonObject userJson , Handler<AsyncResult<String>> handler){
+  public static void graderRequestForWorkshop(MongoClient client , JsonObject clientJson , User user , Handler<AsyncResult<String>> handler){
 
 	  JsonObject enteredCourseId = new JsonObject()
       .put("_id",clientJson.getString("enteredCourseId"));
@@ -222,47 +263,22 @@ public class EnteredCourse {
 
         EnteredCourse workshop = new EnteredCourse(res.result().get(0));
 
-        JsonObject grader = new JsonObject()
-          .put("_id", new ObjectId().toString())
-          .put("requestDate", clientJson.getString("requestDate"))
-          .put("roleName", "grader")
-          .put("course", workshop.getCourseName());
+        String time = new SimpleDateFormat("HH-dd-MM-yyyy").format(new java.util.Date());
+        Grader grader = new Grader( time );
+        grader.saveToDB(client);
+        Report report = new Report();
+        report.saveToDB(client);
+        Identity identity = new Identity(report ,grader , new Course(workshop.getCourseName()),"Grader");
+        identity.saveToDB(client);
+        user.addRole(identity);
+        user.update(client);
 
-        client.insert(Const.role, grader, resInsertGrader -> {
-          if (resInsertGrader.succeeded()) {
-
-            JsonArray userRoles = userJson.getJsonArray("roles");
-
-            userRoles.add(grader.getString("_id"));
-
-            JsonObject graderNew = new JsonObject().put("roles", userRoles);
-            JsonObject userRolesNew = new JsonObject().put("$set", graderNew);
-
-            client.updateCollection(Const.user, new JsonObject().put("token", userJson.getString("token")), userRolesNew, resRolesUpdate -> {
-              if (resRolesUpdate.succeeded()) {
-
-                JsonArray workshopGroup = res.result().get(0).getJsonArray("group");
-
-                workshopGroup.add(grader.getString("_id"));
-
-                JsonObject workshopGroupJsonNew = new JsonObject()
-                  .put("$set", new JsonObject().put("group", workshopGroup));
-
-                client.updateCollection(Const.enteredCourse, enteredCourseId, workshopGroupJsonNew, resGroupUpdate -> {
-
-                  if (resGroupUpdate.succeeded()) {
-                    handler.handle(Future.succeededFuture("succeeded"));
-                  } else {//cannot add group to enterd course collection
-                    handler.handle(Future.failedFuture("cannot add group to enterd course collection"));
-                  }
-                });
-              } else {//cannot update roles id in the user collection
-                handler.handle(Future.failedFuture("cannot update roles id in the user collection"));
-              }
-            });
-          } else {
-            handler.handle(Future.failedFuture("cannot add grader to role in db "));
-          }
+        client.find(Const.group , new JsonObject().put("_id",workshop.getGroups().get(0).get_id()) , resFindGroup ->{
+          Group group = new Group(resFindGroup.result().get(0));
+          group.addIdentity(identity);
+          group.update(client , resUpdate->{
+            handler.handle(Future.succeededFuture());
+          });
         });
       }
 	    else{//didn't find workshop in db
@@ -270,7 +286,5 @@ public class EnteredCourse {
       }
     });
 	}
-
-
 }
 

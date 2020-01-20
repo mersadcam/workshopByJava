@@ -120,4 +120,7 @@ public class Grader implements RequestType , FormWriter {
 
   }
 
+  public void saveToDB(MongoClient client) {
+    client.insert(Const.role,this.toJson(),handler->{});
+  }
 }

@@ -132,6 +132,20 @@ public class User {
     client.updateCollection(Const.user,query,update,handler);
 
   }
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.user,this.toJson(),handler->{});
+
+  }
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("token",this.token);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.user,query,update,handler->{});
+
+  }
 
   public ArrayList<Role> getRoles() {
     return roles;
@@ -374,6 +388,7 @@ public class User {
     return toReturn;
 
   }
+
   public static void passedStudent(
     MongoClient client,
     ArrayList<JsonObject> arr,

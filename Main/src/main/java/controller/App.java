@@ -205,8 +205,9 @@ public class App extends AbstractVerticle {
         JsonObject toResponse = new JsonObject();
         JsonObject clientJson = ctx.get("clientJson");
         JsonObject userJson = ctx.get("userJson");
+        User user = new User(userJson);
 
-        EnteredCourse.graderRequestForWorkshop(client , clientJson , userJson , handler ->{
+        EnteredCourse.graderRequestForWorkshop(client , clientJson , user , handler ->{
           if(handler.succeeded()){
             toResponse
               .put("status","true");
