@@ -290,10 +290,12 @@ public class User {
 
     else{
 
-
+      System.out.println(rolesId);
       client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)), res->{
 
-        arr.add(res.result().get(0));
+        if (!res.result().isEmpty())
+          arr.add(res.result().get(0));
+
         returnRoles(client,arr,rolesId,counter+1,handler);
 
       });

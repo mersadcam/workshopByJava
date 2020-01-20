@@ -93,12 +93,28 @@ public class Payment {
 
   }
 
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.payment,this.toJson(),handler->{});
+
+  }
+
   public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
 	  JsonObject query = new JsonObject().put("_id",this._id);
 	  JsonObject update = new JsonObject().put("$set",this.toJson());
 
 	  client.updateCollection(Const.payment,query,update,handler);
+
+  }
+
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.payment,query,update,handler->{});
 
   }
 

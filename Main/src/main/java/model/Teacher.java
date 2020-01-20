@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Teacher implements Role,FormWriter{
 
   private String _id;
-  private String roleName;
+  private String roleName = "Teacher";
 	private ArrayList<Form> forms = new ArrayList<Form>();
 	private EnteredCourse enteredCourse;
 
@@ -26,7 +26,11 @@ public class Teacher implements Role,FormWriter{
 	  this._id = new ObjectId().toString();
 
   }
-  public Teacher(){}
+  public Teacher(){
+
+	  this._id = new ObjectId().toString();
+
+  }
 
   public Teacher(String _id){
 	  this._id = _id;
@@ -53,6 +57,10 @@ public class Teacher implements Role,FormWriter{
     return forms;
   }
 
+  public void setEnteredCourse(EnteredCourse enteredCourse) {
+    this.enteredCourse = enteredCourse;
+  }
+
   public JsonObject toJson(){
 
 	  JsonArray formsTeacher = new JsonArray();
@@ -76,6 +84,13 @@ public class Teacher implements Role,FormWriter{
     client.insert(Const.role,this.toJson(),handler);
 
   }
+
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.role,this.toJson(),handler->{});
+
+  }
+
 
   public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 

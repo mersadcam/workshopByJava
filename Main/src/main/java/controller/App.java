@@ -124,7 +124,7 @@ public class App extends AbstractVerticle {
             gender
           );
 
-          cp.saveToDB(client);
+
 
           String username  = json.getString("username");
           String password = json.getString("password");
@@ -133,6 +133,7 @@ public class App extends AbstractVerticle {
 
           User user = new User( cp , username , password , userType);
           user.setToken();
+          cp.saveToDB(client);
           user.saveToDB(client);
 
           ctx.response().end(new JsonObject()
@@ -276,34 +277,40 @@ public class App extends AbstractVerticle {
             if (!resFind.result().isEmpty()) {
 
               EnteredCourse workshop = new EnteredCourse(resFind.result().get(0));
-              JsonArray paymentParts = workshop.getPaymentParts();
+              JsonObject paymentParts = workshop.getPaymentParts();
               int workshopValue = workshop.getValue();
 
-              Payment payment;
+              Payment payment ;
               PaymentStatus paymentStatus = new PaymentStatus(workshopValue);
 
               if (clientJson.getString("paymentType").equals("cash")) {
 
-                payment = new Payment(paymentParts.getJsonObject(0).getString("name"),
-                  paymentParts.getJsonObject(0).getString("time"),
+                String paymentTime = paymentParts.getJsonObject("cash").getString("time");
+
+
+                payment = new Payment("",
+                  paymentTime,
                   workshopValue);
-                payment.saveToDB(client,save->{});
+
                 paymentStatus.addPayment(payment);
+
+                payment.saveToDB(client);
                 paymentStatus.saveToDB(client);
 
               } else {
 
+                JsonArray payments = workshop.getPaymentParts().getJsonArray("installment");
 
-                JsonArray listOfJson = workshop.getPaymentParts();
-                for (int i = 0; i < listOfJson.size(); i++) {
+                  for (int i = 0; i < payments.size(); i++) {
 
-                  payment = new Payment(listOfJson.getJsonObject(i).getString("name"),
-                    listOfJson.getJsonObject(i).getString("time"), listOfJson.getJsonObject(i).getInteger("value"));
-                  payment.saveToDB(client,save->{});
-                  paymentStatus.addPayment(payment);
+                    payment = new Payment(payments.getJsonObject(i).getString("name"),
+                      payments.getJsonObject(i).getString("time"), payments.getJsonObject(i).getInteger("value"));
+                    payment.saveToDB(client);
+                    paymentStatus.addPayment(payment);
 
-                }
-                paymentStatus.saveToDB(client);
+                  }
+                  paymentStatus.saveToDB(client);
+
               }
 
               Report report = new Report();
@@ -355,7 +362,6 @@ public class App extends AbstractVerticle {
         JsonObject clientJson = ctx.get("clientJson"); //sent from user
         User user = new User(userJson);
         JsonObject toResponse = new JsonObject();
-
         User.returnRoles(client,new ArrayList<JsonObject>(),user.getRolesId(),0,res->{
 
           JsonObject teacherJson = User.isTeacherInWorkshop(res.result(),clientJson.getString("workshopId"));
@@ -513,55 +519,20 @@ public class App extends AbstractVerticle {
         JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
         String username = clientJson.getString("teacher");
-        EnteredCourse.enterNewWorkshop(client,clientJson,res-> {
 
-          if (res.succeeded()){
+        EnteredCourse.enterNewWorkshop(client, clientJson,res-> {
+          if (res.failed()){
 
-              JsonObject jsonToCreateTeacher = new JsonObject();
-              jsonToCreateTeacher.put("roleName", "Teacher")
-                .put("_id", new ObjectId().toString())
-                .put("enteredCourse", res.result())
-                .put("form", new JsonArray());
-
-
-              client.insert(Const.role, jsonToCreateTeacher, resInsert -> {
-
-                JsonArray lastUserRoles = userJson.getJsonArray("roles");
-
-                if (lastUserRoles == null) {
-                  //#Delete
-                  lastUserRoles = new JsonArray();
-
-                }
-
-                JsonArray newUserRoles = lastUserRoles.add(jsonToCreateTeacher.getString("_id"));
-
-                client.updateCollection(Const.user, new JsonObject().put("username", username),
-                  new JsonObject().put("$set", new JsonObject().put("roles", newUserRoles)), resUpdate -> {
-
-                    if (resUpdate.succeeded()) {
-                      toResponse
-                        .put("status", "true")
-                        .put("msg", "Workshop Created Successfully");
-
-                    } else
-                      toResponse.put("status", "false").put("msg", "Error");
-
-                    response.end(toResponse.toString());
-
-                  });
-
-              });
-        }
-
-
-
-
-          else {
-
-            toResponse.put("status", "fasle");
+            toResponse.put("status", "fasle").put("msg",res.cause().getMessage());
             response.end(toResponse.toString());
 
+          }else{
+
+            ctx.response().end(new JsonObject()
+              .put("status","true")
+              .put("body",res.result())
+              .put("msg","Workshop is created successfully")
+            .toString());
           }
 
         });

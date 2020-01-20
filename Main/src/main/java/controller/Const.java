@@ -36,7 +36,7 @@ public class Const {
   public static final String userProfileEdit ="/user/profile/edit";
   public static final String userProfile ="/user/profile/"; //nazadim
   public static final String userWorkshops ="/user/workshops"; //tamiz it
-  public static final String userWorkshopStudentRequest ="/user/workshop/studentRequest";//need test
+  public static final String userWorkshopStudentRequest ="/user/workshop/studentRequest";
   public static final String userWorkshopGraderRequest = "/user/workshop/graderRequest";
   public static final String userWorkshop = "/user/workshop";//tamiz kon
   public static final String userMakeGroup = "/user/workshop/makeGroup";//nazadeh
@@ -49,11 +49,11 @@ public class Const {
   public static final String superAdminCreateAdmin ="/superAdmin/createAdmin";
 
 
-  public static int getEnteredCourseId() {
+  public static String generateWorkshopId() {
 //    enteredCourseId++; for system we should run it
     enteredCourseId = new Random().nextInt();
     enteredCourseId = Math.abs(enteredCourseId);
-    return enteredCourseId;
+    return String.valueOf(enteredCourseId);
   }
 
   public static void setEnteredCourseId(int number){
