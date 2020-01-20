@@ -43,7 +43,7 @@ public class User {
     this.userType = json.getString("userType");
     this.contactPoint = new ContactPoint(json.getString("contactPoint"));
 
-    JsonArray rolesId = json.getJsonArray("identities");
+    JsonArray rolesId = json.getJsonArray("roles");
 
     for (int i = 0 ; i < rolesId.size() ; i++){
       this.roles.add(new Identity(rolesId.getString(i)));

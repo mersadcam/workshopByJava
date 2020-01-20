@@ -68,7 +68,7 @@ public class EnteredCourse {
 	  this.value = json.getInteger("value");
 	  this.paymentParts = json.getJsonArray("paymentParts");
 	  this._id = json.getString("_id");
-    this.course = new Course(json.getString("_id"));
+    this.course = new Course(json.getString("course"));
 
     JsonArray groupsId = json.getJsonArray("groups");
 
@@ -272,7 +272,7 @@ public class EnteredCourse {
 
         EnteredCourse workshop = new EnteredCourse(res.result().get(0));
 
-        String time = new SimpleDateFormat("HH-dd-MM-yyyy").format(new java.util.Date());
+        String time = new SimpleDateFormat("yyyy-MM-dd-HH:mm").format(new java.util.Date());
         Grader grader = new Grader( time );
         grader.saveToDB(client);
         Report report = new Report();
@@ -282,7 +282,10 @@ public class EnteredCourse {
         user.addRole(identity);
         user.update(client);
 
-        client.find(Const.group , new JsonObject().put("_id",workshop.getGroups().get(0).get_id()) , resFindGroup ->{
+        String _id = workshop.getGroups().get(0).get_id();
+        JsonObject searchGroup = new JsonObject().put("_id",_id);
+
+        client.find(Const.group , searchGroup , resFindGroup ->{
           Group group = new Group(resFindGroup.result().get(0));
           group.addIdentity(identity);
           group.update(client , resUpdate->{

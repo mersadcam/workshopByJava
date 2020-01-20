@@ -34,7 +34,7 @@ public class Course {
 
   public Course(JsonObject json){
 
-	  this.name = json.getString("name");
+	  this.name = json.getString("name").toUpperCase();
 	  this.description = json.getString("description");
 
 	  JsonArray coursesName = json.getJsonArray("neededCourses");
