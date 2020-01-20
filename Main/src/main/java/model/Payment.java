@@ -33,6 +33,26 @@ public class Payment {
 	  this.time = time;
 	  this.value = value;
 	  this.paymentStatus = Status.NOTPAID;
+  }
+
+  public Payment(String _id){
+	  this._id = _id;
+  }
+
+  public Payment(JsonObject jsonObject){
+	  this._id = jsonObject.getString("_id");
+	  this.paymentName = jsonObject.getString("paymentName");
+	  this.time = jsonObject.getString("time");
+	  this.value = jsonObject.getInteger("value");
+	  this.paymentStatus = StringToStatus(jsonObject.getString("paymentStatus"));
+  }
+
+  public Status StringToStatus(String status){
+
+	  if(status.equals("PAID"))
+	    return Status.PAID;
+
+	  return Status.NOTPAID;
 
   }
 

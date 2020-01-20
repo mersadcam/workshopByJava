@@ -12,26 +12,26 @@ public class Student implements RequestType{
 
 
   private String _id;
-  private String roleName;
-  private Course course;
 	private PaymentStatus paymentStatus;
 
 
-	public Student(Course course,PaymentStatus paymentStatus){
+	public Student(PaymentStatus paymentStatus){
 
 	  this._id = new ObjectId().toString();
-	  this.roleName = "Student";
-	  this.course = course;
 	  this.paymentStatus = paymentStatus;
 
+  }
+  public Student(){}
+  public Student(String _id){
+	  this._id = _id;
+  }
+  public Student(JsonObject jsonObject){
+	  this._id = jsonObject.getString("_id");
+	  this.paymentStatus = new PaymentStatus(jsonObject.getString("paymentStatus"));
   }
 
   public String get_id() {
     return _id;
-  }
-
-  public void setCourse(Course course){
-	  this.course = course;
   }
 
   public void setPaymentStatus(PaymentStatus paymentStatus) {
@@ -41,9 +41,8 @@ public class Student implements RequestType{
   public JsonObject toJson(){
 
 	  JsonObject json = new JsonObject();
+
 	  json.put("_id",this._id)
-      .put("roleName",this.roleName)
-      .put("course",this.course.getName())
       .put("paymentStatus",this.paymentStatus.get_id());
 
 	  return json;
@@ -52,7 +51,7 @@ public class Student implements RequestType{
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
 
-	  client.insert(Const.role,this.toJson(),handler);
+	  client.insert(Const.role, this.toJson() ,handler);
 
   }
 

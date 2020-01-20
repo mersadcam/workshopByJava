@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import io.vertx.reactivex.ext.unit.Async;
+import org.bson.types.ObjectId;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class User {
   private ArrayList<Role> roles = new ArrayList<Role>();
 
   //OneToOne relationship :
+  private String _id;
   private ContactPoint contactPoint;
   private String username;
   private String password;
@@ -34,11 +36,32 @@ public class User {
 
   public User(JsonObject json) {
 
+    this._id = json.getString("_id");
     this.username = json.getString("username");
     this.password = json.getString("password");
     this.token = json.getString("token");
     this.userType = json.getString("userType");
+    this.contactPoint = new ContactPoint(json.getString("contactPoint"));
 
+    JsonArray rolesId = json.getJsonArray("identities");
+
+    for (int i = 0 ; i < rolesId.size() ; i++){
+      this.roles.add(new Identity(rolesId.getString(i)));
+    }
+
+  }
+
+  public User(String _id){
+    this._id = _id;
+  }
+
+  public User(ContactPoint contactPoint , String username , String password , String token , String userType){
+    this._id = new ObjectId().toString();
+    this.contactPoint = contactPoint;
+    this.username = username;
+    this.password = password;
+    this.token = token;
+    this.userType = userType;
   }
 
   public void setContactPoint(ContactPoint contactPoint) {
@@ -76,10 +99,19 @@ public class User {
   public JsonObject toJson(){
 
     JsonObject json = new JsonObject();
+    JsonArray roleJsonArray = new JsonArray();
+
+    for (int i = 0 ; i < this.roles.size() ; i++ ){
+      roleJsonArray.add(this.roles.get(i).get_id());
+    }
+
+
+
     json.put("username",this.username)
       .put("password",this.password)
       .put("token",this.token)
       .put("userType",this.userType)
+      .put("roles",roleJsonArray)
       .put("contactPoint",this.contactPoint.get_id());
 
     return json;

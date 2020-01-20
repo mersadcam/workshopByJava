@@ -24,9 +24,33 @@ public class Course {
 
 
 	public Course(String name , String description){
-	  this.name = name;
+	  this.name = name.toUpperCase();
 	  this.description = description;
   }
+
+  public Course(String name){
+	  this.name = name.toUpperCase();
+  }
+
+  public Course(JsonObject json){
+
+	  this.name = json.getString("name");
+	  this.description = json.getString("description");
+
+	  JsonArray coursesName = json.getJsonArray("neededCourses");
+
+	  for( int i = 0 ; i < coursesName.size() ; i++ )
+	    addCourse(new Course(coursesName.getString(i)));
+
+
+  }
+
+  public void addCourse(Course course){
+
+	  this.neededCourses.add(course);
+
+  }
+
 
   public void addToNeededCourses(Course course){
 
@@ -71,7 +95,6 @@ public class Course {
 
   }
 
-
   public void createNewCourse(MongoClient client, JsonObject json, Handler<AsyncResult<String>> handler){
 
 	  JsonObject toFind = new JsonObject()
@@ -104,7 +127,5 @@ public class Course {
     });
 
   }
-
-
 
 }

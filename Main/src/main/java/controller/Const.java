@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class Const {
 
+
   private static int enteredCourseId = 0;
 
   //Collections
@@ -19,6 +20,7 @@ public class Const {
   public static final String group = "group";
   public static final String payment = "payment";
   public static final String paymentStatus = "paymentStatus";
+  public static final String formAnswer = "formAnswer";
 
 
 
