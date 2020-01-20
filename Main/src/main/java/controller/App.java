@@ -104,26 +104,56 @@ public class App extends AbstractVerticle {
 
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
-      User user = new User(json);
-      ContactPoint cp = new ContactPoint(json);
-
-      cp.addCPToDB(client,res->{
-
-        user.register(client,res.result(),res1->{
-
-          if( res1.succeeded() ) {
-            response.end(res1.result());
-          }else{
-
-            response.setStatusCode(401);
-            response.end(res.result());
-
-          }
 
 
-        });
+
+      client.find(Const.user,new JsonObject().put("username",json.getString("username")),res->{
+
+        if(res.result().isEmpty()){
+
+          String firstName = json.getString("firstName");
+          String lastName = json.getString("lastName");
+          String emailAddress = json.getString("emailAddress");
+          String gender  = json.getString("gender");
+
+
+          ContactPoint cp = new ContactPoint(
+            firstName,
+            lastName,
+            emailAddress,
+            gender
+          );
+
+          cp.saveToDB(client);
+
+          String username  = json.getString("username");
+          String password = json.getString("password");
+          String userType = "user";
+
+
+          User user = new User( cp , username , password , userType);
+          user.setToken();
+          user.saveToDB(client);
+
+          ctx.response().end(new JsonObject()
+            .put("status","true")
+            .put("body",
+              new JsonObject()
+                .put("token",user.getToken())
+                .put("userType",user.getUserType())
+                ).toString());
+
+        }
+
+        else{
+
+          ctx.response().end(new JsonObject().put("status","false").put("msg","this User have saved before").toString());
+
+        }
 
       });
+
+
 
     });
 
@@ -133,13 +163,15 @@ public class App extends AbstractVerticle {
       .handler(BodyHandler.create())
       .handler(ctx ->{
 
-        HttpServerResponse response = ctx.response();
         JsonObject json = ctx.getBodyAsJson();
-        User user = new User(json);
 
-        user.login(client,res->{
 
-            response.end(res.result());
+        User.login(client,json,res->{
+
+          if (res.succeeded())
+            ctx.response().end(res.result().toString());
+          else
+            ctx.response().end(new JsonObject().put("status","false").put("msg","username or password is wrong").toString());
 
         });
 
@@ -158,7 +190,7 @@ public class App extends AbstractVerticle {
         String CP_id = userJson.getString("contactPoint");
         User user = new User(userJson);
 
-        user.editProfile(client , json,userType,CP_id, handle -> {
+        user.editProfile(client , user ,json , CP_id , handle -> {
 
           if (handle.succeeded())
             toResponse.put("status", "true");
@@ -226,7 +258,6 @@ public class App extends AbstractVerticle {
     router.route(Const.userWorkshopStudentRequest)
       .handler(ctx->{
 
-      JsonObject toResponse = new JsonObject();
       JsonObject clientJson = ctx.get("clientJson");
       JsonObject userJson = ctx.get("userJson");
       User user = new User(userJson);
@@ -553,10 +584,9 @@ public class App extends AbstractVerticle {
       .handler(ctx ->{
 
         JsonObject toResponse = new JsonObject();
-        JsonObject user = ctx.get("userJson");
-        User userSignOut = new User(user);
+        JsonObject userJson = ctx.get("userJson");
 
-        userSignOut.signout(client , userSignOut.getToken() , res ->{
+        User.signout(client , userJson.getString("token") , res ->{
           if(res.succeeded()){
             toResponse
               .put("status","true")

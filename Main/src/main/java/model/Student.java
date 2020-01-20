@@ -56,13 +56,13 @@ public class Student implements RequestType{
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
 
-	  client.insert(Const.role, this.toJson() ,handler);
+	  client.insert(Const.student, this.toJson() ,handler);
 
   }
 
   public void saveToDB(MongoClient client){
 
-    client.insert(Const.role, this.toJson() ,handler->{});
+    client.insert(Const.student, this.toJson() ,handler->{});
 
   }
 
@@ -71,7 +71,7 @@ public class Student implements RequestType{
     JsonObject query = new JsonObject().put("_id",this._id);
     JsonObject update = new JsonObject().put("$set",this.toJson());
 
-    client.updateCollection(Const.role,query,update,handler);
+    client.updateCollection(Const.student,query,update,handler);
 
   }
 

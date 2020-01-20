@@ -21,9 +21,8 @@ public class Const {
   public static final String payment = "payment";
   public static final String paymentStatus = "paymentStatus";
   public static final String formAnswer = "formAnswer";
-
-
-
+  public static final String student = "student";
+  public static final String grader = "grader";
 
 
   //Routes

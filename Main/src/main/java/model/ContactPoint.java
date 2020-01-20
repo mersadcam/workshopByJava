@@ -16,12 +16,12 @@ public class ContactPoint {
 	private String emailAddress;
   private Gender gender;
 
-	public ContactPoint(String firstName, String lastName, String emailAddress, Gender gender){
+	public ContactPoint(String firstName, String lastName, String emailAddress, String gender){
 	  this._id = new ObjectId().toString();
 	  this.firstName = firstName;
 	  this.lastName = lastName;
 	  this.emailAddress = emailAddress;
-	  this.gender = gender;
+	  this.gender = stringToGender(gender);
   }
 
   public ContactPoint(String _id){
@@ -34,7 +34,7 @@ public class ContactPoint {
     this.lastName = json.getString("lastName");
     this.emailAddress = json.getString("emailAddress");
     this._id = json.getString("_id");
-    this.gender = StringToGender(json.getString("gender"));
+    this.gender = stringToGender(json.getString("gender"));
 
   }
 
@@ -70,6 +70,12 @@ public class ContactPoint {
 
   }
 
+  public void saveToDB(MongoClient client){
+
+    client.insert(Const.contactPoint,this.toJson(),handler->{});
+
+  }
+
   public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     JsonObject query = new JsonObject().put("_id",this._id);
@@ -77,6 +83,32 @@ public class ContactPoint {
 
     client.updateCollection(Const.contactPoint,query,update,handler);
 
+  }
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.contactPoint,query,update,handler->{});
+
+  }
+
+
+  public void setEmailAddress(String emailAddress) {
+    this.emailAddress = emailAddress;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public void setGender(String gender) {
+    this.gender = stringToGender(gender);
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public void addCPToDB(MongoClient client , Handler<AsyncResult<String>> handler){
@@ -105,7 +137,7 @@ public class ContactPoint {
       .put("emailAddress",json.getValue("emailAddress"))
       .put("firstName",json.getValue("firstName"))
       .put("lastName",json.getValue("lastName"))
-      .put("gender",StringToGender(json.getString("gender")));
+      .put("gender",stringToGender(json.getString("gender")));
 
     JsonObject update = new JsonObject().put("$set",toSet);
     JsonObject query = new JsonObject().put("_id", _id);
@@ -114,7 +146,7 @@ public class ContactPoint {
 
   }
 
-  public static Gender StringToGender(String genderString){
+  public static Gender stringToGender(String genderString){
 
 	  Gender gender;
 

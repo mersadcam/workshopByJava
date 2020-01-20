@@ -43,7 +43,7 @@ public class User {
     this.userType = json.getString("userType");
     this.contactPoint = new ContactPoint(json.getString("contactPoint"));
 
-    JsonArray rolesId = json.getJsonArray("identities");
+    JsonArray rolesId = json.getJsonArray("roles");
 
     for (int i = 0 ; i < rolesId.size() ; i++){
       this.roles.add(new Identity(rolesId.getString(i)));
@@ -55,12 +55,11 @@ public class User {
     this._id = _id;
   }
 
-  public User(ContactPoint contactPoint , String username , String password , String token , String userType){
+  public User(ContactPoint contactPoint , String username , String password , String userType){
     this._id = new ObjectId().toString();
     this.contactPoint = contactPoint;
     this.username = username;
     this.password = password;
-    this.token = token;
     this.userType = userType;
   }
 
@@ -72,6 +71,10 @@ public class User {
 
     this.roles.add(role);
 
+  }
+
+  public String getUserType() {
+    return userType;
   }
 
   public String getUsername() {
@@ -90,6 +93,10 @@ public class User {
     byte[] randomBytes = new byte[24];
     secureRandom.nextBytes(randomBytes);
     return base64Encoder.encodeToString(randomBytes);
+  }
+
+  public String getContactPointId() {
+    return contactPoint.get_id();
   }
 
   public void setToken() {
@@ -163,24 +170,31 @@ public class User {
 
   }
 
-  public void login(MongoClient client , Handler<AsyncResult<String>> handler){
+  public static void login(MongoClient client , JsonObject json , Handler<AsyncResult<JsonObject>> handler){
+
+
+    String username = json.getString("username");
+    String password = json.getString("password");
+
 
     JsonObject query = new JsonObject()
-      .put("username",this.username)
-      .put("password",this.password);
+      .put("username",username)
+      .put("password",password);
 
     client.find(Const.user,query,res->{
 
       if (!res.result().isEmpty()){
-        this.setToken();
-        JsonObject token =  new JsonObject()
-          .put("token", this.token)
-          .put("userType",res.result().get(0).getString("userType"));
+
+        String token = generateNewToken();
 
         client.updateCollection(Const.user , query , new JsonObject().put("$set",new JsonObject()
-        .put("token",this.token)),result->{
+        .put("token",token)),result->{
 
-          handler.handle(Future.succeededFuture(token.toString()));
+          JsonObject toResponse = new JsonObject()
+            .put("token",token)
+            .put("userType",res.result().get(0).getString("userType"));
+
+          handler.handle(Future.succeededFuture(new JsonObject().put("body",toResponse).put("status","true")));
 
         });
 
@@ -198,46 +212,7 @@ public class User {
 
   }
 
-  public void register(MongoClient client,String contactPointId , Handler<AsyncResult<String>> handler ) {
-
-
-
-    //startTransaction :
-
-    client.find(Const.user,new JsonObject()
-    .put("username",this.username),res->{
-
-      if(res.result().isEmpty()){
-        this.setToken();
-        JsonObject json = new JsonObject()
-          .put("username",this.username)
-          .put("password",this.password)
-          .put("token",this.token)
-          .put("contactPoint",contactPointId)
-          .put("userType","user");
-
-        client.insert("user",json,ctx->{
-
-          JsonObject token = new JsonObject()
-            .put("token",this.token);
-          handler.handle(Future.succeededFuture(token.toString()));
-
-        });
-
-      }else{
-
-        handler.handle(Future.failedFuture(""));
-
-      }
-
-
-    });
-
-    //commitTransaction
-
-  }
-
-  public void editProfile(MongoClient client,JsonObject editJson,String collection ,String contactPoint_id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public static void editProfile(MongoClient client,User user , JsonObject editJson , String contactPoint_id , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
     String username,gender,emailAddress,firstName,lastName;
 
@@ -255,20 +230,25 @@ public class User {
       handler.handle(Future.failedFuture(""));
     }else {
 
-      client.find(collection , new JsonObject().put("username", username), resDup -> {
+      client.find(Const.user , new JsonObject().put("username", username) , resDup -> {
 
-        if (this.username.equals(username) || resDup.result().isEmpty()) {
+        if (user.getUsername().equals(username) || resDup.result().isEmpty()) {
 
-          JsonObject toSet = new JsonObject().put("username",username);
-          JsonObject update = new JsonObject().put("$set", toSet);
+          user.setUsername(username);
+          user.update(client,res->{
 
-          client.updateCollection(collection,new JsonObject().put("token",this.token), update , resUp->{
+            client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resFind->{
 
+              ContactPoint cp = new ContactPoint(resFind.result().get(0));
+              cp.setFirstName(firstName);
+              cp.setEmailAddress(emailAddress);
+              cp.setLastName(lastName);
+              cp.setGender(gender);
+              cp.update(client,handler);
 
+            });
 
-            ContactPoint.editContactPoint(client,editJson,contactPoint_id, handler);
-
-          } );
+          });
 
         }
         else{

@@ -55,7 +55,7 @@ public class Grader implements RequestType , FormWriter {
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
 
-    client.insert(Const.role,this.toJson(),handler);
+    client.insert(Const.grader,this.toJson(),handler);
 
   }
 
@@ -64,7 +64,7 @@ public class Grader implements RequestType , FormWriter {
     JsonObject query = new JsonObject().put("_id",this._id);
     JsonObject update = new JsonObject().put("$set",this.toJson());
 
-    client.updateCollection(Const.role,query,update,handler);
+    client.updateCollection(Const.grader,query,update,handler);
 
   }
 
@@ -121,6 +121,6 @@ public class Grader implements RequestType , FormWriter {
   }
 
   public void saveToDB(MongoClient client) {
-    client.insert(Const.role,this.toJson(),handler->{});
+    client.insert(Const.grader,this.toJson(),handler->{});
   }
 }
