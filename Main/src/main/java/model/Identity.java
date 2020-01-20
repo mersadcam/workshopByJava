@@ -29,6 +29,7 @@ public class Identity implements Role {
   }
 
   public Identity(JsonObject jsonObject){
+    // inja baadesh namidanam che konam ???
     this._id = jsonObject.getString("_id");
     this.roleName = jsonObject.getString("roleName");
     this.report = new Report(jsonObject.getString("report"));

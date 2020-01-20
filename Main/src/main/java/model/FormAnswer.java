@@ -32,6 +32,7 @@ public class FormAnswer {
 	  this._id = jsonObject.getString("_id");
 	  this.jsonAnswer = jsonObject.getJsonObject("form");
 	  this.form = new Form(jsonObject.getString("form"));
+
   }
   public FormAnswer(String _id){
 	  this._id = _id;

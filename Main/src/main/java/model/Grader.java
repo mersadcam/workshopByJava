@@ -18,12 +18,16 @@ public class Grader implements RequestType , FormWriter {
   private String _id;
 	private String requestDate;
 
+	//contructor dige ro namidonam chitor benvisam
+  //yaani faghat hamin 2 ta ro dare???
+
 	public Grader( String requestDate ){
 
 	  this._id = new ObjectId().toString();
 	  this.requestDate = requestDate;
 
   }
+
   public Grader(JsonObject jsonObject){
 	  this._id = jsonObject.getString("_id");
 	  this.requestDate = jsonObject.getString("requestDate");

@@ -26,6 +26,7 @@ public class Student implements RequestType{
 	  this._id = _id;
   }
   public Student(JsonObject jsonObject){
+	  //payment status ham inja dorost kon
 	  this._id = jsonObject.getString("_id");
 	  this.paymentStatus = new PaymentStatus(jsonObject.getString("paymentStatus"));
   }
