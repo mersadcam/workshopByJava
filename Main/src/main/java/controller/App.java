@@ -248,7 +248,7 @@ public class App extends AbstractVerticle {
           else {
             toResponse
               .put("status","false")
-              .put("msg","cannot add grader request");
+              .put("msg",handler.cause());
 
           }
           ctx.response().end(toResponse.toString());

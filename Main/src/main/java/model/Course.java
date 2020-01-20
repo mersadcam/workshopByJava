@@ -34,7 +34,7 @@ public class Course {
 
   public Course(JsonObject json){
 
-	  this.name = json.getString("name");
+	  this.name = json.getString("name").toUpperCase();
 	  this.description = json.getString("description");
 
 	  JsonArray coursesName = json.getJsonArray("neededCourses");
@@ -59,7 +59,7 @@ public class Course {
   }
 
   public String getName() {
-    return name;
+    return name.toUpperCase();
   }
 
   public JsonObject toJson(){
@@ -69,7 +69,7 @@ public class Course {
     JsonArray CoursesName = new JsonArray();
 
     for (int i = 0 ; i < this.neededCourses.size() ; i++ ){
-      CoursesName.add(this.neededCourses.get(i).getName());
+      CoursesName.add(this.neededCourses.get(i).getName().toUpperCase());
     }
 
     json.put("name",this.getName())

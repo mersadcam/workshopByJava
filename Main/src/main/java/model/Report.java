@@ -21,6 +21,8 @@ public class Report {
 
 	public Report(){
 	  this._id = new ObjectId().toString();
+	  this.performance = Performance.NOTSET;
+	  this.studentCourseStatus = Status.NOTPASSED;
   }
 
 	public Report(JsonObject jsonObject){
@@ -68,17 +70,19 @@ public class Report {
 
   public Performance stringToPerformance(String performance){
 
-	  if(performance.equals("BAD"))
+	  if(performance.toUpperCase().equals("BAD"))
 	    return Performance.BAD;
 
-	  if(performance.equals("NOTBAD"))
+	  if(performance.toUpperCase().equals("NOTBAD"))
 	    return Performance.NOTBAD;
 
-	  if(performance.equals("GOOD"))
+	  if(performance.toUpperCase().equals("GOOD"))
 	    return Performance.GOOD;
 
-	  return Performance.EXCELLENT;
+    if(performance.toUpperCase().equals("EXCELLENT"))
+	    return Performance.EXCELLENT;
 
+    return Performance.NOTSET;
   }
 
   public void set_id(String _id) {
@@ -94,7 +98,8 @@ public class Report {
 		BAD,
 		NOTBAD,
 		GOOD,
-		EXCELLENT
+		EXCELLENT,
+    NOTSET
 	}
 
 	public void addAnswer(FormAnswer formAnswer){
@@ -113,7 +118,7 @@ public class Report {
       .put("_id",this._id)
       .put("studentStatusCourse",this.studentCourseStatus)
       .put("finalNumber",this.finalNumber)
-      .put("performance",this.performance)
+      .put("performance",this.performance.toString())
       .put("answer",jsonArray);
 
 	  return jsonObject;
