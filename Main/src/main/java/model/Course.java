@@ -74,7 +74,7 @@ public class Course {
 
     json.put("name",this.getName())
       .put("description",description)
-      .put("neededCourse",CoursesName);
+      .put("neededCourses",CoursesName);
 
     return json;
 
@@ -95,37 +95,20 @@ public class Course {
 
   }
 
-  public void createNewCourse(MongoClient client, JsonObject json, Handler<AsyncResult<String>> handler){
+  public void saveToDB(MongoClient client){
 
-	  JsonObject toFind = new JsonObject()
-      .put("name",this.name);
-
-	  client.find("course",toFind,resFind ->{
-
-	    if(resFind.result().isEmpty()){
-
-        JsonArray jsonArray = json.getJsonArray("neededCourses");
-
-        JsonObject forInsert = new JsonObject()
-          .put("_id",new ObjectId().toString())
-          .put("name",json.getString("name"))
-          .put("description",json.getString("description"))
-          .put("neededCourses",json.getJsonArray("neededCourse"));
-
-        client.insert("course",forInsert,resInsert->{
-
-          handler.handle(Future.succeededFuture(""));
-
-        });
-
-
-      }else
-	      handler.handle(Future.failedFuture("duplicated"));
-
-
-
-    });
+    client.insert(Const.course,this.toJson(),handler->{});
 
   }
+
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("name",this.name);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.course,query,update,handler->{});
+
+  }
+
 
 }
