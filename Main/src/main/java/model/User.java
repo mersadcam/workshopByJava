@@ -438,7 +438,11 @@ public class User {
     //don't debug this part for teacher
     client.find(Const.role , new JsonObject().put("roleName","teacher").put("_id",enteredCourse.getGroups().get(0).get_id()) , res->{
       if(res.succeeded() && !res.result().isEmpty()){
-        JsonArray teachers = res.result().get(0).getJsonArray("teacher");//you should know how save teachers
+
+        JsonArray teachers = new JsonArray();
+        for(int i = 0 ; i < res.result().size() ; i++){
+          teachers.add(res.result().get(i).getString("_id"));
+        }
 
         String teacherRoleId = null;
         teacherRoleId = isIdentityInRole(teachers,user.getRoles());

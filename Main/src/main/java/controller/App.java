@@ -32,7 +32,6 @@ public class App extends AbstractVerticle {
   public static void main(String[] args) throws IOException {
 
     Vertx vertx = Vertx.vertx();
-
     HttpServer server = vertx.createHttpServer();
     Router router = Router.router(vertx);
 
@@ -43,7 +42,7 @@ public class App extends AbstractVerticle {
     allowedHeaders.add("origin");
     allowedHeaders.add("Content-Type");
     allowedHeaders.add("accept");
-
+    /////////////////////////////////////
     Set<HttpMethod> allowedMethods = new HashSet<>();
     allowedMethods.add(HttpMethod.GET);
     allowedMethods.add(HttpMethod.POST);
@@ -62,7 +61,6 @@ public class App extends AbstractVerticle {
     MongoClient client = MongoClient.createShared( vertx , config );
 
     /////////////////////////////////////
-
 
     router.route()
       .path(Const.userStar)
@@ -231,6 +229,7 @@ public class App extends AbstractVerticle {
 
     });
 
+
     router.route(Const.userWorkshopGraderRequest)
       .handler(ctx ->{
 
@@ -255,6 +254,7 @@ public class App extends AbstractVerticle {
           ctx.response().end(toResponse.toString());
         });
       });
+
 
     router.route(Const.userWorkshopStudentRequest)
       .handler(ctx->{
@@ -415,7 +415,7 @@ public class App extends AbstractVerticle {
 
       });
 
-    //new added
+    //new added (for teacher needed debug)
     router.route(Const.workshopStar)
       .handler(ctx ->{
 
@@ -429,26 +429,23 @@ public class App extends AbstractVerticle {
         EnteredCourse.workshopStar(client , clientJson , roleId , user , handler ->{
           if(handler.succeeded()){
             ctx.put("roleId",handler.result());
-            toResponse
-              .put("status","true")
-              .put("msg",handler.result());
           }
           else{
             toResponse
               .put("status","false")
               .put("msg",handler.cause().toString());
-
+            ctx.put("roleId","");
           }
-          //what should i do ( ctx.next or ctx.end )
-          ctx.response().end(toResponse.toString());
+          ctx.next();
         });
-
       });
 
     ////////////////////////////////////
 
 
-    router.route().path(Const.adminStar).handler(BodyHandler.create()).handler(ctx ->{
+    router.route().path(Const.adminStar)
+      .handler(BodyHandler.create())
+      .handler(ctx ->{
 
       String userType = ctx.request().getHeader("userType");
       String token = ctx.request().getHeader("token");
