@@ -399,9 +399,8 @@ public class App extends AbstractVerticle {
 
         JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
-        String roleName = ctx.get("roleName");
 
-        Grader.writerReport(client , roleName , clientJson , res ->{
+        Grader.writerReport(client , "Grader" , clientJson , res ->{
           if(res.succeeded()){
             System.out.println("succed we win");
           }
@@ -440,10 +439,11 @@ public class App extends AbstractVerticle {
             toResponse
               .put("status","false")
               .put("msg",handler.cause().toString());
+            ctx.response().end(toResponse.toString());
 
           }
           //what should i do ( ctx.next or ctx.end )
-          ctx.response().end(toResponse.toString());
+
         });
 
       });
@@ -581,7 +581,7 @@ public class App extends AbstractVerticle {
             });
           }
           else{
-            response.end("access denied.");
+            response.end("Access Denied.");
           }
         });
 

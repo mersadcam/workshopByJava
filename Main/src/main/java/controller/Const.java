@@ -45,8 +45,9 @@ public class Const {
   public static final String userWorkshop = "/user/workshop";//tamiz kon
   public static final String userMakeGroup = "/user/workshop/makeGroup";//nazadeh
   public static final String userWorkshopNewForm ="/user/workshop/newForm";//tamiz
-  public static final String userGraderReport ="/user/graderReport";//nazadeh
-  public static final String userFinalReport ="/user/finalReport";//nazadeh
+  public static final String userGraderReport ="/user/workshop/graderReport";//need test
+  public static final String userTeacherAcceptGrader = "/user/workshop/acceptGrader"; //nazadeh
+  public static final String userFinalReport ="/user/workshop/finalReport";//nazadeh
   public static final String adminCreateNewCourse ="/admin/createNewCourse";
   public static final String adminEnterNewWorkshop ="/admin/enterNewWorkshop";
   public static final String superAdminCreateAdmin ="/superAdmin/createAdmin";
