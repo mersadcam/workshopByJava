@@ -516,6 +516,31 @@ public class App extends AbstractVerticle {
         });
       });
 
+
+    router.route(Const.userMessege)
+      .handler(ctx->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        String text = clientJson.getString("text");
+        User sender = new User(userJson);
+        User receiver = new User(clientJson.getString("receiver"));
+        String replyId = clientJson.getString("replyId");
+        Messege reply = new Messege(replyId);
+
+        Messege messege = new Messege(text,reply);
+        MessegeRelation messegeRelation = new MessegeRelation(sender,receiver,messege);
+        messegeRelation.saveToDB(client);
+        messege.saveToDB(client);
+
+        ctx.response().end(new JsonObject()
+        .put("status","true")
+        .put("msg","Your messege have been sent successfully")
+        .toString());
+
+      });
+
+
     ////////////////////////////////////
 
 
@@ -685,6 +710,8 @@ public class App extends AbstractVerticle {
       });
 
 
+
+    //////////////////////////////////////
     router.route(Const.uploadProfileImage)
       .handler(BodyHandler.create())
       .handler(ctx->{
@@ -700,6 +727,8 @@ public class App extends AbstractVerticle {
 
 
       });
+
+
 
     server.requestHandler(router).listen(Const.port);
 

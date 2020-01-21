@@ -27,6 +27,9 @@ public class Const {
   public static final String formAnswer = "formAnswer";
   public static final String student = "student";
   public static final String grader = "grader";
+  public static final String messege = "messege";
+  public static final String messegeRelation = "messegeRelation";
+
 
 
   //Routes
@@ -52,6 +55,7 @@ public class Const {
   public static final String adminCreateNewCourse ="/admin/createNewCourse";
   public static final String adminEnterNewWorkshop ="/admin/enterNewWorkshop";
   public static final String superAdminCreateAdmin ="/superAdmin/createAdmin";
+  public static final String userMessege = "/user/messege";
 
   public static final String uploadBackgroundImage = "/img/profile/background";
   public static final String uploadProfileImage = "/img/profile/main";

@@ -10,6 +10,7 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import org.bson.types.ObjectId;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -33,12 +34,8 @@ public class Grader implements RequestType , FormWriter {
   }
 
   //what should i do in this constructor with status
-	public Grader( String requestDate ){
-
-	  this._id = new ObjectId().toString();
-	  this.requestDate = requestDate;
-	  this.status = Status.NOT_ACCEPTED;
-
+	public Grader( String _id ){
+	  this._id = _id;
   }
 
   public Grader(JsonObject jsonObject){
@@ -48,7 +45,9 @@ public class Grader implements RequestType , FormWriter {
   }
 
   public Grader(){
-    this._id = new ObjectId().toString();
+    this.requestDate = new SimpleDateFormat("yyyy-MM-dd-HH:mm").format(new java.util.Date());
+	  this._id = new ObjectId().toString();
+    this.status = Status.NOT_ACCEPTED;
   }
 
   public Status StringToStatus(String status){
