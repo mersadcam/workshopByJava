@@ -24,7 +24,8 @@ public class Grader implements RequestType , FormWriter {
 
   public enum Status{
     ACCEPTED,
-    NOT_ACCEPTED
+    NOT_ACCEPTED,
+    REJECTED
   }
 
   //what should i do in this constructor with status
@@ -49,6 +50,8 @@ public class Grader implements RequestType , FormWriter {
   public Status StringToStatus(String status){
     if (status.equals("ACCEPTED"))
       return Status.ACCEPTED;
+    else if(status.equals("REJECTED"))
+      return Status.REJECTED;
 
     return Status.NOT_ACCEPTED;
   }
