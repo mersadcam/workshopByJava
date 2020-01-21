@@ -25,7 +25,7 @@ public class EnteredCourse {
   private String _id;
 	private String startTime;
 	private String finishTime;
-  private JsonArray paymentParts;
+  private JsonObject paymentParts;
   private int value;
 	private String place;
 	private int capacity;
@@ -44,10 +44,10 @@ public class EnteredCourse {
     String description ,
     int capacity,
     int value ,
-    JsonArray paymentParts){
+    JsonObject paymentParts){
 
     this.value = value;
-	  this._id = new ObjectId().toString();
+	  this._id = Const.generateWorkshopId();
 	  this.course = course;
 	  this.startTime = startTime;
 	  this.finishTime = finishTime;
@@ -67,7 +67,7 @@ public class EnteredCourse {
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
 	  this.value = json.getInteger("value");
-	  this.paymentParts = json.getJsonArray("paymentParts");
+	  this.paymentParts = json.getJsonObject("paymentParts");
 	  this._id = json.getString("_id");
     this.course = new Course(json.getString("course").toUpperCase());
 
@@ -125,7 +125,7 @@ public class EnteredCourse {
 	  return json;
   }
 
-  public JsonArray getPaymentParts() {
+  public JsonObject getPaymentParts() {
     return paymentParts;
   }
 
@@ -163,10 +163,10 @@ public class EnteredCourse {
 
   }
 
-  public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<String>> handler){
+  public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<JsonObject>> handler){
 
 	  int value = json.getInteger("value");
-	  JsonArray paymentParts = json.getJsonArray("paymentParts");
+	  JsonObject paymentParts = json.getJsonObject("paymentParts");
 	  String courseName = json.getString("course").toUpperCase();
 	  String startTime = json.getString("startTime");
 	  String finishTime = json.getString("finishTime");
@@ -187,11 +187,34 @@ public class EnteredCourse {
               capacity,
               value ,
               paymentParts);
-            Group gp = new Group();
-            gp.saveToDB(client);
-            newWorkshop.addGroup(gp);
-            newWorkshop.saveToDB(client);
-            handler.handle(Future.succeededFuture());
+
+              Group gp = new Group();
+              Teacher teacher = new Teacher();
+              newWorkshop.addGroup(gp);
+              teacher.setEnteredCourse(newWorkshop);
+
+        client.find(Const.user,new JsonObject().put("username",json.getString("teacher")) , res->{
+
+              if(!res.result().isEmpty()) {
+
+                User user = new User(res.result().get(0));
+                gp.saveToDB(client);
+                newWorkshop.saveToDB(client);
+                teacher.saveToDB(client);
+                user.addRole(teacher);
+                user.update(client);
+                handler.handle(Future.succeededFuture(newWorkshop.toJson()));
+
+              }
+              else{
+
+                handler.handle(Future.failedFuture("This user not found"));
+
+              }
+
+            });
+
+
 
           }else{
 
@@ -214,7 +237,7 @@ public class EnteredCourse {
 	  client.find(Const.course,new JsonObject().put("name",courseName),resFind->{
 
 	    JsonObject course = resFind.result().get(0);
-        JsonArray courseList = course.getJsonArray("neededCourse");
+        JsonArray courseList = course.getJsonArray("neededCourses");
 
         User.passedCourses(client,user,resPassedCourses->{
 

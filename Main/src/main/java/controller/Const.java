@@ -6,7 +6,11 @@ import java.util.Random;
 public class Const {
 
 
+
   private static int enteredCourseId = 0;
+
+  public static final String host = "localhost";
+  public static final int port = 8000;
 
   //Collections
   public static final String contactPoint = "contactPoint";
@@ -31,26 +35,33 @@ public class Const {
   public static final String register = "/register";
   public static final String login = "/login" ;
   public static final String signout = "/user/signout";
+  public static final String dashboard = "/user/dashboard"; //nazadeh
   public static final String workshopStar = "/user/workshop/*"; //nazadeh
   public static final String userProfileEdit ="/user/profile/edit";
+  public static final String userProfile ="/user/profile/"; //nazadim
   public static final String userWorkshops ="/user/workshops"; //tamiz it
   public static final String userWorkshopStudentRequest ="/user/workshop/studentRequest";
   public static final String userWorkshopGraderRequest = "/user/workshop/graderRequest";
   public static final String userWorkshop = "/user/workshop";//tamiz kon
   public static final String userMakeGroup = "/user/workshop/makeGroup";//nazadeh
   public static final String userWorkshopNewForm ="/user/workshop/newForm";//tamiz
-  public static final String userGraderReport ="/user/graderReport";
-  public static final String userFinalReport ="/user/finalReport";//nazadeh
+  public static final String userGraderReport ="/user/workshop/graderReport";//need test
+  public static final String userTeacherAcceptGrader = "/user/workshop/acceptGrader"; //nazadeh
+  public static final String userFinalReport ="/user/workshop/finalReport";//nazadeh
   public static final String adminCreateNewCourse ="/admin/createNewCourse";
   public static final String adminEnterNewWorkshop ="/admin/enterNewWorkshop";
   public static final String superAdminCreateAdmin ="/superAdmin/createAdmin";
 
+  public static final String uploadBackgroundImage = "/img/profile/background";
+  public static final String uploadProfileImage = "/img/profile/main";
+  public static final String uploadWorkshopImage = "/img/workshop";
 
-  public static int getEnteredCourseId() {
+
+  public static String generateWorkshopId() {
 //    enteredCourseId++; for system we should run it
     enteredCourseId = new Random().nextInt();
     enteredCourseId = Math.abs(enteredCourseId);
-    return enteredCourseId;
+    return String.valueOf(enteredCourseId);
   }
 
   public static void setEnteredCourseId(int number){

@@ -24,7 +24,7 @@ public class Grader implements RequestType , FormWriter {
 
   public enum Status{
     ACCEPTED,
-    NOTACCEPTED;
+    REJECTED
   }
 
   //what should i do in this constructor with status
@@ -32,7 +32,7 @@ public class Grader implements RequestType , FormWriter {
 
 	  this._id = new ObjectId().toString();
 	  this.requestDate = requestDate;
-	  this.status = Status.NOTACCEPTED;
+	  this.status = Status.REJECTED;
 
   }
 
@@ -50,7 +50,7 @@ public class Grader implements RequestType , FormWriter {
     if (status.equals("ACCEPTED"))
       return Status.ACCEPTED;
 
-    return Status.NOTACCEPTED;
+    return Status.REJECTED;
   }
 
   public void set_id(String _id) {
@@ -87,46 +87,43 @@ public class Grader implements RequestType , FormWriter {
   }
 
 
-  public static void graderReport(MongoClient client , JsonObject userJson , JsonObject clientJson , Handler<AsyncResult<String>> handler){
+  public static void writerReport(MongoClient client , String roleName , JsonObject clientJson , Handler<AsyncResult<String>> handler){
 
 
-	  JsonObject studentId = new JsonObject()
-    .put("_id",clientJson.getString("studentId"));
-    //#Change
 
-    client.find(Const.role , studentId , res ->{
+    String formId = clientJson.getString("formId");
+    String writerId = clientJson.getString("writer");
+    String reportable = clientJson.getString("reportable");
+    JsonObject answerBody = clientJson.getJsonObject("answerBody");
+
+    client.find(Const.role , new JsonObject().put("_id",reportable) , res ->{
+
       if(res.succeeded() && !res.result().isEmpty()){
 
-        FormAnswer answer = new FormAnswer(clientJson.getJsonObject("answerBody"));
+        FormWriter writer;
+        if(roleName.equals("Teacher"))
+          writer = new Teacher(writerId);
 
 
-        client.insert(Const.answer , new JsonObject().put("answerBody",clientJson.getJsonArray("answerBody"))
-        .put("form",clientJson.getString("formId")).put("writer",clientJson.getString("graderId")) , resInsert->{
+        else
+          writer = new Grader(writerId);
 
-          JsonObject report = new JsonObject()
-            .put("_id",res.result().get(0).getString("report") );
+        Form form = new Form(formId);
+        FormAnswer answer = new FormAnswer(form,writer,answerBody);
 
-          client.find(Const.report , report , resReport ->{
-//            if(resReport.succeeded() && !resReport.result().isEmpty()){
+        Identity identity = new Identity(res.result().get(0));
 
+        client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resFindReport->{
 
-            if(resReport.succeeded()){
-              //there is no report atfirst : Error
-              JsonArray answersId = resReport.result().get(0).getJsonArray("answersId");
-              JsonObject query = new JsonObject()
-                .put("answer",answersId);
-              JsonArray ans = answersId.add(resInsert.result());
-              JsonObject update = new JsonObject()
-                .put("$set", new JsonObject()
-                .put("answer",ans));
-              client.updateCollection(Const.report , query , update , resUpdate ->{
-                handler.handle(Future.succeededFuture());
-              } );
+          Report report = new Report(resFindReport.result().get(0));
+          report.addAnswer(answer);
+          answer.saveToDB(client);
+          report.saveToDB(client);
 
-            }
+          handler.handle(Future.succeededFuture("Your report entered successfully"));
 
-          });
         });
+
 
       }
       else{

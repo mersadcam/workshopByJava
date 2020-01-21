@@ -15,6 +15,9 @@ public class ContactPoint {
 	private String lastName;
 	private String emailAddress;
   private Gender gender;
+  private String subTitle;
+  private String biography;
+
 
 	public ContactPoint(String firstName, String lastName, String emailAddress, String gender){
 	  this._id = new ObjectId().toString();
@@ -22,6 +25,8 @@ public class ContactPoint {
 	  this.lastName = lastName;
 	  this.emailAddress = emailAddress;
 	  this.gender = stringToGender(gender);
+	  this.subTitle = "";
+	  this.biography = "";
   }
 
   public ContactPoint(String _id){
@@ -35,6 +40,8 @@ public class ContactPoint {
     this.emailAddress = json.getString("emailAddress");
     this._id = json.getString("_id");
     this.gender = stringToGender(json.getString("gender"));
+    this.biography = json.getString("biography");
+    this.subTitle = json.getString("subTitle");
 
   }
 
@@ -58,7 +65,9 @@ public class ContactPoint {
       .put("lastName",this.lastName)
       .put("emailAddress",this.emailAddress)
       .put("_id",this._id)
-      .put("gender",this.gender);
+      .put("gender",this.gender)
+      .put("biography",this.biography)
+      .put("subTitle",this.subTitle);
 
 	  return json;
 
@@ -111,25 +120,6 @@ public class ContactPoint {
     this.lastName = lastName;
   }
 
-  public void addCPToDB(MongoClient client , Handler<AsyncResult<String>> handler){
-
-	  JsonObject query = new JsonObject()
-      .put("firstName",this.firstName)
-      .put("lastName",this.lastName)
-      .put("emailAddress",this.emailAddress)
-      .put("gender",this.gender)
-      .put("_id",this._id);
-
-	  //transaction :
-
-	  client.insert("contactPoint",query,res->{
-
-	    handler.handle(Future.succeededFuture(this._id));
-
-    });
-
-
-  }
 
   public static void editContactPoint(MongoClient client,JsonObject json,String _id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
 

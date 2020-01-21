@@ -16,21 +16,21 @@ public class FormAnswer {
 
   private String _id;
 	private Form form;
-	private JsonObject jsonAnswer;
+	private JsonObject answerBody;
 	private FormWriter writer;
 
 
-	public FormAnswer(Form form , JsonObject jsonAnswer , FormWriter formWriter){
+	public FormAnswer(Form form , FormWriter formWriter,JsonObject answerBody){
 	  this._id = new ObjectId().toString();
 	  this.form = form;
-	  this.jsonAnswer = jsonAnswer;
+	  this.answerBody = answerBody;
 	  this.writer = formWriter;
   }
 
 	public FormAnswer(JsonObject jsonObject ){
 
 	  this._id = jsonObject.getString("_id");
-	  this.jsonAnswer = jsonObject.getJsonObject("form");
+	  this.answerBody = jsonObject.getJsonObject("answerBody");
 	  this.form = new Form(jsonObject.getString("form"));
 
   }
@@ -42,12 +42,12 @@ public class FormAnswer {
     this.writer = writer;
   }
 
-  public JsonObject getJsonAnswer() {
-    return jsonAnswer;
+  public JsonObject getAnswerBody() {
+    return answerBody;
   }
 
-  public void setJsonAnswer(JsonObject jsonAnswer) {
-    this.jsonAnswer = jsonAnswer;
+  public void setAnswerBody(JsonObject answerBody) {
+    this.answerBody = answerBody;
   }
 
   public JsonObject toJson(){
@@ -57,7 +57,7 @@ public class FormAnswer {
 	  json
       .put("_id",this._id)
       .put("form" , this.form.get_id())
-      .put("answer" , this.jsonAnswer)
+      .put("answerBody" , this.answerBody)
       .put("write",this.writer.get_id());
 
 	  return json;
@@ -66,6 +66,10 @@ public class FormAnswer {
 
   public void saveToDB(MongoClient client , Handler<AsyncResult<String>> handler){
 	  client.insert(Const.formAnswer , this.toJson() , handler);
+  }
+
+  public void saveToDB(MongoClient client ){
+    client.insert(Const.formAnswer , this.toJson() , handler->{});
   }
 
   public void update(MongoClient client , Handler<AsyncResult<MongoClientUpdateResult>> handler){
