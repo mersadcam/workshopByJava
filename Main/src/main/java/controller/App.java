@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -495,8 +496,24 @@ public class App extends AbstractVerticle {
     //new added
     router.route(Const.userTeacherAcceptGrader)
       .handler(ctx ->{
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        User user = new User(userJson);
+        JsonObject toResponse = new JsonObject();
 
-
+        Grader.teacherAcceptGrader(client , user , clientJson , handler ->{
+          if (handler.succeeded()){
+            toResponse
+              .put("status",true)
+              .put("msg",handler.result());
+          }
+          else {
+            toResponse
+              .put("status",false)
+              .put("msg",handler.cause().toString());
+          }
+          ctx.response().end(toResponse.toString());
+        });
       });
 
     ////////////////////////////////////

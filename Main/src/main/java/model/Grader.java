@@ -19,13 +19,17 @@ public class Grader implements RequestType , FormWriter {
 	private String requestDate;
 	private Status status;
 
-	//contructor dige ro namidonam chitor benvisam
+
+	public void setStatus(Status status){
+	  this.status = status;
+  }
+
+  //contructor dige ro namidonam chitor benvisam
   //yaani faghat hamin 2 ta ro dare???
 
   public enum Status{
     ACCEPTED,
-    NOT_ACCEPTED,
-    REJECTED
+    NOT_ACCEPTED
   }
 
   //what should i do in this constructor with status
@@ -48,10 +52,8 @@ public class Grader implements RequestType , FormWriter {
   }
 
   public Status StringToStatus(String status){
-    if (status.equals("ACCEPTED"))
+    if (status.toUpperCase().equals("ACCEPTED"))
       return Status.ACCEPTED;
-    else if(status.equals("REJECTED"))
-      return Status.REJECTED;
 
     return Status.NOT_ACCEPTED;
   }
@@ -89,6 +91,14 @@ public class Grader implements RequestType , FormWriter {
 
   }
 
+  public void update(MongoClient client){
+
+    JsonObject query = new JsonObject().put("_id",this._id);
+    JsonObject update = new JsonObject().put("$set",this.toJson());
+
+    client.updateCollection(Const.grader,query,update,handler->{});
+
+  }
 
   public static void writerReport(MongoClient client , String roleName , JsonObject clientJson , Handler<AsyncResult<String>> handler){
 
@@ -139,6 +149,47 @@ public class Grader implements RequestType , FormWriter {
   }
 
   public void saveToDB(MongoClient client) {
+
     client.insert(Const.grader,this.toJson(),handler->{});
+
   }
+
+  public static void teacherAcceptGrader(MongoClient client, User user , JsonObject clientJson, Handler<AsyncResult<String>> handler) {
+//    security part is not completed
+//    JsonObject userJson = new JsonObject()
+//      .put("_id",user.get_id())
+//      .put("")
+//    client.find(Const.role , )
+//or id
+      JsonObject identity = new JsonObject()
+        .put("_id", clientJson.getString("_id"))
+        .put("roleName","Grader");
+
+      client.find(Const.role , identity , resFind ->{
+        if(resFind.succeeded() && !resFind.result().isEmpty()){
+
+          JsonObject grade = new JsonObject()
+            .put("_id",resFind.result().get(0).getString("requestType"));
+
+          client.find(Const.grader , grade , resFindInGrader ->{
+            if (resFindInGrader.succeeded() && !resFindInGrader.result().isEmpty()){
+              JsonObject js = resFindInGrader.result().get(0);
+              Grader grader = new Grader(js);
+              grader.setStatus(grader.StringToStatus(clientJson.getString("status")));
+              grader.update(client);
+
+              handler.handle(Future.succeededFuture("Grader Accepted."));
+            }
+            else {
+              handler.handle(Future.failedFuture("Don't find grader."));
+            }
+          });
+        }
+        else {//if we don't find grader in the role
+          handler.handle(Future.failedFuture("This Role isn't exist."));
+        }
+      });
+
+  }
+
 }
