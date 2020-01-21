@@ -439,7 +439,9 @@ public class User {
     //should debug it function
     //should return role id
     //don't debug this part for teacher
-    client.find(Const.role , new JsonObject().put("roleName","teacher").put("_id",enteredCourse.getGroups().get(0).get_id()) , res->{
+    JsonObject a = new JsonObject().put("roleName","teacher").put("enteredCourse",enteredCourse.get_id());
+    System.out.println(a.toString());
+    client.find(Const.role , new JsonObject().put("roleName","Teacher").put("enteredCourse",enteredCourse.get_id()) , res->{
       if(res.succeeded() && !res.result().isEmpty()){
 
         JsonArray teachers = new JsonArray();
@@ -482,7 +484,7 @@ public class User {
   public static String isIdentityInRole(JsonArray identities, ArrayList<Role> roles){
     if(identities == null)
       return null;
-
+    System.out.println(roles.get(0).get_id());
     for (int i = 0 ; i < identities.size() ; i++){
       for (int j = 0 ; j < roles.size() ; j++){
         if(identities.getString(i).equals(roles.get(j).get_id()))
