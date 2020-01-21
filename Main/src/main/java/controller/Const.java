@@ -42,7 +42,7 @@ public class Const {
   public static final String userWorkshops ="/user/workshops"; //tamiz it
   public static final String userWorkshopStudentRequest ="/user/workshop/studentRequest";
   public static final String userWorkshopGraderRequest = "/user/workshop/graderRequest";
-  public static final String userWorkshopPage = "/user/workshop/page";//tamiz kon
+  public static final String userWorkshopPage = "/user/workshop/page";
   public static final String userMakeGroup = "/user/workshop/makeGroup";//nazadeh
   public static final String userWorkshopNewForm ="/user/workshop/newForm";//tamiz
   public static final String userGraderReport ="/user/workshop/graderReport";//need test

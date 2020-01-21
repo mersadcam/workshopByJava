@@ -22,6 +22,7 @@ public class Report {
 	public Report(){
 	  this._id = new ObjectId().toString();
 	  this.studentCourseStatus = Status.NOTPASSED;
+	  this.finalNumber = 0;
 	  this.completeNumber = 100;
   }
 
@@ -104,6 +105,7 @@ public class Report {
       .put("_id",this._id)
       .put("studentCourseStatus",this.studentCourseStatus)
       .put("finalNumber",this.finalNumber)
+      .put("completeNumber",this.completeNumber)
       .put("answer",jsonArray);
 
 	  return jsonObject;

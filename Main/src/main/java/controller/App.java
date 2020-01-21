@@ -426,7 +426,7 @@ public class App extends AbstractVerticle {
 
         JsonObject toFindIdentity = new JsonObject()
           .put("roleName","Student")
-          .put("_id",clientJson.getString("_id"));
+          .put("_id",clientJson.getString("studentId"));
 
         client.find(Const.role,toFindIdentity,resIdentity->{
 
@@ -446,7 +446,7 @@ public class App extends AbstractVerticle {
 
                 ctx.response().end(new JsonObject()
                   .put("status","true")
-                  .put("msg","There are some problems in system\nCall to informatic team( numbe")
+                  .put("msg","Report have been entered successfully")
                   .toString());
 
               }
@@ -456,7 +456,7 @@ public class App extends AbstractVerticle {
 
             ctx.response().end(new JsonObject()
               .put("status","false")
-              .put("msg","There is some problem")
+              .put("msg","There are some problems in system\nCall to informatic team( phone number : ++++) ")
               .toString());
 
           }
