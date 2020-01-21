@@ -86,5 +86,9 @@ public class Identity implements Role {
     client.updateCollection(Const.role,query,update,handler->{});
 
   }
+
+  public String getReportId() {
+    return report.get_id();
+  }
 }
 

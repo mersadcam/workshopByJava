@@ -2,23 +2,19 @@ package controller;
 
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import model.*;
-import org.bson.types.ObjectId;
 
-import javax.swing.text.html.parser.Entity;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -187,12 +183,12 @@ public class App extends AbstractVerticle {
         HttpServerResponse response = ctx.response();
         JsonObject toResponse = new JsonObject();
         JsonObject userJson = ctx.get("userJson");
-        JsonObject json = ctx.get("clientJson");
+        JsonObject clientJson = ctx.get("clientJson");
         String userType = ctx.get("userType");
         String CP_id = userJson.getString("contactPoint");
         User user = new User(userJson);
 
-        user.editProfile(client , user ,json , CP_id , handle -> {
+        user.editProfile(client , user ,clientJson , CP_id , handle -> {
 
           if (handle.succeeded())
             toResponse.put("status", "true");
@@ -401,9 +397,11 @@ public class App extends AbstractVerticle {
     router.route(Const.userGraderReport)
       .handler(ctx ->{
 
-        JsonObject user = ctx.get("userJson");
+        JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
-        Grader.graderReport(client , user , clientJson , res ->{
+        String roleName = ctx.get("roleName");
+
+        Grader.writerReport(client , roleName , clientJson , res ->{
           if(res.succeeded()){
             System.out.println("succed we win");
           }
@@ -615,7 +613,24 @@ public class App extends AbstractVerticle {
 
       });
 
-    server.requestHandler(router).listen(8000);
+
+    router.route(Const.uploadProfileImage)
+      .handler(BodyHandler.create())
+      .handler(ctx->{
+
+        Set<FileUpload> files = ctx.fileUploads();
+
+        for (FileUpload file : files){
+
+          File up = new File(file.uploadedFileName());
+          System.out.println(up.toString());
+
+        }
+
+
+      });
+
+    server.requestHandler(router).listen(Const.port);
 
   }
 }

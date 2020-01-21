@@ -6,7 +6,11 @@ import java.util.Random;
 public class Const {
 
 
+
   private static int enteredCourseId = 0;
+
+  public static final String host = "localhost";
+  public static final int port = 8000;
 
   //Collections
   public static final String contactPoint = "contactPoint";

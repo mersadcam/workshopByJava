@@ -215,19 +215,20 @@ public class User {
 
   public static void editProfile(MongoClient client,User user , JsonObject editJson , String contactPoint_id , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
-    String username,gender,emailAddress,firstName,lastName;
+    String username,gender,emailAddress,firstName,lastName,biography;
 
     username = editJson.getString("username");
     firstName = editJson.getString("firstName");
     lastName = editJson.getString("lastName");
     gender = editJson.getString("gender");
     emailAddress = editJson.getString("emailAddress");
+    biography = editJson.getString("biography");
 
-    if ( username == null ||
-    firstName == null ||
-    lastName == null ||
-    gender == null ||
-    emailAddress == null ){
+
+    if ( username.equals("") ||
+    firstName.equals("") ||
+    lastName.equals("") ||
+    emailAddress.equals("") ){
       handler.handle(Future.failedFuture(""));
     }else {
 
