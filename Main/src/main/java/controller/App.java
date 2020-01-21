@@ -424,9 +424,11 @@ public class App extends AbstractVerticle {
         User user = new User(userJson);
         JsonObject toResponse = new JsonObject();
         String roleId = ctx.request().getHeader("roleId");
-
+        //should check reponse and correct it
+        //else part have problem because print stack trace
         EnteredCourse.workshopStar(client , clientJson , roleId , user , handler ->{
           if(handler.succeeded()){
+            ctx.put("roleId",handler.result());
             toResponse
               .put("status","true")
               .put("msg",handler.result());
