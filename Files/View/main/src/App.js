@@ -3,7 +3,7 @@ import './App.css';
 import * as React from "react";
 import './fontawesome'
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import "tabler-react/dist/Tabler.css";
+import "./Tabler.css";
 
 
 import Home from "./Components/Home/Home";

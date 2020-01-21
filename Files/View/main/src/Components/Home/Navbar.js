@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'tabler-react';
+import { Button,Text } from 'tabler-react';
 import './Navbar.css'
 
 class Navbar extends React.Component {
@@ -9,12 +9,12 @@ class Navbar extends React.Component {
                 <a className="navbar-brand nav-item mr-5" href="#">
                     <img className="navbar-logo" src="./logo.png" alt={"logo"}/></a>
                 <ul className="navbar-nav">
-                    <li className="nav-item"><Button pill color={"primary"} href={"#"}> Courses </Button> </li>
-                    <li className="nav-item"><Button pill color={"primary"} href={"#"}> Teach at X </Button> </li>
-                    <li className="nav-item"><Button pill color={"primary"} href={"#"}> About Us </Button> </li>
+                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> Workshops </Button> </li>
+                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> Teach at X </Button> </li>
+                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> About Us </Button> </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
-                    <li className="nav-item"><Button pill color={"primary"} href={"#"} onClick={this.props.toggleLogin}> Login/Signup </Button> </li>
+                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"} onClick={this.props.toggleLogin}> Login/Signup </Button> </li>
                 </ul>
             </nav>
         );
