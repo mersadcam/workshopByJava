@@ -17,23 +17,40 @@ public class Grader implements RequestType , FormWriter {
 
   private String _id;
 	private String requestDate;
+	private Status status;
 
 	//contructor dige ro namidonam chitor benvisam
   //yaani faghat hamin 2 ta ro dare???
 
+  public enum Status{
+    ACCEPTED,
+    NOTACCEPTED;
+  }
+
+  //what should i do in this constructor with status
 	public Grader( String requestDate ){
 
 	  this._id = new ObjectId().toString();
 	  this.requestDate = requestDate;
+	  this.status = Status.NOTACCEPTED;
 
   }
 
   public Grader(JsonObject jsonObject){
 	  this._id = jsonObject.getString("_id");
 	  this.requestDate = jsonObject.getString("requestDate");
+	  this.status = StringToStatus(jsonObject.getString("status"));
   }
-  public Grader(){
 
+  public Grader(){
+    this._id = new ObjectId().toString();
+  }
+
+  public Status StringToStatus(String status){
+    if (status.equals("ACCEPTED"))
+      return Status.ACCEPTED;
+
+    return Status.NOTACCEPTED;
   }
 
   public void set_id(String _id) {
@@ -48,7 +65,8 @@ public class Grader implements RequestType , FormWriter {
 
 	  JsonObject json = new JsonObject()
       .put("_id",this._id)
-      .put("requestDate",this.requestDate);
+      .put("requestDate",this.requestDate)
+      .put("status",this.status);
 
 	  return json;
   }
