@@ -82,6 +82,10 @@ public class User {
     return username;
   }
 
+  public String get_id(){
+    return this._id;
+  }
+
   public void setUsername(String username) {
     this.username = username;
   }
@@ -412,13 +416,12 @@ public class User {
         return false;
     }
     return true;
-
   }
 
-  public void searchInRoleId(MongoClient client , String roleId , Handler<AsyncResult<String>> handler){
+  public static void searchInRoleId(User user , String roleId , Handler<AsyncResult<String>> handler){
     boolean isExist = false;
-    for(int i = 0 ; i < roles.size() ; i++){
-      if(roles.get(i).equals(roleId)){
+    for(int i = 0 ; i < user.getRoles().size() ; i++){
+      if(user.getRoles().get(i).equals(roleId)){
         isExist = true;
       }
     }
@@ -431,15 +434,16 @@ public class User {
     }
   }
 
-  public void findRoleId(MongoClient client , EnteredCourse enteredCourse , Handler<AsyncResult<String>> handler){
+  public static void findRoleId(MongoClient client, User user, EnteredCourse enteredCourse, Handler<AsyncResult<String>> handler){
+    //should debug it function
 
     client.find(Const.role , new JsonObject().put("roleName","teacher").put("_id",enteredCourse.getGroups().get(0).get_id()) , res->{
       if(res.succeeded() && !res.result().isEmpty()){
         JsonArray teachers = res.result().get(0).getJsonArray("teacher");
 
         for(int i = 0 ; i < teachers.size() ; i++){
-          if(this._id.equals(teachers.getString(i))){
-            handler.handle(Future.succeededFuture(this._id));//output
+          if(user.get_id().equals(teachers.getString(i))){
+            handler.handle(Future.succeededFuture(user.get_id()));//output
           }
         }
       }
@@ -449,13 +453,10 @@ public class User {
           if(resFind.succeeded() && !resFind.result().isEmpty()){
             JsonArray identities = resFind.result().get(0).getJsonArray("identities");
             boolean test = false;
-            for( int j = 0 ; j < identities.size() ; j++){
-              if(this._id.equals(identities.getString(j))){
-                test = true;
-              }
-            }
+            test = isIdentityInRole(identities , user.getRoles() );
             if(test){
-              handler.handle(Future.succeededFuture(this._id));//output
+              String id = user.get_id();
+              handler.handle(Future.succeededFuture(id));//output
             }
             else {
               handler.handle(Future.failedFuture("You are not in the workshop."));//output
@@ -468,6 +469,19 @@ public class User {
       }
     });
 
+  }
+
+  public static boolean isIdentityInRole(JsonArray identities, ArrayList<Role> roles){
+    if(identities == null)
+      return false;
+
+    for (int i = 0 ; i < identities.size() ; i++){
+      for (int j = 0 ; j < roles.size() ; j++){
+        if(identities.getString(i).equals(roles.get(j).get_id()))
+          return true;
+      }
+    }
+   return false;
   }
 
 

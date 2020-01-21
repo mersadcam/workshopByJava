@@ -304,14 +304,14 @@ public class EnteredCourse {
       if(resSearchWorkshop.succeeded() && !resSearchWorkshop.result().isEmpty()){//if we find workshop
 
         EnteredCourse findedWorkshop = new EnteredCourse(resSearchWorkshop.result().get(0));
-        System.out.println(roleId);
+
         if(roleId.equals("")){ //we don't have role id
           //should find it
-          user.findRoleId(client , findedWorkshop , handler);
+          User.findRoleId(client, user , findedWorkshop , handler);
 
         }
         else{ //we have role id
-          user.searchInRoleId(client , roleId , handler);
+           User.searchInRoleId(user ,roleId , handler);
           //check and search between user roles if exist do nothing if don't exist send response
         }
       }
