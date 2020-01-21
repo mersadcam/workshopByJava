@@ -15,23 +15,22 @@ public class Report {
 
   private String _id;
 	private Status studentCourseStatus;
-	private String finalNumber;
-	private Performance performance;
+	private double finalNumber;
+	private double completeNumber;
 	private ArrayList<FormAnswer> answer = new ArrayList<FormAnswer>();
 
 	public Report(){
 	  this._id = new ObjectId().toString();
-	  this.performance = Performance.NOTSET;
 	  this.studentCourseStatus = Status.NOTPASSED;
+	  this.completeNumber = 100;
   }
 
 	public Report(JsonObject jsonObject){
-  //enum haeii ke comment shode ro dorost kon
 
 	  this._id = jsonObject.getString("_id");
 	  this.studentCourseStatus = stringToStatus(jsonObject.getString("studentCourseStatus"));
-	  this.finalNumber = jsonObject.getString("finalNumber");
-	  this.performance = stringToPerformance(jsonObject.getString("performance"));
+	  this.finalNumber = jsonObject.getDouble("finalNumber");
+	  this.completeNumber = jsonObject.getDouble("completeNumber");
     JsonArray jsonArray = jsonObject.getJsonArray("answer");
 
     for(int i = 0 ; i < jsonArray.size() ; i++){
@@ -47,43 +46,22 @@ public class Report {
     return _id;
   }
 
-  public void setFinalNumber(String finalNumber) {
+  public void setFinalNumber(double finalNumber) {
     this.finalNumber = finalNumber;
   }
 
-  public void setPerformance(Performance performance) {
-    this.performance = performance;
-  }
-
-  public void setStudentCourseStatus(Status studentCourseStatus) {
-    this.studentCourseStatus = studentCourseStatus;
+  public void setStudentCourseStatus(String studentCourseStatus) {
+    this.studentCourseStatus = stringToStatus(studentCourseStatus);
   }
 
   public Status stringToStatus(String status){
 
 	  if(status.equals("PASSED"))
 	    return Status.PASSED;
-
 	  return Status.NOTPASSED;
 
   }
 
-  public Performance stringToPerformance(String performance){
-
-	  if(performance.toUpperCase().equals("BAD"))
-	    return Performance.BAD;
-
-	  if(performance.toUpperCase().equals("NOTBAD"))
-	    return Performance.NOTBAD;
-
-	  if(performance.toUpperCase().equals("GOOD"))
-	    return Performance.GOOD;
-
-    if(performance.toUpperCase().equals("EXCELLENT"))
-	    return Performance.EXCELLENT;
-
-    return Performance.NOTSET;
-  }
 
   public void set_id(String _id) {
     this._id = _id;
@@ -94,16 +72,24 @@ public class Report {
 		NOTPASSED
 	}
 
-	enum Performance{
-		BAD,
-		NOTBAD,
-		GOOD,
-		EXCELLENT,
-    NOTSET
-	}
-
 	public void addAnswer(FormAnswer formAnswer){
 	  this.answer.add(formAnswer);
+  }
+
+  public double getCompleteNumber() {
+    return completeNumber;
+  }
+
+  public double getFinalNumber() {
+    return finalNumber;
+  }
+
+  public Status getStudentCourseStatus() {
+    return studentCourseStatus;
+  }
+
+  public ArrayList<FormAnswer> getAnswer() {
+    return answer;
   }
 
   public JsonObject toJson(){
@@ -116,12 +102,15 @@ public class Report {
 
 	  jsonObject
       .put("_id",this._id)
-      .put("studentStatusCourse",this.studentCourseStatus)
+      .put("studentCourseStatus",this.studentCourseStatus)
       .put("finalNumber",this.finalNumber)
-      .put("performance",this.performance.toString())
       .put("answer",jsonArray);
 
 	  return jsonObject;
+  }
+
+  public void setCompleteNumber(double completeNumber) {
+    this.completeNumber = completeNumber;
   }
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
@@ -142,6 +131,14 @@ public class Report {
     JsonObject update = new JsonObject().put("$set", this.toJson());
 
     client.updateCollection(Const.report, query, update, handler);
+  }
+
+  public void update(MongoClient client) {
+
+    JsonObject query = new JsonObject().put("_id", this._id);
+    JsonObject update = new JsonObject().put("$set", this.toJson());
+
+    client.updateCollection(Const.report, query, update, handler->{});
   }
 
 //	public static void addReport(MongoClient client , String answerId , String reportId){

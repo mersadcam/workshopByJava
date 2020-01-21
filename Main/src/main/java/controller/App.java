@@ -59,6 +59,7 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
+
     router.route()
       .path(Const.userStar)
       .handler(BodyHandler.create()).handler(ctx ->{
@@ -402,10 +403,13 @@ public class App extends AbstractVerticle {
 
         Grader.writerReport(client , "Grader" , clientJson , res ->{
           if(res.succeeded()){
-            System.out.println("succed we win");
+
+            ctx.response().end(new JsonObject().put("status","true").put("msg","Your answer have saved successfully").toString());
+
           }
           else{
-            System.out.println(res.cause());
+            ctx.response().end(new JsonObject().put("status","false").put("msg","There are some problems in your answer").toString());
+
           }
         });
 
@@ -414,8 +418,52 @@ public class App extends AbstractVerticle {
       });
 
     //new added
-    router.get(Const.userFinalReport)
+    router.get(Const.userStudentFinalReport)
       .handler(ctx ->{
+
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject clientJson = ctx.get("clientJson");
+
+        JsonObject toFindIdentity = new JsonObject()
+          .put("roleName","Student")
+          .put("_id",clientJson.getString("_id"));
+
+        client.find(Const.role,toFindIdentity,resIdentity->{
+
+
+          if( !resIdentity.result().isEmpty()) {
+
+            Identity identity = new Identity(resIdentity.result().get(0));
+            client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resReport->{
+
+              if (!resReport.result().isEmpty()){
+
+                Report report = new Report(resReport.result().get(0));
+                report.setFinalNumber(clientJson.getDouble("finalNumber"));
+                report.setStudentCourseStatus(clientJson.getString("studentCourseStatus"));
+                report.setCompleteNumber(clientJson.getDouble("completeNumber"));
+                report.update(client);
+
+                ctx.response().end(new JsonObject()
+                  .put("status","true")
+                  .put("msg","There are some problems in system\nCall to informatic team( numbe")
+                  .toString());
+
+              }
+
+            });
+          }else{
+
+            ctx.response().end(new JsonObject()
+              .put("status","false")
+              .put("msg","There is some problem")
+              .toString());
+
+          }
+
+
+        });
+
 
       });
 
