@@ -33,22 +33,17 @@ class Home extends React.Component {
                 Choose between Best Teachers and Best Lessons. </p>
             <p>
                 <Button.List>
-                    <Button pill size={'sm'} color={'red'}> <FontAwesomeIcon icon={"code"}/> Programming </Button>
-                    <Button pill size={'sm'} color={'yellow'}> <FontAwesomeIcon icon={"pen-nib"}/> Graphic Design
+                    <Button pill className={"btn-hover"} size={'sm'} color={'red'}> <FontAwesomeIcon icon={"code"}/> Programming </Button>
+                    <Button pill className={"btn-hover"} size={'sm'} color={'yellow'}> <FontAwesomeIcon icon={"pen-nib"}/> Graphic Design
                     </Button>
-                    <Button pill size={'sm'} color={'green'}> <FontAwesomeIcon icon={"atom"}/> Science
+                    <Button pill className={"btn-hover"} size={'sm'} color={'green'}> <FontAwesomeIcon icon={"atom"}/> Science
                     </Button>
-                    <Button pill size={'sm'} color="primary" outline> <FontAwesomeIcon icon={"plus"}/> More
+                    <Button pill className={"btn-hover"} size={'sm'} color="primary" outline> <FontAwesomeIcon icon={"plus"}/> More
                     </Button>
                 </Button.List>
             </p>
-            <Grid.Row className={'mt-8'}>
-                <Grid.Col xl={6} lg={8} md={10} sm={12}>
-                    <Search/>
-                </Grid.Col>
-            </Grid.Row>
             <p className={'mt-8'}>
-                <Button pill color="primary" outline onClick={() => this.goToSlide(2)}> Next </Button>
+                <Button pill className={"btn-hover"} color="primary" outline onClick={() => this.goToSlide(2)}> Next </Button>
             </p>
         </Slideshow>,
 
@@ -59,7 +54,7 @@ class Home extends React.Component {
                 Explore Workshops and Pick One To Learn. <br/>
                 Choose between Best Teachers and Best Lessons. </p>
             <p className={'mt-8'}>
-                <Button pill color="primary" outline onClick={() => this.goToSlide(1)}> Next </Button>
+                <Button pill className={"btn-hover"} color="primary" outline onClick={() => this.goToSlide(1)}> Next </Button>
             </p>
         </Slideshow>,
 

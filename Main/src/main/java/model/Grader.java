@@ -131,7 +131,7 @@ public class Grader implements RequestType , FormWriter {
           Report report = new Report(resFindReport.result().get(0));
           report.addAnswer(answer);
           answer.saveToDB(client);
-          report.saveToDB(client);
+          report.update(client);
 
           handler.handle(Future.succeededFuture("Your report entered successfully"));
 

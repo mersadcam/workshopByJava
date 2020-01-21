@@ -90,5 +90,9 @@ public class Identity implements Role {
   public String getReportId() {
     return report.get_id();
   }
+
+  public String getRequestTypeId() {
+    return requestType.get_id();
+  }
 }
 

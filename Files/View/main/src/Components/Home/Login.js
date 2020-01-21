@@ -1,6 +1,6 @@
 import React from 'react';
 import './Login.css';
-import {Button} from 'reactstrap';
+import {Button, Form, Grid,Text} from 'tabler-react'
 import {Animated} from "react-animated-css";
 
 class Login extends React.Component {
@@ -60,54 +60,85 @@ class Login extends React.Component {
                         </div>
 
                         {this.state.loginShow &&
-                        <form className="form-login px-4 pb-5" action="" method="post" name="form-login">
-                            <label htmlFor="username">Username</label>
-                            <input className="form-styling" type="text" name="username" placeholder=""/>
-
-                            <label htmlFor="password">Password</label>
-                            <input className="form-styling" type="password" name="password" placeholder=""/>
-                            <div className="text-center">
-                                <div className={"keepMeSignedIn"}>
-                                    <input type="checkbox" id="keepMeSignedInCheckbox"/>
-                                    <label htmlFor="keepMeSignedInCheckbox" id={"keepMeSignedInLabel"}>
-                                        Keep me signed in</label>
-                                </div>
-                                <Button color={"primary"} className="rounded-pill" href={"#"}> Login </Button>
-                                <a className="rounded-pill mt-5 ml-5" id={"forgetPasswordButton"}
-                                        onClick={this.forgetPasswordSwitch}> Forgot your password? </a>
-                            </div>
-                        </form>}
+                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-login px-5 pb-5">
+                            <Grid.Row>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="Username"> <Form.Input name="username"/> </Form.Group>
+                                </Grid.Col>
+                            </Grid.Row>
+                            <Grid.Row>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"/> </Form.Group>
+                                </Grid.Col>
+                            </Grid.Row>
+                            <Grid.Row alignItem={'center'} className={'justify-content-center'}>
+                                <Grid.Col>
+                                    <Form.Checkbox isInline label="Keep Me Signed In" name="keepMeSignedIn"/>
+                                </Grid.Col>
+                                <Grid.Col>
+                                    <Text.Small>
+                                        <a href={'#'} id={"forgetPasswordButton"} onClick={this.forgetPasswordSwitch}> Forgot your password? </a>
+                                    </Text.Small>
+                                </Grid.Col>
+                            </Grid.Row>
+                            <Grid.Row className={'text-center'}>
+                                <Grid.Col>
+                                    <Button type='submit' color='primary' value='Login'>Login</Button>
+                                </Grid.Col>
+                            </Grid.Row>
+                        </Form>}
 
                         {this.state.forgetPasswordShow &&
-                        <form className="form-forgetPassword px-5 pb-5" action="" method="post"
-                              name="form-forgetPassword">
-                            <label htmlFor="email">Email Or Username</label>
-                            <input className="form-styling" type="text" name="email" placeholder=""/>
-                            <div className="text-center">
-                                <Button color={"primary"} className="rounded-pill" href={"#"}> Send </Button>
-                                <Button color="" className="rounded-pill"
-                                        onClick={this.forgetPasswordSwitch}> Go Back </Button>
-                            </div>
-                        </form>}
+                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-forgetPassword px-5 pb-5">
+                            <Grid.Row>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="Email or Username"> <Form.Input name="emailOrUsername"/> </Form.Group>
+                                </Grid.Col>
+                            </Grid.Row>
+                            <Grid.Row className={'text-center'}>
+                                <Grid.Col>
+                                    <Button type='submit' color='primary' value='Send'>Send Reset Link</Button>
+                                </Grid.Col>
+                                <Grid.Col>
+                                    <Button type='submit' outline color='primary' value='Send' onClick={this.forgetPasswordSwitch}>Go Back</Button>
+                                </Grid.Col>
+                            </Grid.Row>
+                        </Form>}
 
                         {this.state.signupShow &&
-                        <form className="form-signup px-5 pb-5" action="" method="post" name="form-signup">
-                            <label htmlFor="firstName">Full name</label>
-                            <input className="form-styling" type="text" name="firstName" placeholder=""/>
-
-                            <label htmlFor="lastName">Full name</label>
-                            <input className="form-styling" type="text" name="lastName" placeholder=""/>
-
-                            <label htmlFor="email">Email</label>
-                            <input className="form-styling" type="text" name="email" placeholder=""/>
-
-                            <label htmlFor="password">Password</label>
-                            <input className="form-styling" type="password" name="password" placeholder=""/>
-
-                            <div className="text-center">
-                                <a className="btn btn-primary text-white rounded-pill ">Sign Up</a>
-                            </div>
-                        </form>}
+                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-signup px-5 pb-5">
+                            <Grid.Row>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="First Name"> <Form.Input name="firstname"/> </Form.Group>
+                                </Grid.Col>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="Last Name"> <Form.Input name="lastname"/> </Form.Group>
+                                </Grid.Col>
+                            </Grid.Row>
+                            <Grid.Row>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="Username"> <Form.Input name="username"/> </Form.Group>
+                                </Grid.Col>
+                                <Grid.Col>
+                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"/> </Form.Group>
+                                </Grid.Col>
+                            </Grid.Row>
+                            <Grid.Row>
+                            <Grid.Col>
+                                <Form.Group isRequired label="Email"> <Form.Input name="email"/> </Form.Group>
+                            </Grid.Col>
+                        </Grid.Row>
+                            <Grid.Row alignItems={'center'} >
+                                <Grid.Col>
+                                    <Form.Group label="Gender">
+                                        <Form.Select> <option> Male </option> <option> Female </option> <option> Other </option> </Form.Select>
+                                    </Form.Group>
+                                </Grid.Col>
+                                <Grid.Col className={'text-center'}>
+                                    <Button type='submit' color='primary' value='Signup'>Signup</Button>
+                                </Grid.Col>
+                            </Grid.Row>
+                        </Form>}
                     </div>
                 </div>
             </Animated>}
