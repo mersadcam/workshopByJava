@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
 import io.vertx.reactivex.ext.unit.Async;
+import jdk.internal.dynalink.beans.StaticClass;
 import org.bson.types.ObjectId;
 
 import java.security.SecureRandom;
@@ -432,8 +433,7 @@ public class User {
     //should debug it function
     //should return role id
     //don't debug this part for teacher
-    JsonObject a = new JsonObject().put("roleName","teacher").put("enteredCourse",enteredCourse.get_id());
-    System.out.println(a.toString());
+
     client.find(Const.role , new JsonObject().put("roleName","Teacher").put("enteredCourse",enteredCourse.get_id()) , res->{
       if(res.succeeded() && !res.result().isEmpty()){
 
@@ -487,8 +487,19 @@ public class User {
    return null;
   }
 
+  public static void dashboard(MongoClient client , User user , Handler<AsyncResult<String>> handler){
+
+    JsonObject result = new JsonObject();
+
+    result.put("user",user.toJson());
+    ArrayList<Role> userRoles = user.getRoles();
+    int sizeRole = userRoles.size();
+    for (int i = sizeRole - 1 ; sizeRole - i < 4 ; i--){
+
+    }
 
 
+  }
 
   //  public void roleInWorkshop(MongoClient client,JsonObject clientJson,Handler<AsyncResult<List<JsonObject>>> handler){
 //
