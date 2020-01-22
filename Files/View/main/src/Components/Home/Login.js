@@ -2,6 +2,8 @@ import React from 'react';
 import './Login.css';
 import {Button, Form, Grid,Text} from 'tabler-react'
 import {Animated} from "react-animated-css";
+import axios from "axios";
+import {withRouter} from 'react-router'
 
 class Login extends React.Component {
     constructor(props) {
@@ -13,6 +15,7 @@ class Login extends React.Component {
             forgetPasswordShow: false,
             loginSwitchClass: "switch-active",
             signupSwitchClass: "switch-inactive",
+            user:{}
         };
     } ;
 
@@ -21,6 +24,37 @@ class Login extends React.Component {
             show: props.show
         };
     }
+
+    setPassword(value) {
+
+        const {user} = this.state;
+        this.setState({user:{...user,password: value}})
+
+    }
+
+    setUsername(value) {
+
+        const {user} = this.state;
+        this.setState({user:{...user ,username: value}})
+        console.log(this.state.user);
+    }
+
+
+
+    sendUser(){
+
+
+        axios.post("http://localhost:8000/login", this.state.user )
+            .then((res)=>{
+                localStorage.setItem("token",res.data.body.token);
+                localStorage.setItem("userType",res.data.body.userType);
+                this.props.history.push("/dashboard")
+            })
+            .catch((e)=>console.log(e))
+
+    }
+
+
 
 
     switch = () => {
@@ -60,15 +94,24 @@ class Login extends React.Component {
                         </div>
 
                         {this.state.loginShow &&
-                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-login px-5 pb-5">
+                        <div  className="form-login px-5 pb-5">
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Username"> <Form.Input name="username"/> </Form.Group>
+                                    <Form.Group isRequired label="Username" >
+
+                                        <Form.Input name="username" onChange={(e)=>{
+
+                                            this.setUsername(e.target.value)
+                                        }}/>
+
+                                    </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"/> </Form.Group>
+                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password" onChange={(e)=>{
+                                        this.setPassword(e.target.value)
+                                    }}/> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row alignItem={'center'} className={'justify-content-center'}>
@@ -83,10 +126,11 @@ class Login extends React.Component {
                             </Grid.Row>
                             <Grid.Row className={'text-center'}>
                                 <Grid.Col>
-                                    <Button type='submit' color='primary' value='Login'>Login</Button>
+                                    <Button  color='primary' value='Login' onClick={e => this.sendUser() }>Login</Button>
                                 </Grid.Col>
                             </Grid.Row>
-                        </Form>}
+                        </div>}
+
 
                         {this.state.forgetPasswordShow &&
                         <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-forgetPassword px-5 pb-5">

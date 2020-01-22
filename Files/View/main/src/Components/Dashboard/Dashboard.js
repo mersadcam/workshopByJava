@@ -4,9 +4,18 @@ import SiteTemplate from "../../SiteTemplate";
 import MyWorkshops from "./MyWorkshops";
 import Summary from "./Summary";
 import Messages from "./Messages";
-import Workshop from "../Workshop/Workshop";
 
 class Dashboard extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+
+
+
+        }
+    }
+
     render() {
         return (
             <SiteTemplate>

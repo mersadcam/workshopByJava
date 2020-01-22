@@ -37,6 +37,8 @@ public class App extends AbstractVerticle {
     Set<String> allowedHeaders = new HashSet<>();
     allowedHeaders.add("x-requested-with");
     allowedHeaders.add("Access-Control-Allow-Origin");
+    allowedHeaders.add("token");
+    allowedHeaders.add("userType");
     allowedHeaders.add("origin");
     allowedHeaders.add("Content-Type");
     allowedHeaders.add("accept");
@@ -162,7 +164,6 @@ public class App extends AbstractVerticle {
       .handler(ctx ->{
 
         JsonObject json = ctx.getBodyAsJson();
-
 
         User.login(client,json,res->{
 
@@ -712,6 +713,7 @@ public class App extends AbstractVerticle {
 
 
     //////////////////////////////////////
+
     router.route(Const.uploadProfileImage)
       .handler(BodyHandler.create())
       .handler(ctx->{
