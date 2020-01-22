@@ -542,6 +542,18 @@ public class App extends AbstractVerticle {
       });
 
 
+    router.route(Const.userMakeGroup)
+      .handler(ctx ->{
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject toResponse = new JsonObject();
+        User user = new User(userJson);
+
+        Teacher.userMakeGroup(client , user , clientJson , handler ->{
+
+        });
+
+      });
     ////////////////////////////////////
 
 

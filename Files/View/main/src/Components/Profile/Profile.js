@@ -1,9 +1,15 @@
 import React from 'react';
-import {Card, Grid, Page, Button, Header, Text, Tag} from "tabler-react";
+import {Card, Grid, Page, Button, Header, Text, Tag, Avatar} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
+import Carousel from "./Carousel";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import profile from "./Profile.json";
 import './Profile.css'
+import WorkshopCard from "../WokshopCard/WorkshopCard";
+
+import enrolledWokshops from "./EnrolledWorkshops";
+import gradingWokshops from "./GradingWorkshops";
+import teachingWorkshops from "./TeachingWorkshops";
 
 class Profile extends React.Component {
     render() {
@@ -30,13 +36,16 @@ class Profile extends React.Component {
                                             <Grid.Row>
                                                 <h3> {profile.username} </h3>
                                                 <Text transform={'uppercase d-inline ml-3'}>
-                                                    {profile.userType !== "user" && <Tag color={'blue'}> {profile.userType} </Tag>}
-                                                    <Button icon={'edit'} size={'sm'} className={'ml-3 px-3'}> Edit </Button>
+                                                    {profile.userType !== "user" &&
+                                                    <Tag color={'blue'}> {profile.userType} </Tag>}
+                                                    <Button color={'secondary'} size={'sm'} className={'ml-3 px-3'}>
+                                                        <FontAwesomeIcon size={'sm'} icon={'edit'}/> Edit </Button>
                                                 </Text>
                                             </Grid.Row>
 
                                             <Grid.Row>
-                                                <Header.H4 className={'text-weight-light'}>{profile.subtitle} </Header.H4>
+                                                <Header.H4
+                                                    className={'text-weight-light'}>{profile.subtitle} </Header.H4>
                                             </Grid.Row>
 
                                             <Grid.Row className={'mt-3'}>
@@ -58,7 +67,6 @@ class Profile extends React.Component {
                                             <Grid.Row className={'mt-3'}>
                                                 <Grid.Col>
                                                     <b className={'mr-2'}> Bio </b> {profile.bio}
-
                                                 </Grid.Col>
                                             </Grid.Row>
                                         </Grid.Col>
@@ -67,6 +75,68 @@ class Profile extends React.Component {
                             </Card>
                         </Grid.Col>
                     </Grid.Row>
+
+                    <Card>
+                        <Card.Header>
+                            <Card.Title> Teaching Workshops </Card.Title>
+                        </Card.Header>
+                        <Carousel>
+                            {teachingWorkshops.items.map((item, key) => (
+                                <WorkshopCard
+                                    title={item.title}
+                                    imageURL={item.imageURL}
+                                    avatarURL={item.avatarURL}
+                                    teacher={item.teacher}
+                                    date={item.date}
+                                    place={item.place}
+                                    price={item.price}
+                                    buttonText="View"
+                                    buttonColor="secondary"/>
+                            ))}
+                        </Carousel>
+                    </Card>
+
+                    <Card>
+                        <Card.Header>
+                            <Card.Title> Grading Workshops </Card.Title>
+                        </Card.Header>
+                        <Carousel>
+                            {gradingWokshops.items.map((item, key) => (
+                                <WorkshopCard
+                                    title={item.title}
+                                    imageURL={item.imageURL}
+                                    avatarURL={item.avatarURL}
+                                    teacher={item.teacher}
+                                    date={item.date}
+                                    place={item.place}
+                                    price={item.price}
+                                    buttonText="View"
+                                    buttonColor="secondary"/>
+                            ))}
+                        </Carousel>
+                    </Card>
+
+                    <Card>
+                        <Card.Header>
+                            <Card.Title> Enrolled Workshops </Card.Title>
+                        </Card.Header>
+                        <Carousel>
+                            {enrolledWokshops.items.map((item, key) => (
+                                <WorkshopCard
+                                    title={item.title}
+                                    imageURL={item.imageURL}
+                                    avatarURL={item.avatarURL}
+                                    teacher={item.teacher}
+                                    date={item.date}
+                                    place={item.place}
+                                    price={item.price}
+                                    buttonText="View"
+                                    buttonColor="secondary"/>
+                            ))}
+                        </Carousel>
+                    </Card>
+
+
                 </Page.Content>
             </SiteTemplate>
         )

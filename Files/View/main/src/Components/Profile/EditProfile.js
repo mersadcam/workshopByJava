@@ -1,77 +1,81 @@
 import React from 'react';
-import {Card, Grid, Page, Avatar, Header, Text, Tag, Form} from "tabler-react";
-import 'react-dropzone-uploader/dist/styles.css'
-import Dropzone from 'react-dropzone-uploader'
+import {Card, Grid, Page, Button, Header, Text, Tag, Avatar, Form} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import profile from "./Profile.json";
+import './Profile.css'
 
-
-/**
- import 'react-dropzone-uploader/dist/styles.css'
- import Dropzone from 'react-dropzone-uploader'
- **/
-
-const MyUploader = () => {
-    // specify upload params and url for your files
-    const getUploadParams = ({ meta }) => { return { url: 'localhost:8000' } } ;
-
-    // called every time a file's `status` changes
-    const handleChangeStatus = ({ meta, file }, status) => { console.log(status, meta, file) } ;
-
-    // receives array of files that are done uploading when submit button is clicked
-    const handleSubmit = (files, allFiles) => {
-        console.log(files.map(f => f.meta)) ;
-        allFiles.forEach(f => f.remove())
-    } ;
-
-    return (
-        <Dropzone
-            getUploadParams={getUploadParams}
-            onChangeStatus={handleChangeStatus}
-            onSubmit={handleSubmit}
-            accept="image/*,audio/*,video/*"
-        />
-    )
-} ;
-
-class EditProfile extends React.Component {
-
+class Profile extends React.Component {
     render() {
         return (
             <SiteTemplate>
                 <Page.Content>
-                    <MyUploader />
-                    <Grid.Row className={'justify-content-center'}>
-                        <Grid.Col xl={5} lg={5}>
-                            <Card>
-                                <Card.Body>
-                                    <Grid.Row alignItems={'center'} className={'text-center'}>
-                                        <Grid.Col lg={3}>
-                                            <Avatar size="xxl" imageURL={profile.avatarURL}/>
-                                        </Grid.Col>
-                                        <Grid.Col lg={9}>
-                                            <Grid.Row>
-                                                <Header.H3 className={'text-weight-light mt-3'}>
-                                                    {profile.firstName} {profile.lastName} {profile.username !== "user" &&
-                                                    <Text transform={'uppercase d-inline ml-3'}> <Tag color={'blue'}> {profile.userType} </Tag> </Text>}
-                                                </Header.H3>
-                                            </Grid.Row>
-                                            <Grid.Row className={'mt-3'}> <Tag className={'mr-2'}> Email </Tag> {profile.email} </Grid.Row>
-                                            <Grid.Row className={'mt-3'}> <Tag className={'mr-2'}> Gender </Tag> {profile.gender} </Grid.Row>
-                                        </Grid.Col>
-                                    </Grid.Row>
-                                    <Grid.Row className={'justify-content-center'}>
-                                        <a href={'#'} className={'text-inherit mt-5'}><FontAwesomeIcon color={'gray'} icon={['far', 'edit']}/> Edit</a>
-                                    </Grid.Row>
-                                </Card.Body>
-                            </Card>
-                        </Grid.Col>
-                    </Grid.Row>
+                    <Form onSubmit={(event) => console.log(event.target.name + 'clicked')}>
+                        <img alt={profile.username + " Cover"} src={profile.coverURL}/>
+
+                        <Card>
+                            <Card.Body>
+                                <Grid.Row alignItems={'center'}>
+                                    <Grid.Col lg={3} className={'text-center'}>
+                                        <img
+                                            alt={profile.username + " Cover"}
+                                            src={profile.avatarURL}
+                                            className={'rounded-circle avatar-big'}/>
+                                    </Grid.Col>
+
+
+                                    <Grid.Col lg={9}>
+                                        <Grid.Row>
+                                            <Grid.Col lg={3}>
+                                                <Form.Group isRequired label="Username"> <Form.Input
+                                                    value={profile.username} name="username"/> </Form.Group>
+                                            </Grid.Col>
+                                            <Grid.Col lg={9}>
+                                                <Form.Group label="Subtitle"> <Form.Input
+                                                    value={profile.subtitle} name="subtitle"/> </Form.Group>
+                                            </Grid.Col>
+                                        </Grid.Row>
+
+
+                                        <Grid.Row>
+                                            <Grid.Col lg={3}>
+                                                <Form.Group isRequired label="First Name"> <Form.Input
+                                                    value={profile.firstName} name="firstName"/> </Form.Group>
+                                            </Grid.Col>
+                                            <Grid.Col lg={3}>
+                                                <Form.Group isRequired label="Last Name"> <Form.Input
+                                                    value={profile.lastName} name="lastName"/> </Form.Group>
+                                            </Grid.Col>
+                                            <Grid.Col lg={6}>
+                                                <Form.Group isRequired label="Email"> <Form.Input
+                                                    value={profile.email} name="email"/> </Form.Group>
+                                            </Grid.Col>
+                                        </Grid.Row>
+
+
+                                        <Grid.Row>
+                                            <Grid.Col>
+                                                <Form.Group label={'Bio'}> <Form.Textarea
+                                                    defaultValue={profile.bio} name="bio"/></Form.Group>
+                                            </Grid.Col>
+                                        </Grid.Row>
+
+                                        <Grid.Row className={'justify-content-center'}>
+                                            <Grid.Col lg={4} >
+                                                <Button type='submit' color='blue'>Apply</Button>
+                                                <Button color='secondary' className={'ml-2'}>Cancel</Button>
+                                            </Grid.Col>
+                                        </Grid.Row>
+
+                                    </Grid.Col>
+                                </Grid.Row>
+                            </Card.Body>
+                        </Card>
+                    </Form>
                 </Page.Content>
             </SiteTemplate>
         )
     }
 }
 
-export default EditProfile;
+export default Profile;
