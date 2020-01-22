@@ -11,16 +11,16 @@ class Workshops extends React.Component {
     options =
         <React.Fragment>
             <Form.Select className="w-auto mr-2">
-                <option value="asc">Newest</option>
-                <option value="desc">Oldest</option>
+                <option>Newest</option>
+                <option>Oldest</option>
             </Form.Select>
             <Form.Select className="w-auto mr-2">
-                <option value="asc">All Places</option>
-                <option value="desc">Tehran</option>
-                <option value="desc">Shiraz</option>
-                <option value="desc">Yazd</option>
-                <option value="desc">Tabriz</option>
-                <option value="desc">Isfahan</option>
+                <option>All Places</option>
+                <option>Tehran</option>
+                <option>Shiraz</option>
+                <option>Yazd</option>
+                <option>Tabriz</option>
+                <option>Isfahan</option>
             </Form.Select>
             <Search/>
         </React.Fragment>;

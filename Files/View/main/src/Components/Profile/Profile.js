@@ -49,25 +49,23 @@ class Profile extends React.Component {
                                             </Grid.Row>
 
                                             <Grid.Row className={'mt-3'}>
-                                                <Grid.Col>
+                                                <Grid.Col lg={4}>
                                                     <b className={'mr-2'}> First Name </b> {profile.firstName}
                                                 </Grid.Col>
-                                                <Grid.Col>
+                                                <Grid.Col lg={8}>
                                                     <b className={'mr-2'}> Email </b> {profile.email}
                                                 </Grid.Col>
                                             </Grid.Row>
                                             <Grid.Row className={'mt-3'}>
-                                                <Grid.Col>
+                                                <Grid.Col lg={4}>
                                                     <b className={'mr-2'}> Last Name </b> {profile.lastName}
                                                 </Grid.Col>
-                                                <Grid.Col>
-                                                    <b className={'mr-2'}> Gender </b> {profile.gender}
-                                                </Grid.Col>
-                                            </Grid.Row>
-                                            <Grid.Row className={'mt-3'}>
-                                                <Grid.Col>
+                                                <Grid.Col lg={8}>
                                                     <b className={'mr-2'}> Bio </b> {profile.bio}
                                                 </Grid.Col>
+                                                {/*<Grid.Col>*/}
+                                                {/*    <b className={'mr-2'}> Gender </b> {profile.gender}*/}
+                                                {/*</Grid.Col>*/}
                                             </Grid.Row>
                                         </Grid.Col>
                                     </Grid.Row>
