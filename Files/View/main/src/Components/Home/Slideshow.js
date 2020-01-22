@@ -16,11 +16,6 @@ class Slideshow extends React.Component {
         };
     }
 
-    toggle = () => {
-        this.setState({show: !this.state.show});
-        this.props.changeActiveSlide(this.state.number);
-    };
-
     render() {
         return (
                 <div className="slideshow row">

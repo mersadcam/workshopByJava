@@ -100,7 +100,7 @@ class Login extends React.Component {
                                     <Button type='submit' color='primary' value='Send'>Send Reset Link</Button>
                                 </Grid.Col>
                                 <Grid.Col>
-                                    <Button type='submit' outline color='primary' value='Send' onClick={this.forgetPasswordSwitch}>Go Back</Button>
+                                    <Button color='secondary' value='Go Back' onClick={this.forgetPasswordSwitch}>Go Back</Button>
                                 </Grid.Col>
                             </Grid.Row>
                         </Form>}
