@@ -64,7 +64,7 @@ class Home extends React.Component {
         return (
             <div>
                 <Navbar toggleLogin={this.toggleLogin}/>
-                <Login show={this.state.loginShow} toggleLogin={this.toggleLogin}/>
+                <Login history={this.props.history} show={this.state.loginShow} toggleLogin={this.toggleLogin}/>
                 <div className={"slideshow-container"}>
                     {this.slideshowArray[this.state.activeSlide - 1]}
                 </div>
