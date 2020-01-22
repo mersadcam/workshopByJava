@@ -27,7 +27,6 @@ public class User {
   private ArrayList<Role> roles = new ArrayList<Role>();
 
   //OneToOne relationship :
-  private String _id;
   private ContactPoint contactPoint;
   private String username;
   private String password;
@@ -36,7 +35,6 @@ public class User {
 
   public User(JsonObject json) {
 
-    this._id = json.getString("_id");
     this.username = json.getString("username");
     this.password = json.getString("password");
     this.token = json.getString("token");
@@ -52,12 +50,11 @@ public class User {
   }
 
 
-  public User(String _id){
-    this._id = _id;
+  public User(String username){
+    this.username = username;
   }
 
   public User(ContactPoint contactPoint , String username , String password , String userType){
-    this._id = new ObjectId().toString();
     this.contactPoint = contactPoint;
     this.username = username;
     this.password = password;
@@ -80,10 +77,6 @@ public class User {
 
   public String getUsername() {
     return username;
-  }
-
-  public String get_id(){
-    return this._id;
   }
 
   public void setUsername(String username) {

@@ -27,7 +27,7 @@ public class Group {
 
   }
 
-  public Group( JsonObject jsonObject){
+  public Group( JsonObject jsonObject ){
     this._id = jsonObject.getString("_id");
     JsonArray identitiesId = jsonObject.getJsonArray("identities");
 
@@ -102,5 +102,10 @@ public class Group {
     client.updateCollection(Const.group,query,update,handler->{});
 
 
+  }
+
+  public void addIdentity(String string) {
+    Identity id = new Identity(string);
+    addIdentity(id);
   }
 }

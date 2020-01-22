@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -58,6 +59,7 @@ public class App extends AbstractVerticle {
     MongoClient client = MongoClient.createShared( vertx , config );
 
     /////////////////////////////////////
+
 
     router.route()
       .path(Const.userStar)
@@ -402,10 +404,13 @@ public class App extends AbstractVerticle {
 
         Grader.writerReport(client , "Grader" , clientJson , res ->{
           if(res.succeeded()){
-            System.out.println("succed we win");
+
+            ctx.response().end(new JsonObject().put("status","true").put("msg","Your answer have saved successfully").toString());
+
           }
           else{
-            System.out.println(res.cause());
+            ctx.response().end(new JsonObject().put("status","false").put("msg","There are some problems in your answer").toString());
+
           }
         });
 
@@ -414,8 +419,52 @@ public class App extends AbstractVerticle {
       });
 
     //new added
-    router.get(Const.userFinalReport)
+    router.get(Const.userStudentFinalReport)
       .handler(ctx ->{
+
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject clientJson = ctx.get("clientJson");
+
+        JsonObject toFindIdentity = new JsonObject()
+          .put("roleName","Student")
+          .put("_id",clientJson.getString("studentId"));
+
+        client.find(Const.role,toFindIdentity,resIdentity->{
+
+
+          if( !resIdentity.result().isEmpty()) {
+
+            Identity identity = new Identity(resIdentity.result().get(0));
+            client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resReport->{
+
+              if (!resReport.result().isEmpty()){
+
+                Report report = new Report(resReport.result().get(0));
+                report.setFinalNumber(clientJson.getDouble("finalNumber"));
+                report.setStudentCourseStatus(clientJson.getString("studentCourseStatus"));
+                report.setCompleteNumber(clientJson.getDouble("completeNumber"));
+                report.update(client);
+
+                ctx.response().end(new JsonObject()
+                  .put("status","true")
+                  .put("msg","Report have been entered successfully")
+                  .toString());
+
+              }
+
+            });
+          }else{
+
+            ctx.response().end(new JsonObject()
+              .put("status","false")
+              .put("msg","There are some problems in system\nCall to informatic team( phone number : ++++) ")
+              .toString());
+
+          }
+
+
+        });
+
 
       });
 
@@ -447,10 +496,63 @@ public class App extends AbstractVerticle {
     //new added
     router.route(Const.userTeacherAcceptGrader)
       .handler(ctx ->{
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        User user = new User(userJson);
+        JsonObject toResponse = new JsonObject();
 
+        Grader.teacherAcceptGrader(client , user , clientJson , handler ->{
+          if (handler.succeeded()){
+            toResponse
+              .put("status",true)
+              .put("msg",handler.result());
+          }
+          else {
+            toResponse
+              .put("status",false)
+              .put("msg",handler.cause().toString());
+          }
+          ctx.response().end(toResponse.toString());
+        });
+      });
+
+
+    router.route(Const.userMessege)
+      .handler(ctx->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        String text = clientJson.getString("text");
+        User sender = new User(userJson);
+        User receiver = new User(clientJson.getString("receiver"));
+        String replyId = clientJson.getString("replyId");
+        Messege reply = new Messege(replyId);
+
+        Messege messege = new Messege(text,reply);
+        MessegeRelation messegeRelation = new MessegeRelation(sender,receiver,messege);
+        messegeRelation.saveToDB(client);
+        messege.saveToDB(client);
+
+        ctx.response().end(new JsonObject()
+        .put("status","true")
+        .put("msg","Your messege have been sent successfully")
+        .toString());
 
       });
 
+
+    router.route(Const.userMakeGroup)
+      .handler(ctx ->{
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject toResponse = new JsonObject();
+        User user = new User(userJson);
+
+        Teacher.userMakeGroup(client , user , clientJson , handler ->{
+
+        });
+
+      });
     ////////////////////////////////////
 
 
@@ -620,6 +722,8 @@ public class App extends AbstractVerticle {
       });
 
 
+
+    //////////////////////////////////////
     router.route(Const.uploadProfileImage)
       .handler(BodyHandler.create())
       .handler(ctx->{
@@ -635,6 +739,8 @@ public class App extends AbstractVerticle {
 
 
       });
+
+
 
     server.requestHandler(router).listen(Const.port);
 

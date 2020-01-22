@@ -293,8 +293,7 @@ public class EnteredCourse {
 
         EnteredCourse workshop = new EnteredCourse(res.result().get(0));
 
-        String time = new SimpleDateFormat("yyyy-MM-dd-HH:mm").format(new java.util.Date());
-        Grader grader = new Grader( time );
+        Grader grader = new Grader();
         grader.saveToDB(client);
         Report report = new Report();
         report.saveToDB(client);
