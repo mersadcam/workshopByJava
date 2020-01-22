@@ -5,7 +5,6 @@ import './fontawesome'
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import "./Tabler.css";
 
-
 import Home from "./Components/Home/Home";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import Workshops from "./Components/Workshops/Workshops";

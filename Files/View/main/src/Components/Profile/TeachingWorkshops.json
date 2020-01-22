@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "title" : "Network",
+      "imageURL": "demo/photos/matt-barrett-339981-500.jpg",
+      "avatarURL": "demo/faces/male/32.jpg",
+      "teacher": "Jack Ruiz",
+      "date": "15 Mar",
+      "place": "Tehran",
+      "price": "100$"
+    },
+    {
+      "title" : "Artificial Intelligence",
+      "imageURL": "demo/photos/nathan-anderson-297460-500.jpg",
+      "avatarURL": "demo/faces/male/9.jpg",
+      "teacher": "Ronald Bradley",
+      "date": "11 Mar",
+      "place": "Shiraz",
+      "price": "500$"
+    }
+  ]
+}
+
