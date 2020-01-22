@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, Grid, Page, Button, Header, Text, Tag, Avatar} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
-import Carousel from "./Carousel";
+import Carousel from "../Carousel/Carousel";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import profile from "./Profile.json";
 import './Profile.css'

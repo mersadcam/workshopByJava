@@ -4,13 +4,16 @@ import SiteTemplate from "../../SiteTemplate";
 import MyWorkshops from "./MyWorkshops";
 import Summary from "./Summary";
 import Messages from "./Messages";
-import Workshop from "../Workshop/Workshop";
+import NewWorkshops from "./NewWorkshops";
 
 class Dashboard extends React.Component {
     render() {
         return (
             <SiteTemplate>
                 <Page.Content>
+                    <Grid.Row>
+                        <NewWorkshops/>
+                    </Grid.Row>
                     <Grid.Row>
                         <Grid.Col sm={'12'} lg={'6'}>
                             <Summary/>

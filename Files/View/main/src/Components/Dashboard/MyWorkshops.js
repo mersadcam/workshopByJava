@@ -1,40 +1,30 @@
 import React from 'react';
-import {Button, Card, Icon, Table, Text, Dropdown, StampCard} from 'tabler-react';
+import {Button, Card, Table} from 'tabler-react';
+import enrolledWorkshops from "./EnrolledWorkshops.json";
 
 class MyWorkshops extends React.Component {
+
     render() {
         return (
-            <Card title="My Workshops">
-                <Table
-                    responsive
-                    className="card-table table-vcenter"
-                    headerItems={[
-                        {content: "Workshop"},
-                        {content: "Organizer"},
-                        {content: "Start"},
-                        {content: null},
-                    ]}
-                    bodyItems={[
-                        {key: "1", item: [
-                                {content: (<a href="#">Illustrator</a>)},
-                                {content: (<a href="#" className="text-inherit">Mohammad Mahdian</a>)},
-                                {content: "20 Jan 2020 / 15:00 PM"},
-                                {content: (<Button outline size="sm" color="primary"> Manage </Button>),},
-                            ],},
-                        {key: "2", item: [
-                                {content: (<a href="#">React JS</a>)},
-                                {content: (<a href="#" className="text-inherit">Mersad Khalafi</a>)},
-                                {content: "22 Jan 2020 / 17:00 PM"},
-                                {content: (<Button outline size="sm" color="primary"> Manage </Button>),},
-                            ],},
-                        {key: "3", item: [
-                                {content: (<a href="#">Java</a>)},
-                                {content: (<a href="#" className="text-inherit">Ehsan Kaji</a>)},
-                                {content: "24 Jan 2020 / 16:00 PM"},
-                                {content: (<Button outline size="sm" color="primary"> Manage </Button>),},
-                            ],},
-                    ]}
-                />
+            <Card title="My Workshops" className={'px-2'}>
+                <Table responsive>
+                    <Table.Header>
+                        <Table.ColHeader>Workshop</Table.ColHeader>
+                        <Table.ColHeader>Teacher</Table.ColHeader>
+                        <Table.ColHeader>Start</Table.ColHeader>
+                        <Table.ColHeader>{null}</Table.ColHeader>
+                    </Table.Header>
+                    <Table.Body>
+                        {enrolledWorkshops.items.map((item, key) => (
+                            <Table.Row>
+                                <Table.Col><a href={'?'}>{item.title}</a></Table.Col>
+                                <Table.Col>{item.teacher}</Table.Col>
+                                <Table.Col>{item.date}</Table.Col>
+                                <Table.Col><Button outline size="sm" color="primary"> Manage </Button></Table.Col>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table>
             </Card>
         );
     }
