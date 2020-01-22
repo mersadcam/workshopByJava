@@ -155,16 +155,23 @@ public class Teacher implements Role,FormWriter{
 
     client.find(Const.enteredCourse , workshop , resFindWorkshop ->{
       if (resFindWorkshop.succeeded() && !resFindWorkshop.result().isEmpty()){//we find workshop in db
+
         EnteredCourse findedWorkshop = new EnteredCourse(resFindWorkshop.result().get(0));
+
         for (int i = 0 ; i < mainGroups.size() ; i++) {
           Group g1 = new Group();
+
           for (int j = 0; j < mainGroups.getJsonArray(i).size() ; j++) {//condition for loop is size of the each group
             g1.addIdentity(mainGroups.getJsonArray(i).getString(j));
           }
+
           g1.saveToDB(client);
           findedWorkshop.addGroup(g1);
+
         }
+
         findedWorkshop.update(client);
+        handler.handle(Future.succeededFuture("Groups are created."));
       }
       else {//if we don't find workshop in db
         handler.handle(Future.failedFuture("Workshop doesn't exist."));
