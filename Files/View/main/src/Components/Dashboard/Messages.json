@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "sender" : "Ronald Bradley",
+      "text": "Can you send ...",
+      "avatarURL": "./demo/faces/male/9.jpg",
+      "date": "May 6, 2020"
+    },
+    {
+      "sender" : "Russell Gibson",
+      "text": "Hello. What's up? ...",
+      "avatarURL": "./demo/faces/male/9.jpg",
+      "date": "April 22, 2020"
+    },
+    {
+      "sender" : "Beverly Armstrong",
+      "text": "Let Get Started...",
+      "avatarURL": "./demo/faces/female/1.jpg",
+      "date": "April 15, 2020"
+    },
+    {
+      "sender" : "Bobby Knight",
+      "text": "See you tomorrow...",
+      "avatarURL": "./demo/faces/male/9.jpg",
+      "date": "April 8, 2020"
+    }
+  ]
+}
+
