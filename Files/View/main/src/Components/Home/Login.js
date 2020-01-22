@@ -15,7 +15,8 @@ class Login extends React.Component {
             forgetPasswordShow: false,
             loginSwitchClass: "switch-active",
             signupSwitchClass: "switch-inactive",
-            user:{}
+            user:{},
+            msg:""
         };
     } ;
 
@@ -36,19 +37,29 @@ class Login extends React.Component {
 
         const {user} = this.state;
         this.setState({user:{...user ,username: value}})
-        console.log(this.state.user);
     }
 
 
 
-    sendUser(){
+    sendUser(api){
 
 
-        axios.post("http://localhost:8000/login", this.state.user )
+        axios.post("http://localhost:8000"+api, this.state.user )
             .then((res)=>{
-                localStorage.setItem("token",res.data.body.token);
-                localStorage.setItem("userType",res.data.body.userType);
-                this.props.history.push("/dashboard")
+
+                if( res.data.status == "true"){
+                    localStorage.setItem("token",res.data.body.token);
+                    localStorage.setItem("userType",res.data.body.userType);
+
+                    this.props.history.push("/dashboard");
+
+                }else{
+
+                    this.setState({msg:res.data.msg})
+
+                }
+
+
             })
             .catch((e)=>console.log(e))
 
@@ -76,6 +87,9 @@ class Login extends React.Component {
 
 
     render() {
+
+        const {user} = this.state;
+
         return (
             <div> {this.state.show && <Animated animationIn="fadeIn"
                                                 animationOut="fadeOut"
@@ -124,9 +138,13 @@ class Login extends React.Component {
                                     </Text.Small>
                                 </Grid.Col>
                             </Grid.Row>
+
+                            <p style={{color:"red"}}>{this.state.msg}</p>
+
                             <Grid.Row className={'text-center'}>
                                 <Grid.Col>
-                                    <Button  color='primary' value='Login' onClick={e => this.sendUser() }>Login</Button>
+
+                                    <Button  color='primary' value='Login' onClick={e => this.sendUser("/login") }>Login</Button>
                                 </Grid.Col>
                             </Grid.Row>
                         </div>}
@@ -150,39 +168,55 @@ class Login extends React.Component {
                         </Form>}
 
                         {this.state.signupShow &&
-                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-signup px-5 pb-5">
+                        <div  className="form-signup px-5 pb-5">
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="First Name"> <Form.Input name="firstname"/> </Form.Group>
-                                </Grid.Col>
-                                <Grid.Col>
-                                    <Form.Group isRequired label="Last Name"> <Form.Input name="lastname"/> </Form.Group>
+                                    <Form.Group isRequired label="Full Name"> <Form.Input name="fullName"
+                                    onChange={e => {
+                                        this.setState({user:{...user,fullName:e.target.value}})
+                                    }}
+                                    /> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Username"> <Form.Input name="username"/> </Form.Group>
+                                    <Form.Group isRequired label="Username"> <Form.Input name="username"
+                                    onChange={e=>{
+                                        this.setState({user:{...user,username:e.target.value}})
+                                    }}
+                                    /> </Form.Group>
                                 </Grid.Col>
+                            </Grid.Row>
+
+                            <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"/> </Form.Group>
+                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"
+                                     onChange={e => {
+                                         this.setState({user:{...user,password:e.target.value}})
+                                     }}
+                                    /> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row>
                             <Grid.Col>
-                                <Form.Group isRequired label="Email"> <Form.Input name="email"/> </Form.Group>
+                                <Form.Group isRequired label="Email"> <Form.Input name="email"
+                                  onChange={e => {
+                                      this.setState({user:{...user,emailAddress:e.target.value}})
+                                  }}
+                                /> </Form.Group>
                             </Grid.Col>
                         </Grid.Row>
+
+                            <p style={{color:"red"}}>{this.state.msg}</p>
+
                             <Grid.Row alignItems={'center'} >
-                                <Grid.Col>
-                                    <Form.Group label="Gender">
-                                        <Form.Select> <option> Male </option> <option> Female </option> <option> Other </option> </Form.Select>
-                                    </Form.Group>
-                                </Grid.Col>
                                 <Grid.Col className={'text-center'}>
-                                    <Button type='submit' color='primary' value='Signup'>Signup</Button>
+                                    <Button onClick={e=>this.sendUser("/register")} type='submit' color='primary' value='Signup' >Signup</Button>
                                 </Grid.Col>
                             </Grid.Row>
-                        </Form>}
+                        </div>}
+
+
                     </div>
                 </div>
             </Animated>}
