@@ -42,7 +42,8 @@ public class Teacher implements Role,FormWriter{
 	  this.roleName = jsonObject.getString("roleName");
 	  this.enteredCourse = new EnteredCourse(jsonObject.getString("enteredCourse"));
 
-	  JsonArray formsArray = jsonObject.getJsonArray("forms");
+	  JsonArray formsArray = jsonObject.getJsonArray("form");
+
 
 	  for(int i = 0 ; i < formsArray.size() ; i++){
 	    this.forms.add(new Form(formsArray.getString(i)));
@@ -85,6 +86,11 @@ public class Teacher implements Role,FormWriter{
 
     client.insert(Const.role,this.toJson(),handler);
 
+  }
+
+  @Override
+  public String getRoleName() {
+    return roleName;
   }
 
   public void saveToDB(MongoClient client){

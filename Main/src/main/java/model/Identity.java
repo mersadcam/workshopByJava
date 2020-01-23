@@ -13,18 +13,18 @@ public class Identity implements Role {
   String _id ;
   Report report;
 	RequestType requestType;
-	Course course;
+	EnteredCourse enteredCourse;
   String roleName;
 
   public Identity(String _id){
     this._id = _id;
   }
 
-  public Identity(Report report , RequestType type , Course course , String roleName){
+  public Identity(Report report , RequestType type , EnteredCourse enteredCourse , String roleName){
     this._id = new ObjectId().toString();
     this.requestType = type;
     this.report = report;
-    this.course = course;
+    this.enteredCourse = enteredCourse;
     this.roleName = roleName;
   }
 
@@ -32,7 +32,7 @@ public class Identity implements Role {
     this._id = jsonObject.getString("_id");
     this.roleName = jsonObject.getString("roleName");
     this.report = new Report(jsonObject.getString("report"));
-    this.course = new Course(jsonObject.getString("course"));
+    this.enteredCourse = new EnteredCourse(jsonObject.getString("enteredCourse"));
   }
 
 
@@ -50,12 +50,16 @@ public class Identity implements Role {
       .put("_id",this._id)
       .put("report",this.report.get_id())
       .put("requestType",this.requestType.get_id())
-      .put("course",this.course.getName())
+      .put("enteredCourse",this.enteredCourse.get_id())
       .put("roleName",this.roleName);
 
     return json;
   }
 
+  @Override
+  public String getRoleName() {
+    return roleName;
+  }
 
   public void saveToDB(MongoClient client, Handler<AsyncResult<String>> handler){
 
@@ -101,37 +105,37 @@ public class Identity implements Role {
   }
 
 
-  public static void findRole(MongoClient client , String role){
-    JsonObject result = new JsonObject();
-
-    client.find(Const.role , new JsonObject().put("_id",role) , res->{
-
-      if(res.succeeded() && !res.result().isEmpty()){
-        result.put("roleName",res.result().get(0).getString("roleName"));
-        result.put("_id" ,res.result().get(0).getString("_id"));
-
-        if (!result.getString("roleName").equals("Teacher")){
-          result.put("course", res.result().get(0).getString("course"));
-        }
-        else {
-          client.find(Const.enteredCourse , new JsonObject().put("_id",res.result().get(0).getString("enteredCourse")) , resFind->{
-            if (resFind.succeeded() && !resFind.result().isEmpty()){
-              result.put("course",resFind.result().get(0).getString("course"));
-              final JsonObject result1 = result;
-            }
-            else{//if we don't find entered course
-              result.put("enteredCourse","null");
-
-            }
-          });
-        }
-
-      }
-      else {
-        result.put("roleName","null");
-      }
-
-    });
-  }
+//  public static void findRole(MongoClient client , String role){
+//    JsonObject result = new JsonObject();
+//
+//    client.find(Const.role , new JsonObject().put("_id",role) , res->{
+//
+//      if(res.succeeded() && !res.result().isEmpty()){
+//        result.put("roleName",res.result().get(0).getString("roleName"));
+//        result.put("_id" ,res.result().get(0).getString("_id"));
+//
+//        if (!result.getString("roleName").equals("Teacher")){
+//          result.put("enteredCourse", res.result().get(0).getString("enteredCourse"));
+//        }
+//        else {
+//          client.find(Const.enteredCourse , new JsonObject().put("_id",res.result().get(0).getString("enteredCourse")) , resFind->{
+//            if (resFind.succeeded() && !resFind.result().isEmpty()){
+//              result.put("enteredCourse",resFind.result().get(0).getString("enteredCourse"));
+//              final JsonObject result1 = result;
+//            }
+//            else{//if we don't find entered course
+//              result.put("enteredCourse","null");
+//
+//            }
+//          });
+//        }
+//
+//      }
+//      else {
+//        result.put("roleName","null");
+//      }
+//
+//    });
+//  }
 }
 

@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
+import io.vertx.reactivex.ext.unit.Async;
 import org.bson.types.ObjectId;
 
 import java.sql.Timestamp;
@@ -22,6 +23,8 @@ public class EnteredCourse {
 
   //many to one
 	private Course course;
+	private String name;
+	private String category;
   private String _id;
 	private String startTime;
 	private String finishTime;
@@ -38,6 +41,7 @@ public class EnteredCourse {
 
 	public EnteredCourse(
 	  Course course ,
+    String name,
     String startTime,
     String finishTime ,
     String place ,
@@ -49,6 +53,7 @@ public class EnteredCourse {
     this.value = value;
 	  this._id = Const.generateWorkshopId();
 	  this.course = course;
+	  this.name = name;
 	  this.startTime = startTime;
 	  this.finishTime = finishTime;
 	  this.capacity = capacity;
@@ -63,6 +68,7 @@ public class EnteredCourse {
 
 	  this.startTime = json.getString("startTime");
 	  this.finishTime = json.getString("finishTime");
+	  this.name = json.getString("name");
 	  this.place = json.getString("place");
 	  this.capacity = (int)json.getValue("capacity");
 	  this.description = json.getString("description");
@@ -86,6 +92,14 @@ public class EnteredCourse {
 
   public String getCourseName() {
     return this.course.getName().toUpperCase();
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public void setCourse(Course course){
@@ -112,6 +126,7 @@ public class EnteredCourse {
 
 	  JsonObject json = new JsonObject()
       .put("_id",this._id)
+      .put("name",this.name)
       .put("startTime",this.startTime)
       .put("finishTime",this.finishTime)
       .put("place",this.place)
@@ -171,6 +186,7 @@ public class EnteredCourse {
 	  String startTime = json.getString("startTime");
 	  String finishTime = json.getString("finishTime");
 	  String place = json.getString("place");
+	  String name = json.getString("name");
 	  String description = json.getString("description");
 	  int capacity = json.getInteger("capacity");
 
@@ -180,6 +196,7 @@ public class EnteredCourse {
 	    if (!resSC.result().isEmpty()){
 	      Course course = new Course(resSC.result().get(0));
             EnteredCourse newWorkshop = new EnteredCourse(course ,
+              name,
               startTime,
               finishTime ,
               place ,
@@ -297,7 +314,7 @@ public class EnteredCourse {
         grader.saveToDB(client);
         Report report = new Report();
         report.saveToDB(client);
-        Identity identity = new Identity(report ,grader , new Course(workshop.getCourseName().toUpperCase()),"Grader");
+        Identity identity = new Identity(report ,grader , workshop,"Grader");
         identity.saveToDB(client);
         user.addRole(identity);
         user.update(client);
@@ -341,6 +358,55 @@ public class EnteredCourse {
         handler.handle(Future.failedFuture("Don't find workshop."));
       }
     });
+  }
+
+  public static void myWorkshops(
+    MongoClient client,
+    ArrayList<JsonObject> workshops,
+    List rolesId,
+    int counter,
+    Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+
+    if (counter == rolesId.size()){
+
+      handler.handle(Future.succeededFuture(workshops));
+
+    }
+
+    else {
+
+      client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)),resRole->{
+
+
+
+
+        client.find(Const.enteredCourse,new JsonObject().put("_id",resRole.result().get(0).getString("enteredCourse")),resWork->{
+
+          JsonObject jsonObject = new JsonObject().put("workshop",resWork.result().get(0));
+
+          if (resRole.result().get(0).getString("roleName").equals("Teacher")){
+
+            Teacher teacher = new Teacher(resRole.result().get(0));
+            jsonObject.put("role",teacher.toJson());
+
+          }
+          else{
+
+            Identity identity = new Identity(resWork.result().get(0));
+            jsonObject.put("role",identity.toJson().put("status",identity.report.getStudentCourseStatus()));
+
+          }
+
+          workshops.add(jsonObject);
+          myWorkshops(client,workshops,rolesId,counter+1,handler);
+
+        });
+
+      });
+
+    }
+
+
   }
 
 

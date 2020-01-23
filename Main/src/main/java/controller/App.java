@@ -201,16 +201,40 @@ public class App extends AbstractVerticle {
     router.route(Const.profile)
       .handler(ctx->{
 
-        JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
 
-        User user = new User(userJson);
-        client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resCP->{
+        String username = clientJson.getString("username");
+        client.find(Const.user,new JsonObject().put("username",username),res->{
 
-          ContactPoint cp = new ContactPoint(resCP.result().get(0));
-//          JsonObject toSend = User.returnProfile(user,cp);
+          if (!res.result().isEmpty()){
+
+            User user = new User(res.result().get(0));
+            client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resCP->{
+
+              ContactPoint cp = new ContactPoint(resCP.result().get(0));
+              EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),user.getRolesId(),0,resWorkshops->{
+
+                ArrayList<JsonObject> toSend = resWorkshops.result();
+                toSend.add(new JsonObject().put("ContactPoint",cp.toJson()));
+                toSend.add(new JsonObject().put("user",user.toJson()));
+
+                ctx.response().end(new JsonObject().put("body",toSend.toString()).put("status","true").toString());
+
+              });
+
+            });
+
+          }else{
+
+            ctx.response().end(new JsonObject().put("status","false").put("msg","This student is not in system").toString());
+
+          }
+
+
 
         });
+
+
 
       });
 
@@ -354,7 +378,7 @@ public class App extends AbstractVerticle {
               report.saveToDB(client);
               Student student = new Student(paymentStatus);
               student.saveToDB(client);
-              Identity identity = new Identity(report,student,new Course(workshop.getCourseName()), "Student");
+              Identity identity = new Identity(report,student,workshop, "Student");
               user.addRole(identity);
               user.update(client);
               identity.saveToDB(client);
