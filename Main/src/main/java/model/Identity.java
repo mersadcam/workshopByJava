@@ -101,7 +101,7 @@ public class Identity implements Role {
   }
 
 
-  public static JsonObject findRole(MongoClient client , String role){
+  public static void findRole(MongoClient client , String role){
     JsonObject result = new JsonObject();
 
     client.find(Const.role , new JsonObject().put("_id",role) , res->{
@@ -112,19 +112,16 @@ public class Identity implements Role {
 
         if (!result.getString("roleName").equals("Teacher")){
           result.put("course", res.result().get(0).getString("course"));
-          return result;
         }
         else {
           client.find(Const.enteredCourse , new JsonObject().put("_id",res.result().get(0).getString("enteredCourse")) , resFind->{
             if (resFind.succeeded() && !resFind.result().isEmpty()){
               result.put("course",resFind.result().get(0).getString("course"));
               final JsonObject result1 = result;
-              return result1;
             }
             else{//if we don't find entered course
               result.put("enteredCourse","null");
 
-              return result;
             }
           });
         }
@@ -132,7 +129,6 @@ public class Identity implements Role {
       }
       else {
         result.put("roleName","null");
-        return result;
       }
 
     });

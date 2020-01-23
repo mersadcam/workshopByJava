@@ -208,7 +208,7 @@ public class App extends AbstractVerticle {
         client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resCP->{
 
           ContactPoint cp = new ContactPoint(resCP.result().get(0));
-          
+//          JsonObject toSend = User.returnProfile(user,cp);
 
         });
 
