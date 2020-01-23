@@ -1,6 +1,7 @@
 package model;
 
 import controller.Const;
+import dev.morphia.annotations.Id;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -8,9 +9,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.mongo.MongoClientUpdateResult;
-import io.vertx.reactivex.ext.unit.Async;
-import jdk.internal.dynalink.beans.StaticClass;
-import org.bson.types.ObjectId;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -49,7 +47,6 @@ public class User {
     }
 
   }
-
 
   public User(String username){
     this.username = username;
@@ -156,7 +153,6 @@ public class User {
   public ArrayList<Role> getRoles() {
     return roles;
   }
-
 
   public ArrayList<String> getRolesId(){
 
@@ -276,12 +272,8 @@ public class User {
 
   }
 
-  public static void returnRoles(
-    MongoClient client,
-    ArrayList<JsonObject> arr,
-    ArrayList<String> rolesId,
-    int counter,
-    Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+  public static void returnRoles(MongoClient client, ArrayList<JsonObject> arr, ArrayList<String> rolesId, int counter,
+                                 Handler<AsyncResult<ArrayList<JsonObject>>> handler){
 
     if( counter == rolesId.size())
       handler.handle(Future.succeededFuture(arr));
@@ -297,12 +289,9 @@ public class User {
         returnRoles(client,arr,rolesId,counter+1,handler);
 
       });
-
-
     }
-
-
   }
+
 
   public static JsonObject isTeacherInWorkshop(ArrayList<JsonObject> roles,String workshopId){
 
@@ -490,16 +479,40 @@ public class User {
   public static void dashboard(MongoClient client , User user , Handler<AsyncResult<String>> handler){
 
     JsonObject result = new JsonObject();
-
     result.put("user",user.toJson());
-    ArrayList<Role> userRoles = user.getRoles();
-    int sizeRole = userRoles.size();
-    for (int i = sizeRole - 1 ; sizeRole - i < 4 ; i--){
+    client.find(Const.enteredCourse , new JsonObject() , resFind->{
+      if (resFind.succeeded()){
+        List workshopsList = resFind.result();
+        result.put("workshopsList",workshopsList);
+      }
+      else{
+        result.put("workshopsList","null");
+        handler.handle(Future.failedFuture("We don't have any workshop."));
+      }
 
-    }
+      ArrayList<Role> userRoles = user.getRoles();
+      int sizeRole = userRoles.size();
+      JsonObject roles = findRoles(client , userRoles , sizeRole , new JsonObject());
+      result.put("roles",roles);
 
+      //message isn't complete
+    });
 
   }
+
+  public static JsonObject findRoles(MongoClient client , ArrayList<Role> roles , int counter , JsonObject user){
+    if (counter == (-1)){
+      return user;
+    }
+    else {
+
+      user.put(counter+" - role",Identity.findRole(client , roles.get(counter).get_id() ));
+
+      return findRoles(client , roles ,counter - 1 , user );
+    }
+  }
+
+
 
   //  public void roleInWorkshop(MongoClient client,JsonObject clientJson,Handler<AsyncResult<List<JsonObject>>> handler){
 //

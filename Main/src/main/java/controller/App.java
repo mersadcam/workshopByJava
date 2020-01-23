@@ -628,7 +628,7 @@ public class App extends AbstractVerticle {
 
           if(resFind.result().isEmpty()){
 
-            Course course = new Course(name,description);
+            Course course = new Course(name,description,"");
             course.saveToDB(client);
 
             ctx.response().end(new JsonObject()
@@ -647,7 +647,7 @@ public class App extends AbstractVerticle {
 
         });
 
-        Course course = new Course(clientJson.getString("name"),clientJson.getString("description"));
+        Course course = new Course(clientJson.getString("name"),clientJson.getString("description"),"");
 
 
 

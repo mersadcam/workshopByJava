@@ -35,10 +35,10 @@ public class Identity implements Role {
     this.course = new Course(jsonObject.getString("course"));
   }
 
+
   public void setType(RequestType type) {
     this.requestType = type;
   }
-
   //need find or json or update for data base??
   @Override
   public String get_id() {
@@ -63,11 +63,13 @@ public class Identity implements Role {
 
   }
 
+
   public void saveToDB(MongoClient client){
 
     client.insert(Const.role, this.toJson() ,handler->{});
 
   }
+
 
   public void update(MongoClient client, Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
@@ -78,6 +80,7 @@ public class Identity implements Role {
 
   }
 
+
   public void update(MongoClient client){
 
     JsonObject query = new JsonObject().put("_id",this._id);
@@ -87,12 +90,52 @@ public class Identity implements Role {
 
   }
 
+
   public String getReportId() {
     return report.get_id();
   }
 
+
   public String getRequestTypeId() {
     return requestType.get_id();
+  }
+
+
+  public static JsonObject findRole(MongoClient client , String role){
+    JsonObject result = new JsonObject();
+
+    client.find(Const.role , new JsonObject().put("_id",role) , res->{
+
+      if(res.succeeded() && !res.result().isEmpty()){
+        result.put("roleName",res.result().get(0).getString("roleName"));
+        result.put("_id" ,res.result().get(0).getString("_id"));
+
+        if (!result.getString("roleName").equals("Teacher")){
+          result.put("course", res.result().get(0).getString("course"));
+          return result;
+        }
+        else {
+          client.find(Const.enteredCourse , new JsonObject().put("_id",res.result().get(0).getString("enteredCourse")) , resFind->{
+            if (resFind.succeeded() && !resFind.result().isEmpty()){
+              result.put("course",resFind.result().get(0).getString("course"));
+              final JsonObject result1 = result;
+              return result1;
+            }
+            else{//if we don't find entered course
+              result.put("enteredCourse","null");
+
+              return result;
+            }
+          });
+        }
+
+      }
+      else {
+        result.put("roleName","null");
+        return result;
+      }
+
+    });
   }
 }
 
