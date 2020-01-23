@@ -81,29 +81,25 @@ class EditProfile extends React.Component {
 
                                     <Grid.Col lg={9}>
                                         <Grid.Row>
-                                            <Grid.Col lg={3}>
+                                            <Grid.Col lg={6}>
+                                                <Form.Group isRequired label="Full Name"> <Form.Input
+                                                    value={profile.fullName} name="fullName"/> </Form.Group>
+                                            </Grid.Col>
+                                            <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Username"> <Form.Input
                                                     value={profile.username} name="username"/> </Form.Group>
-                                            </Grid.Col>
-                                            <Grid.Col lg={9}>
-                                                <Form.Group label="Subtitle"> <Form.Input
-                                                    value={profile.subtitle} name="subtitle"/> </Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
 
 
                                         <Grid.Row>
-                                            <Grid.Col lg={3}>
-                                                <Form.Group isRequired label="First Name"> <Form.Input
-                                                    value={profile.firstName} name="firstName"/> </Form.Group>
-                                            </Grid.Col>
-                                            <Grid.Col lg={3}>
-                                                <Form.Group isRequired label="Last Name"> <Form.Input
-                                                    value={profile.lastName} name="lastName"/> </Form.Group>
-                                            </Grid.Col>
                                             <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Email"> <Form.Input
                                                     value={profile.email} name="email"/> </Form.Group>
+                                            </Grid.Col>
+                                            <Grid.Col lg={6}>
+                                                <Form.Group label="Subtitle"> <Form.Input
+                                                    value={profile.subtitle} name="subtitle"/> </Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
 
