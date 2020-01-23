@@ -207,22 +207,20 @@ public class User {
 
   }
 
-  public static void editProfile(MongoClient client,User user , JsonObject editJson , String contactPoint_id , Handler<AsyncResult<MongoClientUpdateResult>> handler){
+  public static void editProfile(MongoClient client,User user , JsonObject editJson , Handler<AsyncResult<MongoClientUpdateResult>> handler){
 
-    String username,gender,emailAddress,firstName,lastName,biography;
+    String username,emailAddress,fullName,biography,subTitle;
 
     username = editJson.getString("username");
-    firstName = editJson.getString("firstName");
-    lastName = editJson.getString("lastName");
-    gender = editJson.getString("gender");
+    fullName = editJson.getString("fullName");
     emailAddress = editJson.getString("emailAddress");
     biography = editJson.getString("biography");
+    subTitle = editJson.getString("subTitle");
 
 
     if ( username.equals("") ||
-    firstName.equals("") ||
-    lastName.equals("") ||
-    emailAddress.equals("") ){
+      fullName.equals("") ||
+      emailAddress.equals("") ){
       handler.handle(Future.failedFuture(""));
     }else {
 
@@ -236,10 +234,10 @@ public class User {
             client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resFind->{
 
               ContactPoint cp = new ContactPoint(resFind.result().get(0));
-              cp.setFirstName(firstName);
+              cp.setFullName(fullName);
+              cp.setBiography(biography);
+              cp.setSubTitle(subTitle);
               cp.setEmailAddress(emailAddress);
-              cp.setLastName(lastName);
-              cp.setGender(gender);
               cp.update(client,handler);
 
             });
@@ -266,7 +264,7 @@ public class User {
 
     JsonObject update = new JsonObject()
       .put("$set",new JsonObject()
-        .put("token",""));
+        .put("token",User.generateNewToken()));
 
     client.updateCollection(Const.user,query,update,handler);
 

@@ -37,6 +37,8 @@ public class App extends AbstractVerticle {
     Set<String> allowedHeaders = new HashSet<>();
     allowedHeaders.add("x-requested-with");
     allowedHeaders.add("Access-Control-Allow-Origin");
+    allowedHeaders.add("token");
+    allowedHeaders.add("userType");
     allowedHeaders.add("origin");
     allowedHeaders.add("Content-Type");
     allowedHeaders.add("accept");
@@ -101,54 +103,61 @@ public class App extends AbstractVerticle {
       HttpServerResponse response = ctx.response();
       JsonObject json = ctx.getBodyAsJson();
 
+      String fullName = json.getString("fullName");
+      String emailAddress = json.getString("emailAddress");
+      String username = json.getString("username");
+      String password = json.getString("password");
+
+      if( fullName == null ||
+          emailAddress == null ||
+          username == null)
+        ctx.response().end(new JsonObject()
+        .put("status","false")
+        .put("msg","Please fill the star blanks")
+        .toString());
+
+      else{
+
+        client.find(Const.user,new JsonObject().put("username",json.getString("username")),res->{
+
+          if(res.result().isEmpty()){
 
 
-      client.find(Const.user,new JsonObject().put("username",json.getString("username")),res->{
-
-        if(res.result().isEmpty()){
-
-          String firstName = json.getString("firstName");
-          String lastName = json.getString("lastName");
-          String emailAddress = json.getString("emailAddress");
-          String gender  = json.getString("gender");
 
 
-          ContactPoint cp = new ContactPoint(
-            firstName,
-            lastName,
-            emailAddress,
-            gender
-          );
+            ContactPoint cp = new ContactPoint(
+              fullName,
+              emailAddress
+            );
+
+            String userType = "user";
+
+            User user = new User( cp , username , password , userType);
+            user.setToken();
+            cp.saveToDB(client);
+            user.saveToDB(client);
+
+            ctx.response().end(new JsonObject()
+              .put("status","true")
+              .put("body",
+                new JsonObject()
+                  .put("token",user.getToken())
+                  .put("userType",user.getUserType())
+              ).toString());
+
+          }
+
+          else{
+
+            ctx.response().end(new JsonObject().put("status","false").put("msg","This Username has saved before").toString());
+
+          }
+
+        });
 
 
 
-          String username  = json.getString("username");
-          String password = json.getString("password");
-          String userType = "user";
-
-
-          User user = new User( cp , username , password , userType);
-          user.setToken();
-          cp.saveToDB(client);
-          user.saveToDB(client);
-
-          ctx.response().end(new JsonObject()
-            .put("status","true")
-            .put("body",
-              new JsonObject()
-                .put("token",user.getToken())
-                .put("userType",user.getUserType())
-                ).toString());
-
-        }
-
-        else{
-
-          ctx.response().end(new JsonObject().put("status","false").put("msg","this User have saved before").toString());
-
-        }
-
-      });
+      }
 
 
 
@@ -162,15 +171,28 @@ public class App extends AbstractVerticle {
 
         JsonObject json = ctx.getBodyAsJson();
 
+        if(json.getString("username") == null ||
+            json.getString("password") == null ){
 
-        User.login(client,json,res->{
+          ctx.response().end(new JsonObject().put("status","false")
+          .put("msg","Please fill the blanks").toString());
 
-          if (res.succeeded())
-            ctx.response().end(res.result().toString());
-          else
-            ctx.response().end(new JsonObject().put("status","false").put("msg","username or password is wrong").toString());
+        }else{
 
-        });
+          User.login(client,json,res->{
+
+            if (res.succeeded())
+              ctx.response().end(res.result().toString());
+            else
+              ctx.response().end(new JsonObject().put("status","false")
+                .put("msg","There was a problem logging in. Check your email and password or create an account.")
+                .toString());
+
+          });
+
+        }
+
+
 
       });
 
@@ -187,7 +209,7 @@ public class App extends AbstractVerticle {
         String CP_id = userJson.getString("contactPoint");
         User user = new User(userJson);
 
-        user.editProfile(client , user ,clientJson , CP_id , handle -> {
+        user.editProfile(client , user ,clientJson , handle -> {
 
           if (handle.succeeded())
             toResponse.put("status", "true");
@@ -745,6 +767,7 @@ public class App extends AbstractVerticle {
 
 
     //////////////////////////////////////
+
     router.route(Const.uploadProfileImage)
       .handler(BodyHandler.create())
       .handler(ctx->{

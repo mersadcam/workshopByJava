@@ -11,20 +11,16 @@ import org.bson.types.ObjectId;
 public class ContactPoint {
 
   private String _id;
-	private String firstName;
-	private String lastName;
+	private String fullName;
 	private String emailAddress;
-  private Gender gender;
   private String subTitle;
   private String biography;
 
 
-	public ContactPoint(String firstName, String lastName, String emailAddress, String gender){
+	public ContactPoint(String fullName, String emailAddress){
 	  this._id = new ObjectId().toString();
-	  this.firstName = firstName;
-	  this.lastName = lastName;
+	  this.fullName = fullName;
 	  this.emailAddress = emailAddress;
-	  this.gender = stringToGender(gender);
 	  this.subTitle = "";
 	  this.biography = "";
   }
@@ -35,21 +31,12 @@ public class ContactPoint {
 
 	public ContactPoint(JsonObject json){
 
-    this.firstName = json.getString("firstName");
-    this.lastName = json.getString("lastName");
+    this.fullName = json.getString("fullName");
     this.emailAddress = json.getString("emailAddress");
     this._id = json.getString("_id");
-    this.gender = stringToGender(json.getString("gender"));
     this.biography = json.getString("biography");
     this.subTitle = json.getString("subTitle");
 
-  }
-
-  public enum Gender{
-    MALE,
-    FEMALE,
-    OTHERS,
-    NOTSET
   }
 
   public String get_id(){
@@ -61,11 +48,9 @@ public class ContactPoint {
   public JsonObject toJson(){
 
 	  JsonObject json = new JsonObject()
-      .put("firstName",this.firstName)
-      .put("lastName",this.lastName)
+      .put("fullName",this.fullName)
       .put("emailAddress",this.emailAddress)
       .put("_id",this._id)
-      .put("gender",this.gender)
       .put("biography",this.biography)
       .put("subTitle",this.subTitle);
 
@@ -103,55 +88,24 @@ public class ContactPoint {
 
   }
 
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
+  }
+
+  public void setBiography(String biography) {
+    this.biography = biography;
+  }
+
+  public void setSubTitle(String subTitle) {
+    this.subTitle = subTitle;
+  }
 
   public void setEmailAddress(String emailAddress) {
     this.emailAddress = emailAddress;
   }
 
   public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  public void setGender(String gender) {
-    this.gender = stringToGender(gender);
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-
-  public static void editContactPoint(MongoClient client,JsonObject json,String _id,Handler<AsyncResult<MongoClientUpdateResult>> handler){
-
-    JsonObject toSet = new JsonObject()
-      .put("emailAddress",json.getValue("emailAddress"))
-      .put("firstName",json.getValue("firstName"))
-      .put("lastName",json.getValue("lastName"))
-      .put("gender",stringToGender(json.getString("gender")));
-
-    JsonObject update = new JsonObject().put("$set",toSet);
-    JsonObject query = new JsonObject().put("_id", _id);
-
-    client.updateCollection("contactPoint",query,update,handler);
-
-  }
-
-  public static Gender stringToGender(String genderString){
-
-	  Gender gender;
-
-    if (genderString == null)
-      gender = ContactPoint.Gender.NOTSET;
-    else if (genderString.equals("male"))
-      gender = ContactPoint.Gender.MALE;
-    else if (genderString.equals("female"))
-      gender = ContactPoint.Gender.FEMALE;
-    else {
-      gender = ContactPoint.Gender.OTHERS;
-    }
-
-    return gender;
-
+    this.fullName = firstName;
   }
 
 

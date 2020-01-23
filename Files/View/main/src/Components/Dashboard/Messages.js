@@ -1,67 +1,28 @@
 import React from 'react';
-import {Button, Card, Icon, Table, Text, Dropdown, StampCard, Form, Avatar} from 'tabler-react';
+import messages from "./Messages.json";
+import {Button, Card, Table} from "tabler-react";
+import enrolledWorkshops from "./EnrolledWorkshops";
 
 class Messages extends React.Component {
     render() {
         return (
-            <Card>
-                <Card.Header>
-                    <Card.Title>Messages</Card.Title>
-                    <Card.Options>
-                        <Form>
-                            <Form.InputGroup>
-                                <Form.Input
-                                    icon="search"
-                                    placeholder="Search Messages..."
-                                    position="append"
-                                    className="form-control-sm"/>
-                            </Form.InputGroup>
-                        </Form>
-                    </Card.Options>
-                </Card.Header>
-
-                <Table cards={true} striped={true} responsive={true} className="table-vcenter">
+            <Card title="My Messages" className={'px-2'}>
+                <Table responsive>
+                    <Table.Header>
+                        <Table.ColHeader>Sender</Table.ColHeader>
+                        <Table.ColHeader>Preview</Table.ColHeader>
+                        <Table.ColHeader>Date</Table.ColHeader>
+                        <Table.ColHeader>{null}</Table.ColHeader>
+                    </Table.Header>
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Col> <Avatar imageURL="./demo/faces/male/9.jpg"/> </Table.Col>
-                            <Table.Col>Ronald Bradley</Table.Col>
-                            <Table.Col>Can you send ...</Table.Col>
-                            <Table.Col>May 6, 2020</Table.Col>
-                            <Table.Col> <Icon link={true} name="trash"/> </Table.Col>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Col> <Avatar>RG</Avatar> </Table.Col>
-                            <Table.Col>Russell Gibson</Table.Col>
-                            <Table.Col>Hello. What's up? ...</Table.Col>
-                            <Table.Col>April 22, 2020</Table.Col>
-                            <Table.Col> <Icon link={true} name="trash"/> </Table.Col>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Col> <Avatar imageURL="./demo/faces/female/1.jpg"/> </Table.Col>
-                            <Table.Col>Beverly Armstrong</Table.Col>
-                            <Table.Col>Let Get Started...</Table.Col>
-                            <Table.Col>April 15, 2020</Table.Col>
-                            <Table.Col> <Icon link={true} name="trash"/> </Table.Col>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Col> <Avatar imageURL="./demo/faces/male/4.jpg"/> </Table.Col>
-                            <Table.Col>Bobby Knight</Table.Col>
-                            <Table.Col>See you tomorrow...</Table.Col>
-                            <Table.Col>April 8, 2020</Table.Col>
-                            <Table.Col> <Icon link={true} name="trash"/> </Table.Col>
-                        </Table.Row>
-
-                        <Table.Row>
-                            <Table.Col> <Avatar imageURL="./demo/faces/female/11.jpg"/> </Table.Col>
-                            <Table.Col>Sharon Wells</Table.Col>
-                            <Table.Col>How are you?...</Table.Col>
-                            <Table.Col>April 6, 2020</Table.Col>
-                            <Table.Col> <Icon link={true} name="trash"/> </Table.Col>
-                        </Table.Row>
-
+                        {messages.items.map((item, key) => (
+                            <Table.Row>
+                                <Table.Col>{item.sender}</Table.Col>
+                                <Table.Col>{item.text}</Table.Col>
+                                <Table.Col>{item.date}</Table.Col>
+                                <Table.Col><Button outline size="sm" color="primary"> View </Button></Table.Col>
+                            </Table.Row>
+                        ))}
                     </Table.Body>
                 </Table>
             </Card>

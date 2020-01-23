@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "title" : "Cinema 4D",
+      "imageURL": "demo/photos/jonatan-pie-226191-500.jpg",
+      "avatarURL": "demo/faces/male/26.jpg",
+      "teacher": "Wayne Holland",
+      "date": "16 Feb",
+      "place": "Tabriz",
+      "price": "100$"
+    },
+    {
+      "title" : "Digital Marketing",
+      "imageURL": "demo/photos/josh-calabrese-66153-500.jpg",
+      "avatarURL": "demo/faces/female/7.jpg",
+      "teacher": "Michelle Ross",
+      "date": "4 Feb",
+      "place": "Tehran",
+      "price": "50$"
+    },
+    {
+      "title" : "Photography",
+      "imageURL": "demo/photos/joshua-earle-157231-500.jpg",
+      "avatarURL": "demo/faces/female/17.jpg",
+      "teacher": "Debra Beck",
+      "date": "6 Feb",
+      "place": "Shiraz",
+      "price": "70$"
+    },
+    {
+      "title" : "UI Design",
+      "imageURL": "demo/photos/mahkeo-222765-500.jpg",
+      "avatarURL": "demo/faces/male/30.jpg",
+      "teacher": "Phillip Peters",
+      "date": "17 Mar",
+      "place": "Tehran",
+      "price": "125$"
+    }
+  ]
+}
+

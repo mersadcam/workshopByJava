@@ -2,6 +2,8 @@ import React from 'react';
 import './Login.css';
 import {Button, Form, Grid,Text} from 'tabler-react'
 import {Animated} from "react-animated-css";
+import axios from "axios";
+import {withRouter} from 'react-router'
 
 class Login extends React.Component {
     constructor(props) {
@@ -13,6 +15,8 @@ class Login extends React.Component {
             forgetPasswordShow: false,
             loginSwitchClass: "switch-active",
             signupSwitchClass: "switch-inactive",
+            user:{},
+            msg:""
         };
     } ;
 
@@ -21,6 +25,47 @@ class Login extends React.Component {
             show: props.show
         };
     }
+
+    setPassword(value) {
+
+        const {user} = this.state;
+        this.setState({user:{...user,password: value}})
+
+    }
+
+    setUsername(value) {
+
+        const {user} = this.state;
+        this.setState({user:{...user ,username: value}})
+    }
+
+
+
+    sendUser(api){
+
+
+        axios.post("http://localhost:8000"+api, this.state.user )
+            .then((res)=>{
+
+                if( res.data.status == "true"){
+                    localStorage.setItem("token",res.data.body.token);
+                    localStorage.setItem("userType",res.data.body.userType);
+
+                    this.props.history.push("/dashboard");
+
+                }else{
+
+                    this.setState({msg:res.data.msg})
+
+                }
+
+
+            })
+            .catch((e)=>console.log(e))
+
+    }
+
+
 
 
     switch = () => {
@@ -42,6 +87,9 @@ class Login extends React.Component {
 
 
     render() {
+
+        const {user} = this.state;
+
         return (
             <div> {this.state.show && <Animated animationIn="fadeIn"
                                                 animationOut="fadeOut"
@@ -60,15 +108,24 @@ class Login extends React.Component {
                         </div>
 
                         {this.state.loginShow &&
-                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-login px-5 pb-5">
+                        <div  className="form-login px-5 pb-5">
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Username"> <Form.Input name="username"/> </Form.Group>
+                                    <Form.Group isRequired label="Username" >
+
+                                        <Form.Input name="username" onChange={(e)=>{
+
+                                            this.setUsername(e.target.value)
+                                        }}/>
+
+                                    </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"/> </Form.Group>
+                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password" onChange={(e)=>{
+                                        this.setPassword(e.target.value)
+                                    }}/> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row alignItem={'center'} className={'justify-content-center'}>
@@ -81,12 +138,17 @@ class Login extends React.Component {
                                     </Text.Small>
                                 </Grid.Col>
                             </Grid.Row>
+
+                            <p style={{color:"red"}}>{this.state.msg}</p>
+
                             <Grid.Row className={'text-center'}>
                                 <Grid.Col>
-                                    <Button type='submit' color='primary' value='Login'>Login</Button>
+
+                                    <Button  color='primary' value='Login' onClick={e => this.sendUser("/login") }>Login</Button>
                                 </Grid.Col>
                             </Grid.Row>
-                        </Form>}
+                        </div>}
+
 
                         {this.state.forgetPasswordShow &&
                         <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-forgetPassword px-5 pb-5">
@@ -100,45 +162,61 @@ class Login extends React.Component {
                                     <Button type='submit' color='primary' value='Send'>Send Reset Link</Button>
                                 </Grid.Col>
                                 <Grid.Col>
-                                    <Button type='submit' outline color='primary' value='Send' onClick={this.forgetPasswordSwitch}>Go Back</Button>
+                                    <Button color='secondary' value='Go Back' onClick={this.forgetPasswordSwitch}>Go Back</Button>
                                 </Grid.Col>
                             </Grid.Row>
                         </Form>}
 
                         {this.state.signupShow &&
-                        <Form onSubmit={(event) => console.log(event.target.name + 'clicked')} className="form-signup px-5 pb-5">
+                        <div  className="form-signup px-5 pb-5">
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="First Name"> <Form.Input name="firstname"/> </Form.Group>
-                                </Grid.Col>
-                                <Grid.Col>
-                                    <Form.Group isRequired label="Last Name"> <Form.Input name="lastname"/> </Form.Group>
+                                    <Form.Group isRequired label="Full Name"> <Form.Input name="fullName"
+                                    onChange={e => {
+                                        this.setState({user:{...user,fullName:e.target.value}})
+                                    }}
+                                    /> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Username"> <Form.Input name="username"/> </Form.Group>
+                                    <Form.Group isRequired label="Username"> <Form.Input name="username"
+                                    onChange={e=>{
+                                        this.setState({user:{...user,username:e.target.value}})
+                                    }}
+                                    /> </Form.Group>
                                 </Grid.Col>
+                            </Grid.Row>
+
+                            <Grid.Row>
                                 <Grid.Col>
-                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"/> </Form.Group>
+                                    <Form.Group isRequired label="Password"> <Form.Input name="password" type="password"
+                                     onChange={e => {
+                                         this.setState({user:{...user,password:e.target.value}})
+                                     }}
+                                    /> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row>
                             <Grid.Col>
-                                <Form.Group isRequired label="Email"> <Form.Input name="email"/> </Form.Group>
+                                <Form.Group isRequired label="Email"> <Form.Input name="email"
+                                  onChange={e => {
+                                      this.setState({user:{...user,emailAddress:e.target.value}})
+                                  }}
+                                /> </Form.Group>
                             </Grid.Col>
                         </Grid.Row>
+
+                            <p style={{color:"red"}}>{this.state.msg}</p>
+
                             <Grid.Row alignItems={'center'} >
-                                <Grid.Col>
-                                    <Form.Group label="Gender">
-                                        <Form.Select> <option> Male </option> <option> Female </option> <option> Other </option> </Form.Select>
-                                    </Form.Group>
-                                </Grid.Col>
                                 <Grid.Col className={'text-center'}>
-                                    <Button type='submit' color='primary' value='Signup'>Signup</Button>
+                                    <Button onClick={e=>this.sendUser("/register")} type='submit' color='primary' value='Signup' >Signup</Button>
                                 </Grid.Col>
                             </Grid.Row>
-                        </Form>}
+                        </div>}
+
+
                     </div>
                 </div>
             </Animated>}
