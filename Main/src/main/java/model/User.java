@@ -474,41 +474,42 @@ public class User {
    return null;
   }
 
-  public static void dashboard(MongoClient client , User user , Handler<AsyncResult<String>> handler){
-
-    JsonObject result = new JsonObject();
-    result.put("user",user.toJson());
-    client.find(Const.enteredCourse , new JsonObject() , resFind->{
-      if (resFind.succeeded()){
-        List workshopsList = resFind.result();
-        result.put("workshopsList",workshopsList);
-      }
-      else{
-        result.put("workshopsList","null");
-        handler.handle(Future.failedFuture("We don't have any workshop."));
-      }
-
-      ArrayList<Role> userRoles = user.getRoles();
-      int sizeRole = userRoles.size();
-      JsonObject roles = findRoles(client , userRoles , sizeRole , new JsonObject());
-      result.put("roles",roles);
-
-      //message isn't complete
-    });
+//  public static void dashboard(MongoClient client , User user , Handler<AsyncResult<String>> handler){
+//
+//    JsonObject result = new JsonObject();
+//    result.put("user",user.toJson());
+//    client.find(Const.enteredCourse , new JsonObject() , resFind->{
+//      if (resFind.succeeded()){
+//        List workshopsList = resFind.result();
+//        result.put("workshopsList",workshopsList);
+//      }
+//      else{
+//        result.put("workshopsList","null");
+//        handler.handle(Future.failedFuture("We don't have any workshop."));
+//      }
+//
+//      ArrayList<Role> userRoles = user.getRoles();
+//      int sizeRole = userRoles.size();
+//      JsonObject roles = findRoles(client , userRoles , sizeRole , new JsonObject());
+//      result.put("roles",roles);
+//
+//      //message isn't complete
+//    });
 
   }
 
-  public static JsonObject findRoles(MongoClient client , ArrayList<Role> roles , int counter , JsonObject user){
-    if (counter == (-1)){
-      return user;
-    }
-    else {
-
-      user.put(counter+" - role",Identity.findRole(client , roles.get(counter).get_id() ));
-
-      return findRoles(client , roles ,counter - 1 , user );
-    }
-  }
+//
+//  public static void findRoles(MongoClient client , ArrayList<Role> roles , int counter , JsonObject user){
+//    if (counter == (-1)){
+//      return user;
+//    }
+//    else {
+//
+//      user.put(counter+" - role",Identity.findRole(client , roles.get(counter).get_id() ));
+//
+//      return findRoles(client , roles ,counter - 1 , user );
+//    }
+//  }
 
 
 
@@ -526,4 +527,4 @@ public class User {
 //
 //  }
 
-}
+//}

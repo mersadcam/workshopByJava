@@ -602,17 +602,17 @@ public class App extends AbstractVerticle {
 
       });
 
-    router.route(Const.dashboard)
-      .handler(ctx ->{
-        JsonObject userJson = ctx.get("userJson");
-        JsonObject toResponse = new JsonObject();
-        User user = new User(userJson);
-
-        User.dashboard(client , user , handler->{
-
-        });
-
-      });
+//    router.route(Const.dashboard)
+//      .handler(ctx ->{
+//        JsonObject userJson = ctx.get("userJson");
+//        JsonObject toResponse = new JsonObject();
+//        User user = new User(userJson);
+//
+//        User.dashboard(client , user , handler->{
+//
+//        });
+//
+//      });
     ////////////////////////////////////
 
 
