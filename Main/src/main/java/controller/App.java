@@ -62,6 +62,7 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
+
     router.route()
       .path(Const.userStar)
       .handler(BodyHandler.create()).handler(ctx ->{
@@ -626,17 +627,22 @@ public class App extends AbstractVerticle {
 
       });
 
-//    router.route(Const.dashboard)
-//      .handler(ctx ->{
-//        JsonObject userJson = ctx.get("userJson");
-//        JsonObject toResponse = new JsonObject();
-//        User user = new User(userJson);
-//
-//        User.dashboard(client , user , handler->{
-//
-//        });
-//
-//      });
+    router.route(Const.dashboard)
+      .handler(ctx ->{
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject toResponse = new JsonObject();
+        User user = new User(userJson);
+
+        User.dashboard(client , user , handler->{
+          if(handler.succeeded()){
+            System.out.println(handler.result());
+          }
+          else{
+            System.out.println("dashboard have problem");
+          }
+
+        });
+      });
     ////////////////////////////////////
 
 
