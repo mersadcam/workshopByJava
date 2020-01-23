@@ -199,6 +199,23 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
+    router.route(Const.profile)
+      .handler(ctx->{
+
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject clientJson = ctx.get("clientJson");
+
+        User user = new User(userJson);
+        client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resCP->{
+
+          ContactPoint cp = new ContactPoint(resCP.result().get(0));
+          
+
+        });
+
+      });
+
+
     router.route(Const.userProfileEdit)
       .handler(ctx ->{
 
