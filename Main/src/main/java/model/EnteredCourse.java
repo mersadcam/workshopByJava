@@ -456,5 +456,16 @@ public class EnteredCourse {
     }
   }
 
+  public static void getTeacherUser(MongoClient client , String workshopId , Handler<AsyncResult<String>> handler){
+
+    JsonObject workShopId = new JsonObject().put("_id",workshopId)
+      .put("roleName","Teacher");
+    client.find(Const.role , workShopId , res->{
+      if (res.succeeded() && !res.result().isEmpty()){
+
+      }
+    });
+  }
+
 }
 
