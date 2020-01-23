@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Grid, Page, Button, Header, Text, Tag, Avatar} from "tabler-react";
+import {Card, Grid, Page, Button, Header, Text, Tag, Avatar,List} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
 import Carousel from "../Carousel/Carousel";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -25,48 +25,36 @@ class Profile extends React.Component {
                             <Card>
                                 <Card.Body>
                                     <Grid.Row alignItems={'center'}>
-                                        <Grid.Col lg={3} className={'text-center'}>
+                                        <Grid.Col lg={2} className={'text-center'}>
                                             <img
                                                 alt={profile.username + " Cover"}
                                                 src={profile.avatarURL}
                                                 className={'rounded-circle avatar-big'}
                                             />
                                         </Grid.Col>
-                                        <Grid.Col lg={9}>
-                                            <Grid.Row>
-                                                <h3> {profile.username} </h3>
-                                                <Text transform={'uppercase d-inline ml-3'}>
-                                                    {profile.userType !== "user" &&
-                                                    <Tag color={'blue'}> {profile.userType} </Tag>}
-                                                    <Button color={'secondary'} size={'sm'} className={'ml-3 px-3'}>
-                                                        <FontAwesomeIcon size={'sm'} icon={'edit'}/> Edit </Button>
-                                                </Text>
-                                            </Grid.Row>
-
-                                            <Grid.Row>
-                                                <Header.H4
-                                                    className={'text-weight-light'}>{profile.subtitle} </Header.H4>
-                                            </Grid.Row>
-
-                                            <Grid.Row className={'mt-3'}>
-                                                <Grid.Col lg={4}>
-                                                    <b className={'mr-2'}> First Name </b> {profile.firstName}
-                                                </Grid.Col>
-                                                <Grid.Col lg={8}>
-                                                    <b className={'mr-2'}> Email </b> {profile.email}
-                                                </Grid.Col>
-                                            </Grid.Row>
-                                            <Grid.Row className={'mt-3'}>
-                                                <Grid.Col lg={4}>
-                                                    <b className={'mr-2'}> Last Name </b> {profile.lastName}
-                                                </Grid.Col>
-                                                <Grid.Col lg={8}>
-                                                    <b className={'mr-2'}> Bio </b> {profile.bio}
-                                                </Grid.Col>
-                                                {/*<Grid.Col>*/}
-                                                {/*    <b className={'mr-2'}> Gender </b> {profile.gender}*/}
-                                                {/*</Grid.Col>*/}
-                                            </Grid.Row>
+                                        <Grid.Col lg={10}>
+                                            <List unstyled seperated>
+                                                <List.Item>
+                                                    <h3 className={'d-inline'}> {profile.username} </h3>
+                                                    <Text transform={'uppercase'} className={'d-inline ml-3'}>
+                                                        {profile.userType !== "user" &&
+                                                        <Tag color={'blue'}> {profile.userType} </Tag>}
+                                                    </Text>
+                                                </List.Item>
+                                                <List.Item className={'mt-3'}>
+                                                    <Header.H4 className={'text-weight-light'}>{profile.subtitle} </Header.H4>
+                                                </List.Item>
+                                                <List.Item className={'mt-3'}> <b className={'mr-2'}> Name </b> {profile.fullName} </List.Item>
+                                                <List.Item className={'mt-3'}> <b className={'mr-2'}> Email </b> {profile.email} </List.Item>
+                                                <List.Item className={'mt-3'}> <b className={'mr-2'}> Bio </b> {profile.bio} </List.Item>
+                                                <List.Item className={'mt-5'}>
+                                                    <Button.List>
+                                                        <Button size={'sm'} color={'secondary'} icon={'edit'} RootComponent={'a'} href={'/editprofile'}> Edit </Button>
+                                                        <Button size={'sm'} color={'secondary'}>Send Message</Button>
+                                                        <Button size={'sm'} color={'secondary'}>Report</Button>
+                                                    </Button.List>
+                                                </List.Item>
+                                            </List>
                                         </Grid.Col>
                                     </Grid.Row>
                                 </Card.Body>
