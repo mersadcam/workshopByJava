@@ -140,13 +140,6 @@ public class Teacher implements Role,FormWriter{
     JsonObject workshop = new JsonObject()
       .put("_id" , clientJson.getString("workshopId"));
 
-    JsonArray f = new JsonArray()
-      .add(new JsonArray().add("1").add("2").add("3").add("4").add("5"));
-    f.add(new JsonArray().add("11").add("12").add("13").add("14"));
-    f.add(new JsonArray().add("21").add("22").add("23").add("24"));
-    f.add(new JsonArray().add("31").add("32").add("33").add("34"));
-    System.out.println(f.getJsonArray(0).size());
-
     JsonArray groups = clientJson.getJsonArray("groups");
     JsonArray mainGroups = new JsonArray();
     for (int k = 0 ; k < groups.size() ; k++){

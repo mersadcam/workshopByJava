@@ -18,13 +18,14 @@ import java.util.List;
 public class Course {
 
 	private String name;
+	private String category;
 	private String description;
-
 	private ArrayList<Course> neededCourses = new ArrayList<Course>();
 
 
-	public Course(String name , String description){
+	public Course(String name , String description ,String category){
 	  this.name = name.toUpperCase();
+	  this.category = category.toUpperCase();
 	  this.description = description;
   }
 
@@ -32,10 +33,19 @@ public class Course {
 	  this.name = name.toUpperCase();
   }
 
+  public void setCategory(String category) {
+    this.category = category;
+  }
+
+  public void setName(String name){
+	  this.name = name;
+  }
+
   public Course(JsonObject json){
 
 	  this.name = json.getString("name").toUpperCase();
 	  this.description = json.getString("description");
+	  this.category = json.getString("category").toUpperCase();
 
 	  JsonArray coursesName = json.getJsonArray("neededCourses");
 
@@ -59,7 +69,9 @@ public class Course {
   }
 
   public String getName() {
-    return name.toUpperCase();
+
+	  return name.toUpperCase();
+
   }
 
   public JsonObject toJson(){
@@ -74,7 +86,8 @@ public class Course {
 
     json.put("name",this.getName())
       .put("description",description)
-      .put("neededCourses",CoursesName);
+      .put("neededCourses",CoursesName)
+      .put("category",this.category.toUpperCase());
 
     return json;
 

@@ -62,7 +62,6 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
-
     router.route()
       .path(Const.userStar)
       .handler(BodyHandler.create()).handler(ctx ->{
@@ -588,6 +587,28 @@ public class App extends AbstractVerticle {
         User user = new User(userJson);
 
         Teacher.userMakeGroup(client , user , clientJson , handler ->{
+          if (handler.succeeded()){
+            toResponse
+              .put("status","true")
+              .put("msg",handler.result());
+          }
+          else {
+            toResponse
+              .put("status","false")
+              .put("msg",handler.cause().toString());
+          }
+          ctx.response().end(toResponse.toString());
+        });
+
+      });
+
+    router.route(Const.dashboard)
+      .handler(ctx ->{
+        JsonObject userJson = ctx.get("userJson");
+        JsonObject toResponse = new JsonObject();
+        User user = new User(userJson);
+
+        User.dashboard(client , user , handler->{
 
         });
 
@@ -646,7 +667,7 @@ public class App extends AbstractVerticle {
 
           if(resFind.result().isEmpty()){
 
-            Course course = new Course(name,description);
+            Course course = new Course(name,description,"");
             course.saveToDB(client);
 
             ctx.response().end(new JsonObject()
@@ -665,7 +686,7 @@ public class App extends AbstractVerticle {
 
         });
 
-        Course course = new Course(clientJson.getString("name"),clientJson.getString("description"));
+        Course course = new Course(clientJson.getString("name"),clientJson.getString("description"),"");
 
 
 
