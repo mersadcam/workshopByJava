@@ -333,6 +333,7 @@ public class EnteredCourse {
     });
 	}
 
+	//in this function we find person role in one workshop
   public static void workshopStar(MongoClient client , JsonObject clientJson , String roleId ,
                                   User user , Handler<AsyncResult<String>> handler){
 
@@ -378,24 +379,26 @@ public class EnteredCourse {
       client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)),resRole->{
 
         client.find(Const.enteredCourse,new JsonObject().put("_id",resRole.result().get(0).getString("enteredCourse")),resWork->{
+          if (resWork.succeeded()){
+            JsonObject jsonObject = new JsonObject().put("workshop",resWork.result().get(0));
 
-          JsonObject jsonObject = new JsonObject().put("workshop",resWork.result().get(0));
+            if (resRole.result().get(0).getString("roleName").equals("Teacher")){
 
-          if (resRole.result().get(0).getString("roleName").equals("Teacher")){
+              Teacher teacher = new Teacher(resRole.result().get(0));
+              jsonObject.put("role",teacher.toJson());
 
-            Teacher teacher = new Teacher(resRole.result().get(0));
-            jsonObject.put("role",teacher.toJson());
+            }
+            else{
+
+              Identity identity = new Identity(resWork.result().get(0));
+              jsonObject.put("role",identity.toJson().put("status",identity.report.getStudentCourseStatus()));
+
+            }
+
+            workshops.add(jsonObject);
+            myWorkshops(client,workshops,rolesId,counter+1,handler);
 
           }
-          else{
-
-            Identity identity = new Identity(resWork.result().get(0));
-            jsonObject.put("role",identity.toJson().put("status",identity.report.getStudentCourseStatus()));
-
-          }
-
-          workshops.add(jsonObject);
-          myWorkshops(client,workshops,rolesId,counter+1,handler);
 
         });
 
@@ -403,6 +406,54 @@ public class EnteredCourse {
 
     }
 
+  }
+
+  public static void allWorkshopsWithTeacher(MongoClient client , Handler<AsyncResult<JsonObject>> handler){
+
+    JsonObject id = new JsonObject();
+
+    client.find(Const.enteredCourse , id , resFind ->{
+      if (resFind.succeeded() && !resFind.result().isEmpty()) {
+        EnteredCourse.findTeacherRecursive(client,resFind.result().size() ,resFind.result() , new ArrayList<JsonObject>(), resWorkshops->{
+          ArrayList<JsonObject> toSend = resWorkshops.result();
+          handler.handle(Future.succeededFuture(new JsonObject().put("body" , toSend.toString())));
+        });
+      }
+    });
+
+  }
+
+  public static void findTeacherRecursive(MongoClient client , int counter , List<JsonObject> result , ArrayList<JsonObject> workshops ,
+                                          Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+    if (counter == -1){
+      handler.handle(Future.succeededFuture(workshops));
+    }
+    else {
+      JsonObject json = new JsonObject().put("_id",result.get(counter).getString("_id"));
+
+      client.find(Const.enteredCourse , json , resFind ->{
+        JsonObject workshop = new JsonObject();
+
+        if (resFind.succeeded() && !resFind.result().isEmpty()){
+          client.find(Const.role , new JsonObject().put("enteredCourse",result.get(counter).getString("_id"))
+            .put("roleName","Teacher") , resFindRole ->{
+
+            if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
+              workshop.put("enteredCourse",result.get(counter).getString("_id"))
+                .put("Teacher",resFindRole.result().get(0).getString("roleName"))
+                .put("course",resFind.result().get(0).getString("name"));
+            }
+            workshops.add(workshop);
+            findTeacherRecursive(client,counter-1,result,workshops , handler);
+          });
+        }
+        else {
+          workshop.put("workshop","not found");
+          workshops.add(workshop);
+          findTeacherRecursive(client,counter - 1 , result , workshops , handler);
+        }
+      });
+    }
   }
 
 }
