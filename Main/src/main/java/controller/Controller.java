@@ -1,26 +1,27 @@
 package controller;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
+
+import java.util.List;
 
 public class Controller {
 
 
-  public class newFormHandler implements Handler<RoutingContext>{
 
+  public static void findIn(MongoClient client, String fieldName, String in, Handler<AsyncResult<List<JsonObject>>>handler){
 
-    @Override
-    public void handle(RoutingContext ctx) {
+    JsonObject query = new JsonObject()
+      .put(fieldName,new JsonObject().put("$in",new JsonArray().add(in)));
 
-      JsonObject userJson = ctx.get("user");
-      JsonObject reqJson = ctx.get("json");
-      String userType = ctx.get("userType");
-      String workshopName = reqJson.getString("workshopName");
-
-    }
+    client.find(Const.user,query,handler);
 
   }
+
 
 
 }
