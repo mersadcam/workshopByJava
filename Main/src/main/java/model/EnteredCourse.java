@@ -377,9 +377,6 @@ public class EnteredCourse {
 
       client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)),resRole->{
 
-
-
-
         client.find(Const.enteredCourse,new JsonObject().put("_id",resRole.result().get(0).getString("enteredCourse")),resWork->{
 
           JsonObject jsonObject = new JsonObject().put("workshop",resWork.result().get(0));
@@ -406,9 +403,7 @@ public class EnteredCourse {
 
     }
 
-
   }
-
 
 }
 
