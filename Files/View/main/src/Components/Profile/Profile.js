@@ -26,7 +26,8 @@ class Profile extends React.Component {
     }
 
     async componentDidMount(): void {
-
+        const {usernameURL} = this.props.match.params ;
+        alert(usernameURL);
         await axios.post("http://localhost:8000/user/profile",{username:this.state.username})
             .then(res=>{
                 this.setState({workshops:res.data.body.workshops,

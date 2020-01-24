@@ -41,6 +41,7 @@ class Workshops extends React.Component {
                                     imageURL={item.imageURL}
                                     avatarURL={item.avatarURL}
                                     teacher={item.teacher}
+                                    teacherUsername={item.teacherUsername}
                                     date={item.date}
                                     place={item.place}
                                     price={item.price}

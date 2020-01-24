@@ -1,7 +1,8 @@
 import React from 'react';
-import { Grid, Page} from "tabler-react";
+import {Card, Grid, Page} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
-import details from "./Workshop.json";
+import details from "./details.json";
+
 
 class Workshop extends React.Component {
     render() {
@@ -9,10 +10,18 @@ class Workshop extends React.Component {
             <SiteTemplate>
                 <Page.Content>
                     <Grid.Row>
-                        <img
-                            alt={details.title + " Cover"}
-                            src={details.imageURL}
-                        />
+                        <Grid.Col lg={5}>
+                            <img
+                                alt={details.title + " Cover"}
+                                src={details.imageURL}/>
+                        </Grid.Col>
+                        <Grid.Col>
+                            <Card>
+                                <Card.Body>
+                                    <h3 className={'d-inline'}> {user.username} </h3>
+                                </Card.Body>
+                            </Card>
+                        </Grid.Col>
                     </Grid.Row>
                 </Page.Content>
             </SiteTemplate>
