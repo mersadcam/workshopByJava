@@ -562,9 +562,8 @@ public class App extends AbstractVerticle {
         JsonObject clientJson = ctx.get("clientJson");
         JsonObject userJson = ctx.get("userJson");
         User user = new User(userJson);
-        JsonObject toResponse = new JsonObject();
         String roleId = ctx.request().getHeader("roleId");
-        //should check reponse and correct it
+
         //else part have problem because print stack trace
         EnteredCourse.workshopStar(client , clientJson , roleId , user , handler ->{
           if(handler.succeeded()){
@@ -575,6 +574,72 @@ public class App extends AbstractVerticle {
 
           ctx.next();
         });
+        ctx.next();
+      });
+
+    //new added
+    router.route(Const.userWorkshopPage)
+      .handler(ctx ->{
+        JsonObject clientJson = ctx.get("clientJson");//workshop id is here
+        JsonObject userJson = ctx.get("userJson");
+        User user = new User(userJson);
+        String roleId = ctx.get("roleId");
+        JsonObject toResponse = new JsonObject();
+
+        if (roleId.equals("")){//user don't have role in the workshop
+
+          client.find(Const.enteredCourse , new JsonObject().put("_id",clientJson.getString("workshopId")),res ->{
+
+            if (res.succeeded() && !res.result().isEmpty()){
+
+              EnteredCourse.setTeacherOnWorkshop(client, new ArrayList<JsonObject>() , res.result() , 0 , resSetTeacher ->{
+                JsonObject response = new JsonObject();
+                response.put("body",resSetTeacher.result().toString())
+                .put("roleName","");
+                toResponse.put("status","true")
+                  .put("msg",response);
+              });
+            }
+
+            else {//we don't find workshop in entered course
+
+              toResponse.put("status","false")
+                .put("msg","Workshop doesn't exist in database");
+
+            }
+          });
+        }
+
+        else {//find role in roles and put roleName
+
+          client.find(Const.enteredCourse, new JsonObject().put("_id", clientJson.getString("workshopId")), res -> {
+
+            if (res.succeeded() && !res.result().isEmpty()) {
+
+              EnteredCourse.setTeacherOnWorkshop(client, new ArrayList<JsonObject>(), res.result(), 0, resSetTeacher -> {
+                JsonObject response = new JsonObject();
+                response.put("body", resSetTeacher.result().toString());
+
+                client.find(Const.role, new JsonObject().put("_id" , roleId) , resFindRole->{
+                  if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
+                    Form.findForm(client , new ArrayList<JsonObject>() , resFindRole.result().get(0).getJsonArray("form") , 0 , resFindForm->{
+                      response.put("roleName",resFindRole.result().get(0).getString("roleName"));
+                      response.put("formBody",resFindForm.result().toString());
+                    });
+                  }
+                });
+                toResponse.put("status", "true")
+                  .put("msg", response);
+              });
+            }
+            else {//we don't find workshop in entered course
+              toResponse.put("status", "false")
+                .put("msg", "Workshop doesn't exist in database");
+            }
+          });
+        }
+
+        ctx.response().end(toResponse.toString());
       });
 
     //new added
@@ -647,6 +712,7 @@ public class App extends AbstractVerticle {
         });
 
       });
+
 
     router.route(Const.dashboard)
       .handler(ctx ->{
