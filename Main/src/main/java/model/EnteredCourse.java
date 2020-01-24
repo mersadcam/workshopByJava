@@ -1,6 +1,7 @@
 package model;
 
 import controller.Const;
+import controller.Controller;
 import dev.morphia.annotations.Id;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -487,13 +488,13 @@ public class EnteredCourse {
     }
   }
 
-  public static void getTeacherUser(MongoClient client , String workshopId , Handler<AsyncResult<String>> handler){
+  public static void getTeacherUser(MongoClient client , String workshopId , Handler<AsyncResult<List<JsonObject>>> handler){
 
     JsonObject workShopId = new JsonObject().put("_id",workshopId)
       .put("roleName","Teacher");
     client.find(Const.role , workShopId , res->{
       if (res.succeeded() && !res.result().isEmpty()){
-
+        Controller.findIn(client,Const.user,"roles",res.result().get(0).getString("_id"), handler );
       }
     });
   }
