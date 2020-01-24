@@ -12,9 +12,9 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
 
-            newWorkshops:[],
-            myWorkshops:[],
-            messeges:[]
+            newWorkshops: [],
+            myWorkshops: [],
+            messages: []
 
         }
     }
@@ -22,9 +22,8 @@ class Dashboard extends React.Component {
     async componentDidMount(): void {
 
         await axios.get("http://localhost:8000/user/dashboard").then(res=>{
+            this.setState({myWorkshops:res.data.body.workshops,newWorkshops:res.data.body.newWorkshops,messages:res.data.body.messages})
 
-            this.setState({myWorkshops:res.data.body.workshops,newWorkshops:res.data.body.newWorkshops,messeges:res.data.body.messeges})
-            console.log(this.state.newWorkshops)
         }).catch(e=>{
 
             console.log(e)
@@ -45,7 +44,7 @@ class Dashboard extends React.Component {
                             <MyWorkshops workshops={this.state.myWorkshops}/>
                         </Grid.Col>
                         <Grid.Col sm={'12'} lg={'6'}>
-                            <Messages messege={this.state.messeges}/>
+                            <Messages messages={this.state.messages}/>
                         </Grid.Col>
                     </Grid.Row>
                 </Page.Content>

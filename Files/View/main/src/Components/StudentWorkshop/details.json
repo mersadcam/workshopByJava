@@ -8,7 +8,6 @@
   "workshop": {
     "_id": "1923180577",
     "name": "Illustrator Beginner",
-
     "startTime": "12:30-01-02-2018",
     "finishTime": "15:30-01-06-2018",
     "place": "shriaz",
@@ -50,5 +49,19 @@
       "5e26cb4ae604e51a3f6e100e"
     ],
     "contactPoint": "5e26cb3be604e51a3f6e100a"
-  }
+  },
+  "report" : {
+    "studentCourseStatus" : null,
+    "finalNumber" : 80,
+    "completeNumber" : 100
+  },
+  "forms" : [
+    {"id" : "1",
+      "writer" : "Mohammad Mahdian",
+      "date" : "15:30-01-06-2018"},
+    {"id" : "2",
+      "writer" : "Mohammad Mahdian",
+      "date" : "16:30-02-06-2018"}
+  ]
+
 }

@@ -13,13 +13,32 @@ import "tabler-react/dist/Tabler.css";
 import {NavLink, withRouter} from "react-router-dom";
 import Search from "./Components/Workshops/Search";
 import profile from "./Components/Profile/Profile.json";
+import axios from "axios"
 
 class SiteTemplate extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state={
+            userType:"",
+            fullName:""
+
+        }
+    }
+
+    componentWillMount(): void {
+        axios.get("http://localhost:8000/user/info").then(res=>{
+            this.setState({userType:res.data.body.user.userType,fullName:res.data.body.contactPoint.fullName})
+
+        }).catch(e=>{
+            console.log(e)
+        })
+    }
+
     accountDropdownProps = {
         avatarURL: profile.avatarURL,
-        name: profile.fullName,
-        description: profile.userType !== "user" ? profile.userType.toUpperCase() : "Welcome Back",
+        name: state.fullName,
+        description: state.userType !== "user" ? state.userType.toUpperCase() : "Welcome Back",
         options: [
             {icon: "user", value: "Profile", to: "/profile"},
             {icon: "settings", value: "Settings",to: "/settings"},
@@ -33,7 +52,7 @@ class SiteTemplate extends React.Component {
     headerProps = {
         href: "/",
         alt: "XSITE",
-        imageURL: "./logo.png",
+        imageURL: "/logo.png",
         accountDropdown: this.accountDropdownProps,
         navItems: (
             <Nav.Item type="div" className="d-none d-md-flex">

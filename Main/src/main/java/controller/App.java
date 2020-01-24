@@ -6,7 +6,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -15,13 +14,11 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import model.*;
-import sun.misc.FpUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -682,8 +679,6 @@ public class App extends AbstractVerticle {
                   client.find(Const.contactPoint,new JsonObject()
                     .put("_id",user.getContactPointId()),resCP->{
 
-                    client.find(Const.messegeRelation,new JsonObject().put("sender",user.getUsername()),resSender->{
-
                       client.find(Const.messegeRelation,new JsonObject().put("receiver",user.getUsername()),resReceiver->{
 
                         client.find(Const.enteredCourse,new JsonObject(),resWorkshops->{
@@ -709,9 +704,7 @@ public class App extends AbstractVerticle {
                               .put("contactPoint",resCP.result().get(0))
                               .put("username",userJson.getString("username"))
                               .put("newWorkshops",newWorkshops)
-                              .put("messeges",new JsonObject()
-                                .put("sender",resSender.result())
-                                .put("receiver",resReceiver.result()));
+                              .put("messages",resReceiver.result());
                             ctx.response().end(new JsonObject().put("status","true")
                               .put("body",body).toString());
 
@@ -728,7 +721,6 @@ public class App extends AbstractVerticle {
                       });
 
 
-                    });
 
 
 

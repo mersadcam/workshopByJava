@@ -49,7 +49,7 @@ class Workshops extends React.Component {
 
     render() {
 
-        const {workshops} = this.state
+        const {workshops} = this.state;
 
         return (
             <SiteTemplate>
@@ -71,7 +71,6 @@ class Workshops extends React.Component {
                                     place={item.workshop.place}
                                     price={item.workshop.value}
                                     buttonText="View"
-                                    buttonURL={'/workshop'}
                                     buttonColor="primary"/>
                             </Grid.Col>
                         ))}

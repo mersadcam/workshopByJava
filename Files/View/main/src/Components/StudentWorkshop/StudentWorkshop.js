@@ -1,17 +1,17 @@
 import React from 'react';
-import {Avatar, Button, Card, Grid, Header, List, Page, Tag, Text} from "tabler-react";
+import {Avatar, Button, Card, Grid, Header, List, Page, Stamp, Table, Tag, Text} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
 import details from "./details.json";
 
 
-class Workshop extends React.Component {
+class StudentWorkshop extends React.Component {
     constructor(props) {
         super(props);
         this.state = {}
     }
 
     componentDidMount(): void {
-        const {workshopID} = this.props.match.params ;
+        const {workshopID} = this.props.match.params;
     }
 
     timeFormat = (timePattern) => {
@@ -43,19 +43,31 @@ class Workshop extends React.Component {
                                     </Card.Title>
 
                                     <Card.Options className={'mt-3'}>
-                                        <Grid.Col>
-                                            <Grid.Row>
-                                                <Grid.Col>
-                                                    <Button className={'px-7 text-large'}
-                                                            color={'primary'}> Enroll </Button>
-                                                </Grid.Col>
-                                            </Grid.Row>
-                                            <Grid.Row>
-                                                <Grid.Col className={'text-center'}>
-                                                    <h3 className={'text-dark mt-3'}> {details.workshop.value} $ </h3>
-                                                </Grid.Col>
-                                            </Grid.Row>
+                                        <Grid.Col className={'text-center'}>
+
+                                            {details.report.studentCourseStatus !== null ?
+                                                details.report.studentCourseStatus === "PASSED" ?
+                                                    <div>
+                                                        <Stamp className={'px-5 text-large text-weight-light'}
+                                                               color={'green'}>{details.report.finalNumber}/{details.report.completeNumber}</Stamp>
+                                                        <h4 className={'text-weight-light text-green mt-2'}>PASSED</h4>
+                                                    </div>
+                                                    :
+                                                    <div>
+                                                        <Stamp className={'px-5 text-large text-weight-light'}
+                                                               color={'red'}>{details.report.finalNumber}/{details.report.completeNumber}</Stamp>
+                                                        <h4 className={'text-weight-light text-red mt-2'}>NOT
+                                                            PASSED</h4>
+                                                    </div>
+                                                :
+                                                <div>
+                                                    <Stamp className={'px-5 text-large text-weight-light'}
+                                                           color={'blue'}>Enrolled</Stamp>
+                                                    <h4 className={'text-weight-light mt-2'}>LEARNING</h4>
+                                                </div>
+                                            }
                                         </Grid.Col>
+
                                     </Card.Options>
                                 </Card.Header>
                             </Card>
@@ -65,10 +77,8 @@ class Workshop extends React.Component {
                                 <Card.Header>
                                     <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
                                     <a className={'text-inherit mx-2'}
-                                       href={"/profile/" + details.teacher.username}><b className={'mr-2'}> Teacher </b> {details.teacher.fullName}</a>
-                                    <Card.Options>
-                                        <Button outline color={'primary'}> Grading Request </Button>
-                                    </Card.Options>
+                                       href={"/profile/" + details.teacher.username}><b
+                                        className={'mr-2'}> Teacher </b> {details.teacher.fullName}</a>
                                 </Card.Header>
                                 <Card.Body>
                                     <Grid.Row>
@@ -99,6 +109,24 @@ class Workshop extends React.Component {
                                 </Card.Body>
                             </Card>
                         </Grid.Col>
+                        <Card title={"Forms (" + details.forms.length + ")"} className={'px-2'}>
+                            <Table responsive>
+                                <Table.Header>
+                                    <Table.ColHeader>Writer</Table.ColHeader>
+                                    <Table.ColHeader>Date</Table.ColHeader>
+                                    <Table.ColHeader>{null}</Table.ColHeader>
+                                </Table.Header>
+                                <Table.Body>
+                                    {details.forms.map((item) => (
+                                        <Table.Row>
+                                            <Table.Col>{item.writer}</Table.Col>
+                                            <Table.Col>{this.timeFormat(item.date)}</Table.Col>
+                                            <Table.Col><Button outline size="sm" color="primary"> Read </Button></Table.Col>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        </Card>
                     </Grid.Row>
                 </Page.Content>
             </SiteTemplate>
@@ -106,4 +134,4 @@ class Workshop extends React.Component {
     }
 }
 
-export default Workshop;
+export default StudentWorkshop;

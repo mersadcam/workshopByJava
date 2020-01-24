@@ -5,11 +5,9 @@ import WorkshopCard from "../WokshopCard/WorkshopCard";
 import newWorkshops from "./NewWorkshops.json";
 
 class NewWorkshops extends React.Component {
-
     constructor(props) {
         super(props);
     }
-
     render() {
 
         const {workshops} = this.props
@@ -30,7 +28,7 @@ class NewWorkshops extends React.Component {
                             place={item.workshop.place}
                             price={item.workshop.value}
                             buttonText="View"
-                            buttonURL={'/workshop'}
+                            id={item.workshop.id}
                             buttonColor="primary"/>
                     ))}
                 </Carousel>
