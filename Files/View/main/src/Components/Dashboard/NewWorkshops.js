@@ -12,6 +12,7 @@ class NewWorkshops extends React.Component {
 
     render() {
 
+        const {workshops} = this.props
 
         return (
             <Card>
@@ -19,15 +20,15 @@ class NewWorkshops extends React.Component {
                     <Card.Title> New Workshops </Card.Title>
                 </Card.Header>
                 <Carousel>
-                    {this.props.workshops.map((item) => (
+                    {workshops.map((item) => (
                         <WorkshopCard
-                            title={item.name}
+                            title={item.workshop.name}
                             imageURL={item.imageURL}
                             avatarURL={item.avatarURL}
-                            teacher={item.teacher}
-                            date={item.startTime}
-                            place={item.place}
-                            price={item.value}
+                            teacher={item.teacher.fullName}
+                            date={item.workshop.startTime}
+                            place={item.workshop.place}
+                            price={item.workshop.value}
                             buttonText="View"
                             buttonURL={'/workshop'}
                             buttonColor="primary"/>
