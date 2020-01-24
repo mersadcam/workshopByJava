@@ -463,11 +463,12 @@ public class EnteredCourse {
 
     else{
 
+      JsonObject query = new JsonObject()
+        .put("roleName","Teacher")
+        .put("enteredCourse",list.get(counter).getJsonObject("workshop").getString("_id"));
+
       client.find(
-        Const.role,
-        new JsonObject()
-          .put("role","Teacher")
-          .put("enteredCourse",list.get(counter).getJsonObject("workshop").getString("_id")),resFindTeacher->{
+        Const.role,query,resFindTeacher->{
           Teacher teacher = new Teacher(resFindTeacher.result().get(0));
           Controller.findIn(client,"user","roles",teacher.get_id(),resFindIn->{
 

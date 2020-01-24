@@ -5,6 +5,7 @@ import WorkshopCard from "../WokshopCard/WorkshopCard";
 import newWorkshops from "./NewWorkshops.json";
 
 class NewWorkshops extends React.Component {
+    
     render() {
         return (
             <Card>

@@ -207,9 +207,10 @@ public class App extends AbstractVerticle {
         String username = clientJson.getString("username");
         client.find(Const.user,new JsonObject().put("username",username),res->{
 
-          EnteredCourse.setRolesOnWorkshops(client,new ArrayList<JsonObject>(),
+          EnteredCourse.setRolesOnWorkshops(client, new ArrayList<>(),
             res.result().get(0).getJsonArray("roles").getList(),
             0,resSetRoles->{
+
 
             EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),resSetRoles.result(),0,resMyWorkshop->{
 
