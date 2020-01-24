@@ -7,7 +7,7 @@ class Search extends React.Component {
                 <Form.Group>
                     <Form.Input
                         icon="search"
-                        placeholder="What do you want to learn?"
+                        placeholder="What do you want?"
                         position="append"
                     />
                 </Form.Group>

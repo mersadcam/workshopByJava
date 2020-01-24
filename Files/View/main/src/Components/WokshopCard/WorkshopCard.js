@@ -15,6 +15,7 @@ class WorkshopCard extends React.Component {
             place: null,
             price: null,
             buttonText: null,
+            buttonURL: null,
             buttonColor: null,
         }
     }
@@ -29,6 +30,7 @@ class WorkshopCard extends React.Component {
             place: props.place,
             price: props.price,
             buttonText: props.buttonText,
+            buttonURL: props.buttonURL,
             buttonColor: props.buttonColor,
         };
     }
@@ -66,7 +68,7 @@ class WorkshopCard extends React.Component {
                                 <a className={'text-inherit text-nowrap text-gray mx-2'} href={'#'}>{this.state.teacher}</a>
                             </Grid.Col>
                             <Grid.Col lg={2} md={10} sm={10}>
-                                <Button color={this.state.buttonColor} size="sm">{this.state.buttonText}</Button>
+                                <Button color={this.state.buttonColor} size="sm" RootComponent={'a'} href={this.state.buttonURL}>{this.state.buttonText}</Button>
                             </Grid.Col>
                         </Grid.Row>
                     </Card.Body>

@@ -10,6 +10,7 @@ import Workshops from "./Components/Workshops/Workshops";
 import Profile from "./Components/Profile/Profile";
 import EditProfile from "./Components/Profile/EditProfile";
 import Login from "./Components/Home/Login";
+import Workshop from "./Components/Workshop/Workshop";
 import axios from "axios";
 axios.defaults.headers.common['token'] = localStorage.getItem("token");
 axios.defaults.headers.common['userType'] = localStorage.getItem("userType");
@@ -36,6 +37,7 @@ class App extends React.Component {
                     <Route path="/profile" component={Profile}/>
                     <Route path="/editprofile" component={EditProfile}/>
                     <Route path="/login" component={Login}/>
+                    <Route path="/workshop" component={Workshop}/>
 
                 </Switch>
             </Router>

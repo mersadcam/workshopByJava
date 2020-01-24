@@ -1,7 +1,6 @@
 import React from 'react';
-import {Card, Grid, Page, Form, Button, Avatar, Icon, Header, Text} from "tabler-react";
+import {Card, Grid, Page, Form} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import json from "./Workshops.json";
 import Search from "./Search";
 import WorkshopCard from "../WokshopCard/WorkshopCard";
@@ -46,6 +45,7 @@ class Workshops extends React.Component {
                                     place={item.place}
                                     price={item.price}
                                     buttonText="View"
+                                    buttonURL={'/workshop'}
                                     buttonColor="primary"/>
                             </Grid.Col>
                         ))}
