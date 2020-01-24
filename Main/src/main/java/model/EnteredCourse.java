@@ -521,13 +521,17 @@ public class EnteredCourse {
       }else{
 
         getTeacherUser(client,workshops.get(counter).getString("_id"),resTeacher->{
+          client.find(Const.contactPoint,new JsonObject().put("_id",resTeacher.result().get(0).getString("contactPoint")),res->{
 
-          arr.add(
-            new JsonObject().put("teacher",resTeacher.result().get(0))
-            .put("workshop",workshops.get(counter))
-          );
+            arr.add(
+              new JsonObject().put("teacher",resTeacher.result().get(0).put("fullName",res.result().get(0).getString("fullName")))
+                .put("workshop",workshops.get(counter))
+            );
 
-          setTeacherOnWorkshop(client,arr,workshops,counter+1,handler);
+            setTeacherOnWorkshop(client,arr,workshops,counter+1,handler);
+
+          });
+
 
         });
 

@@ -4,8 +4,30 @@ import SiteTemplate from "../../SiteTemplate";
 import json from "./Workshops.json";
 import Search from "./Search";
 import WorkshopCard from "../WokshopCard/WorkshopCard";
+import axios from "axios"
 
 class Workshops extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state={
+            workshops:[]
+
+        }
+    }
+
+    async componentDidMount(): void {
+
+        await axios.get("http://localhost:8000/user/workshops").then(res=>{
+            console.log(res.data)
+
+            this.setState({workshops:res.data.body})
+        }).catch(e=>{
+            console.log(e)
+        })
+
+    }
+
 
     options =
         <React.Fragment>
@@ -26,6 +48,9 @@ class Workshops extends React.Component {
 
 
     render() {
+
+        const {workshops} = this.state
+
         return (
             <SiteTemplate>
                 <Page.Content>
@@ -34,17 +59,17 @@ class Workshops extends React.Component {
                         options={this.options}
                     />
                     <Grid.Row>
-                        {json.items.map((item, key) => (
-                            <Grid.Col md={6} lg={4} xl={3} key={key}>
+                        {workshops.map((item) => (
+                            <Grid.Col md={6} lg={4} xl={3}>
                                 <WorkshopCard
-                                    title={item.title}
+                                    title={item.workshop.name}
                                     imageURL={item.imageURL}
                                     avatarURL={item.avatarURL}
-                                    teacher={item.teacher}
-                                    teacherUsername={item.teacherUsername}
-                                    date={item.date}
-                                    place={item.place}
-                                    price={item.price}
+                                    teacher={item.teacher.fullName}
+                                    teacherUsername={item.teacher.username}
+                                    date={item.workshop.startTime}
+                                    place={item.workshop.place}
+                                    price={item.workshop.value}
                                     buttonText="View"
                                     buttonURL={'/workshop'}
                                     buttonColor="primary"/>

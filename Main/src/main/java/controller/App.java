@@ -275,10 +275,10 @@ public class App extends AbstractVerticle {
         user.editProfile(client , user ,clientJson , handle -> {
 
           if (handle.succeeded())
-            toResponse.put("status", "true");
+            toResponse.put("status", true).put("msg","Profile changed successfully");
 
           else
-            toResponse.put("status", "false").put("msg",handle.cause().getMessage());
+            toResponse.put("status", false).put("msg",handle.cause().getMessage());
 
           response.end(toResponse.toString());
 
@@ -544,6 +544,20 @@ public class App extends AbstractVerticle {
 
       });
 
+    router.route(Const.workshopPage)
+      .handler(ctx->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        String roleId = ctx.get("roleId");
+
+        client.find(Const.enteredCourse,new JsonObject().put("_id",clientJson.getString("workshopId")),res->{
+
+
+
+        });
+
+      });
+
     //new added (for teacher needed debug)
     router.route(Const.workshopStar)
       .handler(ctx ->{
@@ -559,12 +573,9 @@ public class App extends AbstractVerticle {
           if(handler.succeeded()){
             ctx.put("roleId",handler.result());
           }
-          else{
-            toResponse
-              .put("status","false")
-              .put("msg",handler.cause().toString());
+          else
             ctx.put("roleId","");
-          }
+
           ctx.next();
         });
       });
@@ -643,18 +654,96 @@ public class App extends AbstractVerticle {
     router.route(Const.dashboard)
       .handler(ctx ->{
         JsonObject userJson = ctx.get("userJson");
-        JsonObject toResponse = new JsonObject();
+        JsonObject clientJson = ctx.get("clientJson");
+
         User user = new User(userJson);
 
-        User.dashboard(client , user , handler->{
-          if(handler.succeeded()){
-            System.out.println(handler.result());
-          }
-          else{
-            System.out.println("dashboard have problem");
-          }
+          EnteredCourse.setRolesOnWorkshops(client, new ArrayList<>(),
+            user.getRolesId(),
+            0,resSetRoles->{
 
-        });
+
+              EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),resSetRoles.result(),0,resMyWorkshop->{
+
+                ArrayList<JsonObject> someOfMyWorkshop = new ArrayList<>();
+                int x;
+
+                if(resMyWorkshop.result().size() > 5)
+                  x = 5;
+                else
+                  x = resMyWorkshop.result().size();
+
+                for (int i = 0 ; i < x ; i++)
+                  someOfMyWorkshop.add(resMyWorkshop.result().get(i));
+
+
+                EnteredCourse.setTeacherOnMyWorkshops(client,new ArrayList<JsonObject>(),someOfMyWorkshop,0,resFinal->{
+
+                  client.find(Const.contactPoint,new JsonObject()
+                    .put("_id",user.getContactPointId()),resCP->{
+
+                    client.find(Const.messegeRelation,new JsonObject().put("sender",user.getUsername()),resSender->{
+
+                      client.find(Const.messegeRelation,new JsonObject().put("receiver",user.getUsername()),resReceiver->{
+
+                        client.find(Const.enteredCourse,new JsonObject(),resWorkshops->{
+
+                          EnteredCourse.setTeacherOnWorkshop(client,new ArrayList<JsonObject>(),resWorkshops.result(),0,resResolvedWorkshop->{
+
+
+                            ArrayList<JsonObject> newWorkshops = new ArrayList<JsonObject>();
+
+                            int limit;
+
+                            if (resWorkshops.result().size() >= 5)
+                              limit = 5;
+
+                            else
+                              limit = resWorkshops.result().size();
+
+                            for( int i = 0 ; i < limit ; i++)
+                              newWorkshops.add(resResolvedWorkshop.result().get(i));
+
+                            JsonObject body = new JsonObject().put("workshops",resFinal.result())
+                              .put("user",user.toJson())
+                              .put("contactPoint",resCP.result().get(0))
+                              .put("username",userJson.getString("username"))
+                              .put("newWorkshops",newWorkshops)
+                              .put("messeges",new JsonObject()
+                                .put("sender",resSender.result())
+                                .put("receiver",resReceiver.result()));
+                            ctx.response().end(new JsonObject().put("status","true")
+                              .put("body",body).toString());
+
+
+                          });
+
+
+
+                        });
+
+
+
+
+                      });
+
+
+                    });
+
+
+
+
+                  });
+
+
+
+                });
+
+              });
+
+            });
+
+
       });
     ////////////////////////////////////
 

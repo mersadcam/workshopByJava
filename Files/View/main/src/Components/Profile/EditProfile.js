@@ -20,19 +20,17 @@ class EditProfile extends React.Component {
             user:{},
             contactPoint:{},
             msg:"",
-            username:"",
-            fullName:"",
-            emailAddress:"",
-            biography:""
+            status:true,
             // crop: { aspect: 1 / 1 }
         }
     }
 
     async componentDidMount(): void {
 
-        await axios.get("http://localhost:8000/user/info").then(res=>{
+        await axios.post("http://localhost:8000/user/info").then(res=>{
 
-            this.setState({user:res.data.body.user,contactPoint:res.data.body.contactPoint,msg:res.data.msg})
+            this.setState({user:res.data.body.user,contactPoint:res.data.body.contactPoint})
+
 
         }).catch(e=>{
             console.log(e)
@@ -42,7 +40,25 @@ class EditProfile extends React.Component {
 
     onApply(){
 
+        const toSend = {
+            username:this.state.user.username,
+            emailAddress:this.state.contactPoint.emailAddress,
+            fullName:this.state.contactPoint.fullName,
+            biography:this.state.contactPoint.biography,
+            subTitle:this.state.contactPoint.subTitle
+        }
 
+        axios.post("http://localhost:8000/user/profile/edit",toSend).then(res=>{
+            this.setState({status:res.data.status,msg:res.data.msg})
+
+            if(this.state.status) {
+                this.props.history.push("/profile/" + this.state.user.username);
+            }
+
+
+        }).catch(e=>{
+            console.log(e)
+        })
 
     }
 
@@ -88,7 +104,7 @@ class EditProfile extends React.Component {
             <SiteTemplate>
                 <Page.Content>
 
-                    <Form onSubmit={(event) => console.log(event.target.name + 'clicked')}>
+                    <div onSubmit={(event) => console.log(event.target.name + 'clicked')}>
                         <img alt={user.username + " Cover"} src={profile.coverURL}/>
 
                         <Card>
@@ -117,16 +133,20 @@ class EditProfile extends React.Component {
                                                     value={contactPoint.fullName} name="fullName"
 
                                                     onChange={e => {
-
-                                                        this.setState({})
-
+                                                        this.setState({contactPoint:{...contactPoint,fullName:e.target.value}})
                                                     }}
 
                                                 /> </Form.Group>
                                             </Grid.Col>
                                             <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Username"> <Form.Input
-                                                    value={user.username} name="username"/> </Form.Group>
+                                                    value={user.username} name="username"
+
+                                                    onChange={e => {
+                                                        this.setState({user:{...user,username:e.target.value}})
+                                                    }}
+
+                                                /> </Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
 
@@ -134,11 +154,23 @@ class EditProfile extends React.Component {
                                         <Grid.Row>
                                             <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Email"> <Form.Input
-                                                    value={contactPoint.emailAddress} name="email"/> </Form.Group>
+                                                    value={contactPoint.emailAddress} name="email"
+
+                                                    onChange={e => {
+                                                        this.setState({contactPoint:{...contactPoint,emailAddress:e.target.value}})
+                                                    }}
+
+                                                /> </Form.Group>
                                             </Grid.Col>
                                             <Grid.Col lg={6}>
                                                 <Form.Group label="Subtitle"> <Form.Input
-                                                    value={contactPoint.subTitle} name="subtitle"/> </Form.Group>
+                                                    value={contactPoint.subTitle} name="subtitle"
+
+                                                    onChange={e => {
+                                                        this.setState({contactPoint:{...contactPoint,subTitle:e.target.value}})
+                                                    }}
+
+                                                /> </Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
 
@@ -146,27 +178,34 @@ class EditProfile extends React.Component {
                                         <Grid.Row>
                                             <Grid.Col>
                                                 <Form.Group label={'Bio'}> <Form.Textarea
-                                                    defaultValue={contactPoint.biography} name="bio"/></Form.Group>
+                                                    defaultValue={contactPoint.biography} name="bio"
+
+                                                    onChange={e => {
+                                                        this.setState({contactPoint:{...contactPoint,biography:e.target.value}})
+                                                    }}
+                                                /></Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
                                         <Grid.Row>
+                                            <Grid.Col>
 
-                                            {
-                                                this.state.msg!=null ?
-                                                    <Alert type={"danger"}>
-                                                        {this.state.msg}
-                                                    </Alert>
-                                                    :
-                                                    <div></div>
+                                                {
+                                                    !this.state.status ?
+                                                        <Alert type={"danger"}>
+                                                            {this.state.msg}
+                                                        </Alert>
+                                                        :
+                                                        <div></div>
 
-                                            }
+                                                }
 
+                                            </Grid.Col>
 
                                         </Grid.Row>
                                         <Grid.Row className={'justify-content-center'}>
                                             <Grid.Col lg={4}>
                                                 <Button type='submit' color='blue'
-                                                        onClick={() => alert(this.state.profileImageURL)}>Apply</Button>
+                                                        onClick={e=>{this.onApply()}}>Apply</Button>
                                                 <Button color='secondary' className={'ml-2'}>Cancel</Button>
                                             </Grid.Col>
                                         </Grid.Row>
@@ -175,7 +214,7 @@ class EditProfile extends React.Component {
                                 </Grid.Row>
                             </Card.Body>
                         </Card>
-                    </Form>
+                    </div>
                 </Page.Content>
             </SiteTemplate>
         )
