@@ -215,11 +215,11 @@ public class App extends AbstractVerticle {
               ContactPoint cp = new ContactPoint(resCP.result().get(0));
               EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),user.getRolesId(),0,resWorkshops->{
 
-                ArrayList<JsonObject> toSend = resWorkshops.result();
-                toSend.add(new JsonObject().put("ContactPoint",cp.toJson()));
-                toSend.add(new JsonObject().put("user",user.toJson()));
+                JsonObject toSend = new JsonObject().put("workshops",resWorkshops.result());
+                toSend.put("contactPoint",cp.toJson());
+                toSend.put("user", user.toJson());
 
-                ctx.response().end(new JsonObject().put("body",toSend.toString()).put("status","true").toString());
+                ctx.response().end(new JsonObject().put("body",toSend).put("status","true").toString());
 
               });
 
@@ -814,6 +814,8 @@ public class App extends AbstractVerticle {
 
 
     //////////////////////////////////////
+
+
 
     router.route(Const.uploadProfileImage)
       .handler(BodyHandler.create())

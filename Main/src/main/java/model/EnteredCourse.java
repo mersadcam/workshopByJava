@@ -1,6 +1,7 @@
 package model;
 
 import controller.Const;
+import controller.Controller;
 import dev.morphia.annotations.Id;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -361,6 +362,43 @@ public class EnteredCourse {
     });
   }
 
+
+  public static void returnRole(MongoClient client,String workshopId,Handler<AsyncResult<JsonObject>> handler){
+
+    client.find(Const.role,new JsonObject().put("roleName","Student").put("enteredCourse",workshopId),res->{
+
+      if(!res.result().isEmpty()){
+
+        Identity identity = new Identity(res.result().get(0));
+        client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resReport->{
+          Report report = new Report(resReport.result().get(0));
+
+          JsonObject toSend = new JsonObject().put("role",identity.toJson()).put("report",report.toJson());
+          handler.handle(Future.succeededFuture(toSend));
+
+        });
+
+      }else{
+
+        client.find(Const.role,new JsonObject().put("roleName","Grader").put("enteredCourse",workshopId),resGrader->{
+
+          Identity identity = new Identity(res.result().get(0));
+          client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resReport->{
+
+            Report report = new Report(resReport.result().get(0));
+            JsonObject toSend = new JsonObject().put("role",identity.toJson()).put("report",report.toJson());
+            handler.handle(Future.succeededFuture(toSend));
+
+          });
+
+        });
+
+      }
+
+    });
+
+  }
+
   public static void myWorkshops(
     MongoClient client,
     ArrayList<JsonObject> workshops,
@@ -381,23 +419,17 @@ public class EnteredCourse {
         client.find(Const.enteredCourse,new JsonObject().put("_id",resRole.result().get(0).getString("enteredCourse")),resWork->{
           if (resWork.succeeded()){
             JsonObject jsonObject = new JsonObject().put("workshop",resWork.result().get(0));
+            EnteredCourse enteredCourse = new EnteredCourse(resWork.result().get(0));
+            client.find(Const.role,new JsonObject().put("enteredCourse",enteredCourse.get_id())
+            .put("roleName","Teacher"),resFindTeacher->{
 
-            if (resRole.result().get(0).getString("roleName").equals("Teacher")){
+              if( resFindTeacher.succeeded() && !resFindTeacher.result().isEmpty() ){
 
-              Teacher teacher = new Teacher(resRole.result().get(0));
-              jsonObject.put("role",teacher.toJson());
 
-            }
-            else{
 
-              Identity identity = new Identity(resWork.result().get(0));
-              jsonObject.put("role",identity.toJson().put("status",identity.report.getStudentCourseStatus()));
+              }
 
-            }
-
-            workshops.add(jsonObject);
-            myWorkshops(client,workshops,rolesId,counter+1,handler);
-
+            });
           }
 
         });
@@ -456,13 +488,13 @@ public class EnteredCourse {
     }
   }
 
-  public static void getTeacherUser(MongoClient client , String workshopId , Handler<AsyncResult<String>> handler){
+  public static void getTeacherUser(MongoClient client , String workshopId , Handler<AsyncResult<List<JsonObject>>> handler){
 
     JsonObject workShopId = new JsonObject().put("_id",workshopId)
       .put("roleName","Teacher");
     client.find(Const.role , workShopId , res->{
       if (res.succeeded() && !res.result().isEmpty()){
-
+        Controller.findIn(client,Const.user,"roles",res.result().get(0).getString("_id"), handler );
       }
     });
   }
