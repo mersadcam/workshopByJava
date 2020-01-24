@@ -4,9 +4,15 @@ import enrolledWorkshops from "./EnrolledWorkshops.json";
 
 class MyWorkshops extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            workshopsNumber : enrolledWorkshops.items.length
+        }
+    }
     render() {
         return (
-            <Card title="My Workshops" className={'px-2'}>
+            <Card title={"My Workshops (" + this.state.workshopsNumber + ")"} className={'px-2'}>
                 <Table responsive>
                     <Table.Header>
                         <Table.ColHeader>Workshop</Table.ColHeader>

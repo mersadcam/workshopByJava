@@ -1,0 +1,50 @@
+{
+  "role": {
+    "roleName": "Teacher",
+    "_id": "5e26cb4ae604e51a3f6e100e",
+    "form": [],
+    "enteredCourse": "1923180577"
+  },
+  "workshop": {
+    "_id": "1923180577",
+    "name": null,
+    "startTime": "01-02-2018",
+    "finishTime": "01-06-2018",
+    "place": "shriaz",
+    "capacity": 23,
+    "description": "salam iran",
+    "value": 120,
+    "paymentParts": {
+      "cash": {
+        "time": "10-2-2009"
+      },
+      "installment": [
+        {
+          "name": "a",
+          "value": 70,
+          "time": "30-11-98"
+        },
+        {
+          "name": "b",
+          "value": 50,
+          "time": "30-01-99"
+        }
+      ]
+    },
+    "course": "C#",
+    "groups": [
+      "5e26cb4ae604e51a3f6e100d"
+    ]
+  },
+  "teacher": {
+    "_id": "5e26cb3be604e51a3f6e100c",
+    "username": "kaji78",
+    "password": "kaji78",
+    "token": "G7_Rd64mN-H3xqgIPTQFjkUw7Roa_YNk",
+    "userType": "user",
+    "roles": [
+      "5e26cb4ae604e51a3f6e100e"
+    ],
+    "contactPoint": "5e26cb3be604e51a3f6e100a"
+  }
+}

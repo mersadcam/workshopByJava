@@ -12,20 +12,21 @@ import type, {
 import "tabler-react/dist/Tabler.css";
 import {NavLink, withRouter} from "react-router-dom";
 import Search from "./Components/Workshops/Search";
-
+import profile from "./Components/Profile/Profile.json";
 
 class SiteTemplate extends React.Component {
 
     accountDropdownProps = {
-        avatarURL: "demo/faces/male/7.jpg",
-        name: "Jane Pearson",
+        avatarURL: profile.avatarURL,
+        name: profile.fullName,
+        description: profile.userType !== "user" ? profile.userType.toUpperCase() : "Welcome Back",
         options: [
-            {icon: "user", value: "Profile"},
-            {icon: "settings", value: "Settings"},
-            {icon: "send", value: "Messages", badge: "6"},
+            {icon: "user", value: "Profile", to: "/profile"},
+            {icon: "settings", value: "Settings",to: "/settings"},
+            {icon: "send", value: "Messages", badge: "6", to: "/messages"},
             {isDivider: true},
-            {icon: "help-circle", value: "Need help?"},
-            {icon: "log-out", value: "Sign out"},
+            {icon: "help-circle", value: "Need help?",to: "/help"},
+            {icon: "log-out", value: "Sign out", to: "/signout"},
         ],
     };
 

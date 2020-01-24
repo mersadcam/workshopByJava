@@ -12,8 +12,10 @@ class EditProfile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedFile: null,
-            imagePreviewUrl: profile.avatarURL ,
+            selectedProfile: null,
+            selectedCover: null ,
+            profileImageURL: profile.avatarURL ,
+            coverImageURL: profile.coverURL ,
             // crop: { aspect: 1 / 1 }
         }
     }
@@ -21,14 +23,14 @@ class EditProfile extends React.Component {
 
     fileChangedHandler = event => {
         this.setState({
-            selectedFile: event.target.files[0]
+            selectedProfile: event.target.files[0]
         });
 
         let reader = new FileReader();
 
         reader.onloadend = () => {
             this.setState({
-                imagePreviewUrl: reader.result
+                profileImageURL: reader.result
             });
         };
         reader.readAsDataURL(event.target.files[0])
@@ -37,7 +39,7 @@ class EditProfile extends React.Component {
 
     submit = () => {
         let fd = new FormData();
-        fd.append('file', this.state.selectedFile);
+        fd.append('file', this.state.selectedProfile);
         let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
@@ -48,9 +50,9 @@ class EditProfile extends React.Component {
         request.send(fd);
     };
 
-    changeCrop = crop => {
-        this.setState({ crop });
-    };
+    // changeCrop = crop => {
+    //     this.setState({ crop });
+    // };
 
     render() {
         return (
@@ -66,7 +68,7 @@ class EditProfile extends React.Component {
                                     <Grid.Col lg={3} className={'text-center'}>
                                         <img
                                             alt={profile.username + " Cover"}
-                                            src={this.state.imagePreviewUrl}
+                                            src={this.state.profileImageURL}
                                             className={'rounded-circle avatar-big'}/>
                                         <Form.Group className={'image-upload-wrapper mt-5'}>
                                             <Form.Input type={'file'} className={'image-upload-input'} name="avatar"
@@ -114,7 +116,7 @@ class EditProfile extends React.Component {
                                         <Grid.Row className={'justify-content-center'}>
                                             <Grid.Col lg={4}>
                                                 <Button type='submit' color='blue'
-                                                        onClick={() => alert(this.state.imagePreviewUrl)}>Apply</Button>
+                                                        onClick={() => alert(this.state.profileImageURL)}>Apply</Button>
                                                 <Button color='secondary' className={'ml-2'}>Cancel</Button>
                                             </Grid.Col>
                                         </Grid.Row>
