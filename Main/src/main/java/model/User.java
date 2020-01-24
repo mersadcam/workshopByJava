@@ -221,7 +221,7 @@ public class User {
     if ( username.equals("") ||
       fullName.equals("") ||
       emailAddress.equals("") ){
-      handler.handle(Future.failedFuture(""));
+      handler.handle(Future.failedFuture("Please fill star blanks"));
     }else {
 
       client.find(Const.user , new JsonObject().put("username", username) , resDup -> {

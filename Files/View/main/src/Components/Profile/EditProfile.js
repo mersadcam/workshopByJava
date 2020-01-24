@@ -1,9 +1,10 @@
 import React, {useCallback} from 'react';
-import {Card, Grid, Page, Button, Header, Text, Tag, Avatar, Form} from "tabler-react";
+import {Card, Grid, Page, Button, Header, Text, Tag, Avatar, Form,Alert} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import profile from "./Profile.json";
 import './Profile.css'
+import axios from "axios"
 // import ReactCrop from 'react-image-crop';
 // import 'react-image-crop/dist/ReactCrop.css'
 
@@ -16,8 +17,33 @@ class EditProfile extends React.Component {
             selectedCover: null ,
             profileImageURL: profile.avatarURL ,
             coverImageURL: profile.coverURL ,
+            user:{},
+            contactPoint:{},
+            msg:"",
+            username:"",
+            fullName:"",
+            emailAddress:"",
+            biography:""
             // crop: { aspect: 1 / 1 }
         }
+    }
+
+    async componentDidMount(): void {
+
+        await axios.get("http://localhost:8000/user/info").then(res=>{
+
+            this.setState({user:res.data.body.user,contactPoint:res.data.body.contactPoint,msg:res.data.msg})
+
+        }).catch(e=>{
+            console.log(e)
+        })
+
+    }
+
+    onApply(){
+
+
+
     }
 
 
@@ -55,19 +81,22 @@ class EditProfile extends React.Component {
     // };
 
     render() {
+
+        const {user,contactPoint} = this.state
+
         return (
             <SiteTemplate>
                 <Page.Content>
 
                     <Form onSubmit={(event) => console.log(event.target.name + 'clicked')}>
-                        <img alt={profile.username + " Cover"} src={profile.coverURL}/>
+                        <img alt={user.username + " Cover"} src={profile.coverURL}/>
 
                         <Card>
                             <Card.Body>
                                 <Grid.Row alignItems={'center'}>
                                     <Grid.Col lg={3} className={'text-center'}>
                                         <img
-                                            alt={profile.username + " Cover"}
+                                            alt={user.username + " Cover"}
                                             src={this.state.profileImageURL}
                                             className={'rounded-circle avatar-big'}/>
                                         <Form.Group className={'image-upload-wrapper mt-5'}>
@@ -85,11 +114,19 @@ class EditProfile extends React.Component {
                                         <Grid.Row>
                                             <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Full Name"> <Form.Input
-                                                    value={profile.fullName} name="fullName"/> </Form.Group>
+                                                    value={contactPoint.fullName} name="fullName"
+
+                                                    onChange={e => {
+
+                                                        this.setState({})
+
+                                                    }}
+
+                                                /> </Form.Group>
                                             </Grid.Col>
                                             <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Username"> <Form.Input
-                                                    value={profile.username} name="username"/> </Form.Group>
+                                                    value={user.username} name="username"/> </Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
 
@@ -97,11 +134,11 @@ class EditProfile extends React.Component {
                                         <Grid.Row>
                                             <Grid.Col lg={6}>
                                                 <Form.Group isRequired label="Email"> <Form.Input
-                                                    value={profile.email} name="email"/> </Form.Group>
+                                                    value={contactPoint.emailAddress} name="email"/> </Form.Group>
                                             </Grid.Col>
                                             <Grid.Col lg={6}>
                                                 <Form.Group label="Subtitle"> <Form.Input
-                                                    value={profile.subtitle} name="subtitle"/> </Form.Group>
+                                                    value={contactPoint.subTitle} name="subtitle"/> </Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
 
@@ -109,10 +146,23 @@ class EditProfile extends React.Component {
                                         <Grid.Row>
                                             <Grid.Col>
                                                 <Form.Group label={'Bio'}> <Form.Textarea
-                                                    defaultValue={profile.bio} name="bio"/></Form.Group>
+                                                    defaultValue={contactPoint.biography} name="bio"/></Form.Group>
                                             </Grid.Col>
                                         </Grid.Row>
+                                        <Grid.Row>
 
+                                            {
+                                                this.state.msg!=null ?
+                                                    <Alert type={"danger"}>
+                                                        {this.state.msg}
+                                                    </Alert>
+                                                    :
+                                                    <div></div>
+
+                                            }
+
+
+                                        </Grid.Row>
                                         <Grid.Row className={'justify-content-center'}>
                                             <Grid.Col lg={4}>
                                                 <Button type='submit' color='blue'

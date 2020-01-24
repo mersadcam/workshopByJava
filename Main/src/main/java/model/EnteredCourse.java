@@ -384,13 +384,13 @@ public class EnteredCourse {
 
           Identity identity;
           identity = new Identity(res.result().get(0));
-          JsonObject toSave = new JsonObject()
-            .put("role",identity.toJson());
 
           if(roleName.equals("Student")){
 
             client.find(Const.report,new JsonObject().put("_id",res.result().get(0).getString("report")),resFindReport->{
-
+              identity.setRequestType(new Student(res.result().get(0).getString("requestType")));
+              JsonObject toSave = new JsonObject()
+                .put("role",identity.toJson());
               toSave.put("report",resFindReport.result().get(0).getString("studentCourseStatus"));
               arr.add(toSave);
               setRolesOnWorkshops(client,arr,roles,counter+1,handler);
@@ -398,7 +398,9 @@ public class EnteredCourse {
             });
 
           }else{
-
+            identity.setRequestType(new Grader(res.result().get(0).getString("requestType")));
+            JsonObject toSave = new JsonObject()
+              .put("role",identity.toJson());
             arr.add(toSave);
             setRolesOnWorkshops(client,arr,roles,counter+1,handler);
 
@@ -471,9 +473,15 @@ public class EnteredCourse {
         Const.role,query,resFindTeacher->{
           Teacher teacher = new Teacher(resFindTeacher.result().get(0));
           Controller.findIn(client,"user","roles",teacher.get_id(),resFindIn->{
+            client.find(Const.contactPoint,new JsonObject().put("_id",resFindIn.result().get(0).getString("contactPoint")),resFindCP->{
 
-            arr.add(list.get(counter).put("teacher",resFindIn.result().get(0)));
-            setTeacherOnMyWorkshops(client,arr,list,counter+1,handler);
+              arr.add(list.get(counter).put("teacher",resFindIn.result().get(0)
+                .put("fullName",resFindCP.result().get(0).getString("fullName"))));
+              setTeacherOnMyWorkshops(client,arr,list,counter+1,handler);
+
+            });
+
+
 
           });
 

@@ -18,7 +18,7 @@ class Workshop extends React.Component {
                         <Grid.Col>
                             <Card>
                                 <Card.Body>
-                                    <h3 className={'d-inline'}> {user.username} </h3>
+                                    <h3 className={'d-inline'}> </h3>
                                 </Card.Body>
                             </Card>
                         </Grid.Col>

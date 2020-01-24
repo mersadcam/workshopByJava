@@ -33,8 +33,12 @@ public class Identity implements Role {
     this.roleName = jsonObject.getString("roleName");
     this.report = new Report(jsonObject.getString("report"));
     this.enteredCourse = new EnteredCourse(jsonObject.getString("enteredCourse"));
+
   }
 
+  public void setRequestType(RequestType requestType) {
+    this.requestType = requestType;
+  }
 
   public void setType(RequestType type) {
     this.requestType = type;
