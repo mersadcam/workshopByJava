@@ -38,6 +38,7 @@ class Workshops extends React.Component {
                             <Grid.Col md={6} lg={4} xl={3} key={key}>
                                 <WorkshopCard
                                     title={item.title}
+                                    id={item.id}
                                     imageURL={item.imageURL}
                                     avatarURL={item.avatarURL}
                                     teacher={item.teacher}
@@ -46,7 +47,6 @@ class Workshops extends React.Component {
                                     place={item.place}
                                     price={item.price}
                                     buttonText="View"
-                                    buttonURL={'/workshop'}
                                     buttonColor="primary"/>
                             </Grid.Col>
                         ))}

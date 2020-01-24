@@ -7,12 +7,13 @@
   },
   "workshop": {
     "_id": "1923180577",
-    "name": null,
-    "startTime": "01-02-2018",
-    "finishTime": "01-06-2018",
+    "name": "Illustrator Beginner",
+
+    "startTime": "12:30-01-02-2018",
+    "finishTime": "15:30-01-06-2018",
     "place": "shriaz",
     "capacity": 23,
-    "description": "salam iran",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     "value": 120,
     "paymentParts": {
       "cash": {
@@ -31,14 +32,17 @@
         }
       ]
     },
-    "course": "C#",
+    "course": "Illustrator",
+    "category": "Graphic Design",
     "groups": [
       "5e26cb4ae604e51a3f6e100d"
     ]
   },
   "teacher": {
     "_id": "5e26cb3be604e51a3f6e100c",
+
     "username": "kaji78",
+    "fullName": "Ehsan Kajism",
     "password": "kaji78",
     "token": "G7_Rd64mN-H3xqgIPTQFjkUw7Roa_YNk",
     "userType": "user",

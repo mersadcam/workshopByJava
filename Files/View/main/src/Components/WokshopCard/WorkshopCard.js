@@ -7,6 +7,7 @@ class WorkshopCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: null,
             title : null,
             imageURL: null,
             avatarURL: null,
@@ -16,13 +17,13 @@ class WorkshopCard extends React.Component {
             place: null,
             price: null,
             buttonText: null,
-            buttonURL: null,
             buttonColor: null,
         }
     }
 
     static getDerivedStateFromProps(props, state) {
         return {
+            id: props.id,
             title : props.title,
             imageURL: props.imageURL,
             avatarURL: props.avatarURL,
@@ -32,7 +33,6 @@ class WorkshopCard extends React.Component {
             place: props.place,
             price: props.price,
             buttonText: props.buttonText,
-            buttonURL: props.buttonURL,
             buttonColor: props.buttonColor,
         };
     }
@@ -70,7 +70,7 @@ class WorkshopCard extends React.Component {
                                 <a className={'text-inherit text-nowrap text-gray mx-2'} href={"/profile/" + this.state.teacherUsername}>{this.state.teacher}</a>
                             </Grid.Col>
                             <Grid.Col lg={2} md={10} sm={10}>
-                                <Button color={this.state.buttonColor} size="sm" RootComponent={'a'} href={this.state.buttonURL}>{this.state.buttonText}</Button>
+                                <Button color={this.state.buttonColor} size="sm" RootComponent={'a'} href={"/workshop/" + this.state.id}>{this.state.buttonText}</Button>
                             </Grid.Col>
                         </Grid.Row>
                     </Card.Body>
