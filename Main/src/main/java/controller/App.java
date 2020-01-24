@@ -6,7 +6,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -20,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -199,9 +197,25 @@ public class App extends AbstractVerticle {
 
     /////////////////////////////////////
 
+    router.route(Const.info)
+      .handler(ctx->{
+
+        JsonObject userJson = ctx.get("userJson");
+        client.find(Const.contactPoint,new JsonObject().put("_id",userJson.getString("contactPoint")),res->{
+
+          JsonObject body = new JsonObject().put("user",userJson).put("contactPoint",res.result().get(0));
+          ctx.response().end(new JsonObject()
+          .put("status","true").put("body",body).toString());
+
+        });
+
+      });
+
+
     router.route(Const.profile)
       .handler(ctx->{
 
+        JsonObject userJson = ctx.get("userJson");
         JsonObject clientJson = ctx.get("clientJson");
 
         String username = clientJson.getString("username");
@@ -216,8 +230,19 @@ public class App extends AbstractVerticle {
 
               EnteredCourse.setTeacherOnMyWorkshops(client,new ArrayList<JsonObject>(),resMyWorkshop.result(),0,resFinal->{
 
-                ctx.response().end(new JsonObject().put("status","true")
-                .put("body",resFinal.result()).toString());
+                client.find(Const.contactPoint,new JsonObject()
+                  .put("_id",res.result().get(0).getString("contactPoint")),resCP->{
+
+                  JsonObject body = new JsonObject().put("workshops",resFinal.result())
+                    .put("user",res.result().get(0))
+                    .put("contactPoint",resCP.result().get(0))
+                    .put("username",userJson.getString("username"));
+                  ctx.response().end(new JsonObject().put("status","true")
+                    .put("body",body).toString());
+
+                });
+
+
 
               });
 
@@ -250,7 +275,7 @@ public class App extends AbstractVerticle {
             toResponse.put("status", "true");
 
           else
-            toResponse.put("status", "false");
+            toResponse.put("status", "false").put("msg",handle.cause().getMessage());
 
           response.end(toResponse.toString());
 

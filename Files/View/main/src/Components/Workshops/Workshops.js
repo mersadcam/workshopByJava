@@ -25,6 +25,10 @@ class Workshops extends React.Component {
         </React.Fragment>;
 
 
+    componentDidMount(): void {
+        const {workshopID} = this.props.match.params ;
+    }
+
     render() {
         return (
             <SiteTemplate>

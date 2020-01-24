@@ -23,7 +23,7 @@ class NewWorkshops extends React.Component {
                             place={item.place}
                             price={item.price}
                             buttonText="View"
-                            buttonURL={'/workshop'}
+                            id={item.id}
                             buttonColor="primary"/>
                     ))}
                 </Carousel>

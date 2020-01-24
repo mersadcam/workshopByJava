@@ -29,7 +29,7 @@ class Workshop extends React.Component {
                             <Card>
                                 <img
                                     alt={details.workshop.name + " Cover"}
-                                    src={'demo/photos/illustrator.jpg'}/>
+                                    src={'/demo/photos/illustrator.jpg'}/>
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3
@@ -59,7 +59,7 @@ class Workshop extends React.Component {
                         <Grid.Col>
                             <Card>
                                 <Card.Header>
-                                    <Avatar imageURL={'demo/faces/male/33.jpg'}/>
+                                    <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
                                     <a className={'text-inherit mx-2'}
                                        href={"/profile/" + details.teacher.username}><b className={'mr-2'}> Teacher </b> {details.teacher.fullName}</a>
                                     <Card.Options>
@@ -91,7 +91,6 @@ class Workshop extends React.Component {
                                             <b className={'mr-2'}> Description </b> {details.workshop.description}
                                         </Grid.Col>
                                     </Grid.Row>
-
                                 </Card.Body>
                             </Card>
                         </Grid.Col>

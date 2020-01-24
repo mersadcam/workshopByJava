@@ -33,7 +33,7 @@ class SiteTemplate extends React.Component {
     headerProps = {
         href: "/",
         alt: "XSITE",
-        imageURL: "./logo.png",
+        imageURL: "/logo.png",
         accountDropdown: this.accountDropdownProps,
         navItems: (
             <Nav.Item type="div" className="d-none d-md-flex">

@@ -17,25 +17,48 @@ class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state={
-            username:"kaji78",
             loading:true,
             workshops:{},
+            graderWorkshops:[],
+            teacherWorkshops:[],
+            studentWorkshops:[],
             user:{},
-            contactPoint:{}
+            contactPoint:{},
+            username:"",
+            edit:false
         }
     }
 
     async componentDidMount(): void {
         const {usernameURL} = this.props.match.params ;
-        alert(usernameURL);
-        await axios.post("http://localhost:8000/user/profile",{username:this.state.username})
+        await axios.post("http://localhost:8000/user/profile",{username:usernameURL})
             .then(res=>{
                 this.setState({workshops:res.data.body.workshops,
                     contactPoint:res.data.body.contactPoint,
                     user:res.data.body.user,
+                    username:res.data.body.username,
+
                     loading:false})
 
-                console.log(this.state.workshops)
+
+                if (usernameURL == this.state.username)
+                    this.setState({edit:true})
+
+                this.state.workshops.map(item=>{
+                    if( item.role.roleName == "Student" ) {
+                        this.setState({studentWorkshops: [...this.state.studentWorkshops, item]})
+                    }
+
+                    if( item.role.roleName == "Grader" ) {
+                        this.setState({graderWorkshops: [...this.state.graderWorkshops, item]})
+                    }
+
+                    if( item.role.roleName == "Teacher" ) {
+                        this.setState({teacherWorkshops: [...this.state.teacherWorkshops, item]})
+                    }
+
+                });
+
 
 
             }).catch(e=>{
@@ -98,7 +121,14 @@ class Profile extends React.Component {
                                                     <List.Item className={'mt-3'}> <b className={'mr-2'}> Bio </b> {contactPoint.biography} </List.Item>
                                                     <List.Item className={'mt-5'}>
                                                         <Button.List>
-                                                            <Button size={'sm'} color={'secondary'} icon={'edit'} RootComponent={'a'} href={'/editprofile'}> Edit </Button>
+
+                                                            {
+                                                                (this.state.edit) ?
+                                                                    <Button size={'sm'} color={'secondary'} icon={'edit'} RootComponent={'a'} href={'/editprofile'}> Edit </Button>
+                                                                    : <div></div>
+                                                            }
+
+
                                                             <Button size={'sm'} color={'secondary'}>Send Message</Button>
                                                             <Button size={'sm'} color={'secondary'}>Report</Button>
                                                         </Button.List>
@@ -110,18 +140,17 @@ class Profile extends React.Component {
                                 </Card>
                             </Grid.Col>
                         </Grid.Row>
-
                         <Card>
                             <Card.Header>
                                 <Card.Title> Teaching Workshops </Card.Title>
                             </Card.Header>
                             <Carousel>
-                                {workshops.map((item, key) => (
+                                {this.state.teacherWorkshops.map(item => (
                                     <WorkshopCard
                                         title={item.workshop.name}
                                         imageURL={item.workshop.imageURL}
                                         avatarURL={item.workshop.avatarURL}
-                                        teacher={item.workshop.teacher}
+                                        teacher={item.teacher.fullName}
                                         date={item.workshop.startTime}
                                         place={item.workshop.place}
                                         price={item.workshop.value}
@@ -136,15 +165,15 @@ class Profile extends React.Component {
                                 <Card.Title> Grading Workshops </Card.Title>
                             </Card.Header>
                             <Carousel>
-                                {gradingWokshops.items.map((item, key) => (
+                                {this.state.graderWorkshops.map(item => (
                                     <WorkshopCard
-                                        title={item.title}
-                                        imageURL={item.imageURL}
-                                        avatarURL={item.avatarURL}
-                                        teacher={item.teacher}
-                                        date={item.date}
-                                        place={item.place}
-                                        price={item.price}
+                                        title={item.workshop.name}
+                                        imageURL={item.workshop.imageURL}
+                                        avatarURL={item.workshop.avatarURL}
+                                        teacher={item.teacher.fullName}
+                                        date={item.workshop.startTime}
+                                        place={item.workshop.place}
+                                        price={item.workshop.value}
                                         buttonText="View"
                                         buttonColor="secondary"/>
                                 ))}
@@ -156,15 +185,15 @@ class Profile extends React.Component {
                                 <Card.Title> Enrolled Workshops </Card.Title>
                             </Card.Header>
                             <Carousel>
-                                {enrolledWokshops.items.map((item, key) => (
+                                {this.state.studentWorkshops.map((item) => (
                                     <WorkshopCard
-                                        title={item.title}
-                                        imageURL={item.imageURL}
-                                        avatarURL={item.avatarURL}
-                                        teacher={item.teacher}
-                                        date={item.date}
-                                        place={item.place}
-                                        price={item.price}
+                                        title={item.workshop.name}
+                                        imageURL={item.workshop.imageURL}
+                                        avatarURL={item.workshop.avatarURL}
+                                        teacher={item.teacher.fullName}
+                                        date={item.workshop.startTime}
+                                        place={item.workshop.place}
+                                        price={item.workshop.value}
                                         buttonText="View"
                                         buttonColor="secondary"/>
                                 ))}
