@@ -207,30 +207,22 @@ public class App extends AbstractVerticle {
         String username = clientJson.getString("username");
         client.find(Const.user,new JsonObject().put("username",username),res->{
 
-          if (!res.result().isEmpty()){
+          EnteredCourse.setRolesOnWorkshops(client,new ArrayList<JsonObject>(),
+            res.result().get(0).getJsonArray("roles").getList(),
+            0,resSetRoles->{
 
-            User user = new User(res.result().get(0));
-            client.find(Const.contactPoint,new JsonObject().put("_id",user.getContactPointId()),resCP->{
+            EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),resSetRoles.result(),0,resMyWorkshop->{
 
-              ContactPoint cp = new ContactPoint(resCP.result().get(0));
-              EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),user.getRolesId(),0,resWorkshops->{
+              EnteredCourse.setTeacherOnMyWorkshops(client,new ArrayList<JsonObject>(),resMyWorkshop.result(),0,resFinal->{
 
-                JsonObject toSend = new JsonObject().put("workshops",resWorkshops.result());
-                toSend.put("contactPoint",cp.toJson());
-                toSend.put("user", user.toJson());
-
-                ctx.response().end(new JsonObject().put("body",toSend).put("status","true").toString());
+                ctx.response().end(new JsonObject().put("status","true")
+                .put("body",resFinal.result()).toString());
 
               });
 
             });
 
-          }else{
-
-            ctx.response().end(new JsonObject().put("status","false").put("msg","This student is not in system").toString());
-
-          }
-
+          });
 
 
         });
@@ -269,26 +261,18 @@ public class App extends AbstractVerticle {
     router.route(Const.userWorkshops)
       .handler(ctx->{
 
-      JsonObject toResponse = new JsonObject();
+        EnteredCourse.allWorkshopsWithTeacher(client,res->{
 
-      client.find(Const.enteredCourse,new JsonObject(),res->{
+          if( res.succeeded() )
+            ctx.response().end(new JsonObject().put("status","true")
+            .put("body",res.result()).toString());
 
-        List workshopList = res.result();
-
-        if( res.succeeded())
-          toResponse.put("status","true")
-          .put("body",workshopList);
-
-        else
-          toResponse.put("status","false");
-
-        ctx.response().end( toResponse.toString() );
+          else
+            ctx.response().end(new JsonObject().put("status","false")
+            .put("msg","There are some problems in system").toString());
 
 
-      });
-
-
-
+        });
 
     });
 

@@ -476,17 +476,17 @@ public class User {
 
   public static void dashboard(MongoClient client , User user , Handler<AsyncResult<String>> handler){
 
-    EnteredCourse.myWorkshops(client ,new ArrayList<JsonObject>(),user.getRolesId() , 0 , resMyWorkshops ->{
-      if(resMyWorkshops.succeeded()){
-        String workshops = resMyWorkshops.result().toString();
-        System.out.println(workshops);
-        handler.handle(Future.succeededFuture(workshops));
-
-      }
-      else {
-        handler.handle(Future.failedFuture("cannot."));
-      }
-      });
+//    EnteredCourse.myWorkshops(client ,new ArrayList<JsonObject>(),user.getRolesId() , 0 , resMyWorkshops ->{
+//      if(resMyWorkshops.succeeded()){
+//        String workshops = resMyWorkshops.result().toString();
+//        System.out.println(workshops);
+//        handler.handle(Future.succeededFuture(workshops));
+//
+//      }
+//      else {
+//        handler.handle(Future.failedFuture("cannot."));
+//      }
+//      });
   }
 
 

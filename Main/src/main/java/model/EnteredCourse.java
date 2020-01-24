@@ -363,76 +363,86 @@ public class EnteredCourse {
   }
 
 
-  public static void returnRole(MongoClient client,String workshopId,Handler<AsyncResult<JsonObject>> handler){
+  public static void setRolesOnWorkshops(MongoClient client,ArrayList<JsonObject> arr ,
+    List<String> roles , int counter , Handler<AsyncResult<ArrayList<JsonObject>>> handler){
 
-    client.find(Const.role,new JsonObject().put("roleName","Student").put("enteredCourse",workshopId),res->{
+    if( counter == roles.size())
+      handler.handle(Future.succeededFuture(arr));
+    else{
 
-      if(!res.result().isEmpty()){
+      client.find(Const.role,new JsonObject().put("_id",roles.get(counter)),res->{
+        String roleName = res.result().get(0).getString("roleName");
 
-        Identity identity = new Identity(res.result().get(0));
-        client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resReport->{
-          Report report = new Report(resReport.result().get(0));
+        if (roleName.equals("Teacher")){
 
-          JsonObject toSend = new JsonObject().put("role",identity.toJson()).put("report",report.toJson());
-          handler.handle(Future.succeededFuture(toSend));
+          Teacher teacher = new Teacher(res.result().get(0));
+          arr.add(new JsonObject()
+          .put("role",teacher.toJson()));
+          setRolesOnWorkshops(client,arr,roles,counter+1,handler);
 
-        });
+        }else{
 
-      }else{
+          Identity identity;
+          identity = new Identity(res.result().get(0));
+          JsonObject toSave = new JsonObject()
+            .put("role",identity.toJson());
 
-        client.find(Const.role,new JsonObject().put("roleName","Grader").put("enteredCourse",workshopId),resGrader->{
+          if(roleName.equals("Student")){
 
-          Identity identity = new Identity(res.result().get(0));
-          client.find(Const.report,new JsonObject().put("_id",identity.getReportId()),resReport->{
+            client.find(Const.report,new JsonObject().put("_id",res.result().get(0).getString("report")),resFindReport->{
 
-            Report report = new Report(resReport.result().get(0));
-            JsonObject toSend = new JsonObject().put("role",identity.toJson()).put("report",report.toJson());
-            handler.handle(Future.succeededFuture(toSend));
+              toSave.put("report",resFindReport.result().get(0).getString("studentCourseStatus"));
+              arr.add(toSave);
+              setRolesOnWorkshops(client,arr,roles,counter+1,handler);
 
-          });
+            });
 
-        });
+          }else{
 
-      }
+            arr.add(toSave);
+            setRolesOnWorkshops(client,arr,roles,counter+1,handler);
 
-    });
+          }
+
+
+
+        }
+
+
+      });
+
+    }
+
+
 
   }
 
   public static void myWorkshops(
     MongoClient client,
-    ArrayList<JsonObject> workshops,
-    List rolesId,
+    ArrayList<JsonObject> arr,
+    ArrayList<JsonObject> list,
     int counter,
     Handler<AsyncResult<ArrayList<JsonObject>>> handler){
 
-    if (counter == rolesId.size()){
+    if (counter == list.size()){
 
-      handler.handle(Future.succeededFuture(workshops));
+      handler.handle(Future.succeededFuture(arr));
 
     }
 
     else {
 
-      client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)),resRole->{
+      client.find(
+        Const.enteredCourse,
+        new JsonObject()
+          .put("_id",list.get(counter)
+            .getJsonObject("role")
+            .getString("enteredCourse")),
+        resFindWorkshop->{
 
-        client.find(Const.enteredCourse,new JsonObject().put("_id",resRole.result().get(0).getString("enteredCourse")),resWork->{
-          if (resWork.succeeded()){
-            JsonObject jsonObject = new JsonObject().put("workshop",resWork.result().get(0));
-            EnteredCourse enteredCourse = new EnteredCourse(resWork.result().get(0));
-            client.find(Const.role,new JsonObject().put("enteredCourse",enteredCourse.get_id())
-            .put("roleName","Teacher"),resFindTeacher->{
-
-              if( resFindTeacher.succeeded() && !resFindTeacher.result().isEmpty() ){
-
-
-
-              }
-
-            });
-          }
-
-        });
+        EnteredCourse workshop = new EnteredCourse(resFindWorkshop.result().get(0));
+        arr.add(list.get(counter).put("workshop",workshop.toJson()));
+        myWorkshops(client,arr,list,counter+1,handler);
 
       });
 
@@ -440,57 +450,86 @@ public class EnteredCourse {
 
   }
 
-  public static void allWorkshopsWithTeacher(MongoClient client , Handler<AsyncResult<JsonObject>> handler){
+  public static void setTeacherOnMyWorkshops(
+    MongoClient client,
+    ArrayList<JsonObject> arr,
+    ArrayList<JsonObject> list,
+    int counter,
+    Handler<AsyncResult<ArrayList<JsonObject>>> handler
+  ){
+
+    if (counter == list.size())
+      handler.handle(Future.succeededFuture(arr));
+
+    else{
+
+      client.find(
+        Const.role,
+        new JsonObject()
+          .put("role","Teacher")
+          .put("enteredCourse",list.get(counter).getJsonObject("workshop").getString("_id")),resFindTeacher->{
+          Teacher teacher = new Teacher(resFindTeacher.result().get(0));
+          Controller.findIn(client,"user","roles",teacher.get_id(),resFindIn->{
+
+            arr.add(list.get(counter).put("teacher",resFindIn.result().get(0)));
+            setTeacherOnMyWorkshops(client,arr,list,counter+1,handler);
+
+          });
+
+        });
+
+    }
+
+  }
+
+
+  public static void allWorkshopsWithTeacher(MongoClient client , Handler<AsyncResult<ArrayList<JsonObject>>> handler){
 
     JsonObject id = new JsonObject();
 
     client.find(Const.enteredCourse , id , resFind ->{
       if (resFind.succeeded() && !resFind.result().isEmpty()) {
-        EnteredCourse.findTeacherRecursive(client,resFind.result().size() ,resFind.result() , new ArrayList<JsonObject>(), resWorkshops->{
-          ArrayList<JsonObject> toSend = resWorkshops.result();
-          handler.handle(Future.succeededFuture(new JsonObject().put("body" , toSend.toString())));
-        });
+
+        setTeacherOnWorkshop(client,new ArrayList<JsonObject>(),resFind.result(),0,handler);
+
       }
     });
 
   }
 
-  public static void findTeacherRecursive(MongoClient client , int counter , List<JsonObject> result , ArrayList<JsonObject> workshops ,
-                                          Handler<AsyncResult<ArrayList<JsonObject>>> handler){
-    if (counter == -1){
-      handler.handle(Future.succeededFuture(workshops));
-    }
-    else {
-      JsonObject json = new JsonObject().put("_id",result.get(counter).getString("_id"));
 
-      client.find(Const.enteredCourse , json , resFind ->{
-        JsonObject workshop = new JsonObject();
+  public static void setTeacherOnWorkshop(
+    MongoClient client,
+    ArrayList<JsonObject> arr ,
+    List<JsonObject> workshops ,
+    int counter ,
+    Handler<AsyncResult<ArrayList<JsonObject>>> handler){
 
-        if (resFind.succeeded() && !resFind.result().isEmpty()){
-          client.find(Const.role , new JsonObject().put("enteredCourse",result.get(counter).getString("_id"))
-            .put("roleName","Teacher") , resFindRole ->{
+      if(counter == workshops.size()){
 
-            if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
-              workshop.put("enteredCourse",result.get(counter).getString("_id"))
-                .put("Teacher",resFindRole.result().get(0).getString("roleName"))
-                .put("course",resFind.result().get(0).getString("name"));
-            }
-            workshops.add(workshop);
-            findTeacherRecursive(client,counter-1,result,workshops , handler);
-          });
-        }
-        else {
-          workshop.put("workshop","not found");
-          workshops.add(workshop);
-          findTeacherRecursive(client,counter - 1 , result , workshops , handler);
-        }
-      });
-    }
+        handler.handle(Future.succeededFuture(arr));
+
+      }else{
+
+        getTeacherUser(client,workshops.get(counter).getString("_id"),resTeacher->{
+
+          arr.add(
+            new JsonObject().put("teacher",resTeacher.result().get(0))
+            .put("workshop",workshops.get(counter))
+          );
+
+          setTeacherOnWorkshop(client,arr,workshops,counter+1,handler);
+
+        });
+
+      }
+
   }
+
 
   public static void getTeacherUser(MongoClient client , String workshopId , Handler<AsyncResult<List<JsonObject>>> handler){
 
-    JsonObject workShopId = new JsonObject().put("_id",workshopId)
+    JsonObject workShopId = new JsonObject().put("enteredCourse",workshopId)
       .put("roleName","Teacher");
     client.find(Const.role , workShopId , res->{
       if (res.succeeded() && !res.result().isEmpty()){
@@ -501,3 +540,36 @@ public class EnteredCourse {
 
 }
 
+
+//  public static void findTeacherRecursive(MongoClient client , int counter , List<JsonObject> result , ArrayList<JsonObject> workshops ,
+//                                          Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+//    if (counter == -1){
+//      handler.handle(Future.succeededFuture(workshops));
+//    }
+//    else {
+//      JsonObject json = new JsonObject().put("_id",result.get(counter).getString("_id"));
+//
+//      client.find(Const.enteredCourse , json , resFind ->{
+//        JsonObject workshop = new JsonObject();
+//
+//        if (resFind.succeeded() && !resFind.result().isEmpty()){
+//          client.find(Const.role , new JsonObject().put("enteredCourse",result.get(counter).getString("_id"))
+//            .put("roleName","Teacher") , resFindRole ->{
+//
+//            if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
+//              workshop.put("enteredCourse",result.get(counter).getString("_id"))
+//                .put("Teacher",resFindRole.result().get(0).getString("roleName"))
+//                .put("course",resFind.result().get(0).getString("name"));
+//            }
+//            workshops.add(workshop);
+//            findTeacherRecursive(client,counter-1,result,workshops , handler);
+//          });
+//        }
+//        else {
+//          workshop.put("workshop","not found");
+//          workshops.add(workshop);
+//          findTeacherRecursive(client,counter - 1 , result , workshops , handler);
+//        }
+//      });
+//    }
+//  }
