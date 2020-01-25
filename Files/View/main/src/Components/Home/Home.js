@@ -1,10 +1,10 @@
 import React from 'react';
 import Navbar from "./Navbar";
-import Slideshow from "./Slideshow";
 import Login from "./Login";
 import {Button, Form, Grid, List} from "tabler-react";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import Search from "../Workshops/Search";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {Animated} from 'react-animated-css';
+import './Slideshow.css'
 
 class Home extends React.Component {
     constructor(props) {
@@ -23,7 +23,7 @@ class Home extends React.Component {
             <div>
                 <Navbar toggleLogin={this.toggleLogin}/>
                 <Login history={this.props.history} show={this.state.loginShow} toggleLogin={this.toggleLogin}/>
-                <div className={"slideshow-container"}>
+                <Animated className={"slideshow-container"}>
                     <div className="slideshow row">
                         <div className="slide-txt col-6">
                             <div className="row justify-content-end">
@@ -74,7 +74,7 @@ class Home extends React.Component {
                         </div>
                     </div>
 
-                </div>
+                </Animated>
             </div>
         );
     }
