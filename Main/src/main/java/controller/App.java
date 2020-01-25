@@ -700,6 +700,16 @@ public class App extends AbstractVerticle {
 
       });
 
+    router.route(Const.courses)
+      .handler(ctx->{
+
+        client.find(Const.course,new JsonObject(),res->{
+
+          ctx.response().end(res.result().toString());
+
+        });
+
+      });
 
     router.route(Const.dashboard)
       .handler(ctx ->{
@@ -870,7 +880,7 @@ public class App extends AbstractVerticle {
       });
 
 
-    router.get(Const.adminEnterNewWorkshop)
+    router.route(Const.adminEnterNewWorkshop)
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();

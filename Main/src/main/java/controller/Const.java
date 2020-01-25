@@ -58,6 +58,7 @@ public class Const {
   public static final String userMessege = "/user/messege";
   public static final String profile = "/user/profile";
   public static final String info = "/user/info";
+  public static final String courses = "/user/course";
 
   public static final String uploadBackgroundImage = "/img/profile/background";
   public static final String uploadProfileImage = "/img/profile/main";

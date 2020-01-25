@@ -3,27 +3,60 @@ import {Form, Avatar, Button, Card, Grid, Header, List, Page, Tag, Text, Dropdow
 import SiteTemplate from "../../SiteTemplate";
 import details from "./details.json";
 import './CreateWorkshop.css'
+import axios from "axios"
 
 
 class Workshop extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            courses:[],
+            name:"",
+            teacher:"",
+            startTime:"",
+            finishTime:"",
+            course:"",
+            category:"",
+            place:"",
+            capacity:0,
+            value:0,
+            description:"",
+            msg:""
+
+        }
     }
 
     componentDidMount(): void {
         const {workshopID} = this.props.match.params;
+        axios.get("http://localhost:8000/user/course").then(res=>{
+            this.setState({courses:res.data,course:res.data[0].name,category:details.courses[0].name})
+        }).catch(e=>{
+            console.log(e)
+        })
     }
 
-    timeFormat = (timePattern) => {
-        const array = timePattern.split("-");
-        const monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const time = array[0];
-        const day = array[1];
-        const month = monthArray[parseInt(array[2])];
-        const year = array[3];
-        return time + ' | ' + day + ' ' + month + ' ' + year;
-    };
+    createWorkshop(){
+
+        const toSend = {
+            name:this.state.name,
+            teacher:this.state.teacher,
+            startTime:this.state.startTime,
+            finishTime:this.state.finishTime,
+            course:this.state.course,
+            category:this.state.category,
+            place:this.state.place,
+            value:this.state.value,
+            description:this.state.description,
+            capacity:this.state.capacity
+        }
+
+        axios.post("http://localhost:8000/admin/enterNewWorkshop",toSend).then(res=>{
+            this.setState({msg:res.data.msg})
+        }).catch(e=>{
+            console.log(e)
+        })
+
+    }
 
     render() {
         return (
@@ -43,11 +76,22 @@ class Workshop extends React.Component {
                                                 className={'text-large border-none'}
                                                 name="workshopName"
                                                 placeholder="Workshop Name..."
+
+                                                onChange={e=>{
+                                                    this.setState({name:e.target.value})
+
+                                                }}
+
                                             />
                                             <Form.Input
                                                 className={'border-none'}
                                                 name="teacher"
                                                 placeholder="Teacher Username..."
+
+                                                onChange={e=>{
+                                                    this.setState({teacher:e.target.value})
+                                                }}
+
                                             />
                                         </Header.H3>
                                     </Card.Title>
@@ -65,8 +109,13 @@ class Workshop extends React.Component {
                                 <Card.Body>
                                     <Grid.Row>
                                         <Grid.Col>
-                                            <Form.Select label={'Course'}>
-                                                {details.courses.map((item) => (
+                                            <Form.Select label={'Course'}
+
+                                                         onChange={e=>{
+                                                             this.setState({course:e.target.value})
+                                                         }}
+                                            >
+                                                {this.state.courses.map((item) => (
                                                     <option> {item.name} </option>
                                                 ))}
                                             </Form.Select>
@@ -75,16 +124,38 @@ class Workshop extends React.Component {
                                                 label={'Start Time'}
                                                 name="startTime"
                                                 placeholder="Format: HH:MM-DD-MM-YYYY"
+                                                onChange={e=>{
+                                                    this.setState({startTime:e.target.value})
+                                                }}
                                             />
 
                                             <Form.Input
                                                 label={'Finish Time'}
                                                 name="finishTime"
                                                 placeholder="Format: HH:MM-DD-MM-YYYY"
+
+                                                onChange={e=>{
+                                                    this.setState({finishTime:e.target.value})
+                                                }}
+
+                                            />
+                                            <Form.Input
+                                                label={'Capacity'}
+                                                name="capacity"
+
+                                                onChange={e=>{
+                                                    this.setState({capacity:e.target.value})
+                                                }}
+
                                             />
                                         </Grid.Col>
                                         <Grid.Col>
-                                            <Form.Select label={'Category'}>
+                                            <Form.Select label={'Category'}
+
+                                                         onChange={e=>{
+                                                             this.setState({category:e.target.value})
+                                                         }}
+                                            >
                                                 {details.courses.map((item) => (
                                                     <option> {item.category} </option>
                                                 ))}
@@ -93,6 +164,11 @@ class Workshop extends React.Component {
                                                 label={'Place'}
                                                 name="place"
                                                 placeholder="ex: Mollasadra,Shiraz"
+
+
+                                                onChange={e=>{
+                                                    this.setState({place:e.target.value})
+                                                }}
                                             />
 
                                             <Form.Group label="Price">
@@ -102,7 +178,12 @@ class Workshop extends React.Component {
                                                             $
                                                         </Form.InputGroupText>
                                                     </Form.InputGroupPrepend>
-                                                    <Form.Input placeholder="ex: 120"/>
+                                                    <Form.Input placeholder="ex: 120"
+
+                                                                onChange={e=>{
+                                                                    this.setState({value:e.target.value})
+                                                                }}
+                                                    />
                                                 </Form.InputGroup>
                                             </Form.Group>
                                         </Grid.Col>
@@ -111,13 +192,19 @@ class Workshop extends React.Component {
                                         <Grid.Col>
                                             <Form.Group label={'Description'}>
                                                 <Form.Textarea name="description"
-                                                               placeholder="Enter Workshop Description..."/>
+                                                               placeholder="Enter Workshop Description..."
+                                                               onChange={e=>{
+                                                                   this.setState({description:e.target.value})
+                                                               }}
+                                                />
                                             </Form.Group>
                                         </Grid.Col>
                                     </Grid.Row>
                                     <Grid.Row>
                                         <Grid.Col className={'text-center'}>
-                                            <Button icon="check" color="blue">Create</Button>
+                                            <Button icon="check" color="blue"
+                                            onClick={e=>this.createWorkshop()}
+                                            >Create</Button>
                                             <Button color="secondary" className={'ml-3'}>Cancel</Button>
                                         </Grid.Col>
                                     </Grid.Row>
