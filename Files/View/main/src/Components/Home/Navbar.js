@@ -10,7 +10,6 @@ class Navbar extends React.Component {
                     <img className="navbar-logo" src="./logo.png" alt={"logo"}/></a>
                 <ul className="navbar-nav">
                     <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> Workshops </Button> </li>
-                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> Teach at X </Button> </li>
                     <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> About Us </Button> </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">

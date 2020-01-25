@@ -3,6 +3,11 @@
     --primary-shadow-dark: #0077FF30;
 }
 
+
+body {
+    overflow-x: hidden;
+}
+
 p {
     font-weight: 200;
 }
@@ -22,6 +27,13 @@ a:hover {
 
 
 .btn {
+    font-weight: 100 !important;
+    padding: 3px 25px !important;
+    transition: 0.3s !important;
+    border-radius: 100px !important;
+}
+
+.btn-x- {
     font-weight: 100 !important;
     padding: 3px 25px !important;
     transition: 0.3s !important;
@@ -62,7 +74,7 @@ a:hover {
 }
 
 .text-large {
-    font-size: 1.15em !important;
+    font-size: 1.1em !important;
 }
 
 .line-height-larger {

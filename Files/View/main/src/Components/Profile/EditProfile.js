@@ -46,7 +46,7 @@ class EditProfile extends React.Component {
             fullName:this.state.contactPoint.fullName,
             biography:this.state.contactPoint.biography,
             subTitle:this.state.contactPoint.subTitle
-        }
+        };
 
         axios.post("http://localhost:8000/user/profile/edit",toSend).then(res=>{
             this.setState({status:res.data.status,msg:res.data.msg})
