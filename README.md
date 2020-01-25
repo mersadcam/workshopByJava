@@ -22,7 +22,7 @@
 - go to Main folder and run vertx server,how to run?
 
 ```
-git clone https://github.com/mersadcam/workshopByJava
+git clone https://github.com/mersadcam/workshopByJava.git
 cd vertx-examples
 cd examples-utils
 mvn clean install
