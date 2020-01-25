@@ -1,7 +1,6 @@
 import React from 'react';
 import {Avatar, Button, Card, Grid, Header, List, Page, Stamp, Table, Tag, Text} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
-import details from "./details.json";
 import axios from "axios";
 
 
@@ -59,47 +58,51 @@ class StudentWorkshop extends React.Component {
         return (
             <SiteTemplate>
                 <Page.Content>
-                    <Grid.Row cards deck>
+                    <Grid.Row cards >
                         <Grid.Col lg={5}>
                             <Card>
                                 <img
-                                    alt={details.workshop.name + " Cover"}
+                                    alt={this.state.workshop.name + " Cover"}
                                     src={'/banner/default.jpg'}/>
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3
-                                            className={'text-weight-light'}>{details.workshop.name}</Header.H3>
-                                        <Tag className={'mr-2'}> #{details.workshop.category}</Tag>
-                                        <Tag className={'mr-2'}> #{details.workshop.course}</Tag>
+                                            className={'text-weight-light'}>{this.state.workshop.name}</Header.H3>
+                                        {/*<Tag className={'mr-2'}> #{this.state.workshop.category}</Tag>*/}
+                                        <Tag className={'mr-2'}> #{this.state.workshop.course}</Tag>
                                     </Card.Title>
 
-                                    <Card.Options className={'mt-3'}>
-                                        <Grid.Col className={'text-center'}>
-
-                                            {details.report.studentCourseStatus !== null ?
-                                                details.report.studentCourseStatus === "PASSED" ?
-                                                    <div>
-                                                        <Stamp className={'px-5 text-large text-weight-light'}
-                                                               color={'green'}>{details.report.finalNumber}/{details.report.completeNumber}</Stamp>
-                                                        <h4 className={'text-weight-light text-green mt-2'}>PASSED</h4>
-                                                    </div>
-                                                    :
-                                                    <div>
-                                                        <Stamp className={'px-5 text-large text-weight-light'}
-                                                               color={'red'}>{details.report.finalNumber}/{details.report.completeNumber}</Stamp>
-                                                        <h4 className={'text-weight-light text-red mt-2'}>NOT
-                                                            PASSED</h4>
-                                                    </div>
-                                                :
-                                                <div>
-                                                    <Stamp className={'px-5 text-large text-weight-light'}
-                                                           color={'blue'}>Enrolled</Stamp>
-                                                    <h4 className={'text-weight-light mt-2'}>LEARNING</h4>
-                                                </div>
-                                            }
-                                        </Grid.Col>
-
+                                    <Card.Options className={'pr-2'}>
+                                        <Stamp color={'green'}> Student Successful! </Stamp>
                                     </Card.Options>
+
+                                    {/*<Card.Options className={'mt-3'}>*/}
+                                    {/*    <Grid.Col className={'text-center'}>*/}
+
+                                    {/*        {this.state.report.studentCourseStatus !== null ?*/}
+                                    {/*            this.state.report.studentCourseStatus === "PASSED" ?*/}
+                                    {/*                <div>*/}
+                                    {/*                    <Stamp className={'px-5 text-large text-weight-light'}*/}
+                                    {/*                           color={'green'}>{this.state.report.finalNumber}/{this.state.report.completeNumber}</Stamp>*/}
+                                    {/*                    <h4 className={'text-weight-light text-green mt-2'}>PASSED</h4>*/}
+                                    {/*                </div>*/}
+                                    {/*                :*/}
+                                    {/*                <div>*/}
+                                    {/*                    <Stamp className={'px-5 text-large text-weight-light'}*/}
+                                    {/*                           color={'red'}>{this.state.report.finalNumber}/{this.state.report.completeNumber}</Stamp>*/}
+                                    {/*                    <h4 className={'text-weight-light text-red mt-2'}>NOT*/}
+                                    {/*                        PASSED</h4>*/}
+                                    {/*                </div>*/}
+                                    {/*            :*/}
+                                    {/*            <div>*/}
+                                    {/*                <Stamp className={'px-5 text-large text-weight-light'}*/}
+                                    {/*                       color={'blue'}>Enrolled</Stamp>*/}
+                                    {/*                <h4 className={'text-weight-light mt-2'}>LEARNING</h4>*/}
+                                    {/*            </div>*/}
+                                    {/*        }*/}
+                                    {/*    </Grid.Col>*/}
+
+                                    {/*</Card.Options>*/}
                                 </Card.Header>
                             </Card>
                         </Grid.Col>

@@ -128,16 +128,6 @@ class Login extends React.Component {
                                     }}/> </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
-                            <Grid.Row alignItem={'center'} className={'justify-content-center'}>
-                                <Grid.Col>
-                                    <Form.Checkbox isInline label="Keep Me Signed In" name="keepMeSignedIn"/>
-                                </Grid.Col>
-                                <Grid.Col>
-                                    <Text.Small>
-                                        <a href={'#'} id={"forgetPasswordButton"} onClick={this.forgetPasswordSwitch}> Forgot your password? </a>
-                                    </Text.Small>
-                                </Grid.Col>
-                            </Grid.Row>
 
                             <p style={{color:"red"}}>{this.state.msg}</p>
 

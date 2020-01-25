@@ -72,7 +72,7 @@ class TeacherWorkshop extends React.Component {
                                     <Card.Title className={'my-4'}>
                                         <Header.H3
                                             className={'text-weight-light'}>{this.state.workshop.name}</Header.H3>
-                                        <Tag className={'mr-2'}> #{this.state.workshop.category}</Tag>
+                                        {/*<Tag className={'mr-2'}> #{this.state.workshop.category}</Tag>*/}
                                         <Tag className={'mr-2'}> #{this.state.workshop.course}</Tag>
                                     </Card.Title>
 

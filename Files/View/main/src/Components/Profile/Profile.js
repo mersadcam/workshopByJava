@@ -152,7 +152,7 @@ class Profile extends React.Component {
                                         place={item.workshop.place}
                                         price={item.workshop.value}
                                         buttonText="View"
-                                        buttonColor="secondary"/>
+                                        buttonColor="blue"/>
                                 ))}
                             </Carousel>
                         </Card>}
@@ -172,7 +172,7 @@ class Profile extends React.Component {
                                         place={item.workshop.place}
                                         price={item.workshop.value}
                                         buttonText="View"
-                                        buttonColor="secondary"/>
+                                        buttonColor="blue"/>
                                 ))}
                             </Carousel>
                         </Card>}
@@ -192,7 +192,7 @@ class Profile extends React.Component {
                                         place={item.workshop.place}
                                         price={item.workshop.value}
                                         buttonText="View"
-                                        buttonColor="secondary"/>
+                                        buttonColor="blue"/>
                                 ))}
                             </Carousel>
                         </Card>}

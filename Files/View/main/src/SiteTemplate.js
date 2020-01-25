@@ -33,6 +33,7 @@ class SiteTemplate extends React.Component {
         return (
             <Site>
                 <Site.Header imageURL={'/logo.png'}
+                             href={'/'}
                              navItems={
                                  <AccountDropdown
                                      avatarURL={'/default-avatar.png'}
@@ -51,14 +52,12 @@ class SiteTemplate extends React.Component {
                 <Site.Nav>
                     <Nav>
                         <Nav.Item value="Dashboard" icon="home" to={'/dashboard'}/>
-                        <Nav.Item value="Workshops" icon="box" to={'/workshops'}/>
+                        <Nav.Item value="Workshops" icon="layers" to={'/workshops'}/>
                         {this.state.userType!="user"?
                             <Nav.Item value="Create Workshops" icon="plus" to={'/createworkshop'}/>
                             :
                             <div></div>
                         }
-
-                        <Nav.Item value="Help" icon="" to={'/help'}/>
                     </Nav>
                 </Site.Nav>
                 {this.props.children}
@@ -71,16 +70,14 @@ class SiteTemplate extends React.Component {
                         </div>
                     }
                     links={[
-                        <a href="#">First Link</a>,
-                        <a href="#">Second Link</a>,
-                        <a href="#">Third Link</a>,
-                        <a href="#">Fourth Link</a>,
-                        <a href="#">Five Link</a>,
-                        <a href="#">Sixth Link</a>,
-                        <a href="#">Seventh Link</a>,
-                        <a href="#">Eigth Link</a>,
+                        <a href="/workshops">Wokshops</a>,
+                        <a href="/help">Help</a>,
+                        <a href="/aboutus">About Us</a>,
+                        <a href="/contactus">Contact Us</a>,
+                        <a href="/sitemap">Site Map</a>,
+                        <a href="/social">Social Media</a>,
                     ]}
-                    note="Lorem Ipsum is simply dummy text of the printing and typesetting industry.">
+                    note="">
                 </Site.Footer>
             </Site>
         )
