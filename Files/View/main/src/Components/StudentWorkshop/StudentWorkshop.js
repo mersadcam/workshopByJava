@@ -2,17 +2,33 @@ import React from 'react';
 import {Avatar, Button, Card, Grid, Header, List, Page, Stamp, Table, Tag, Text} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
 import details from "./details.json";
+import axios from "axios";
 
 
 class StudentWorkshop extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            teacher: {},
+            workshop: {},
+            role: "",
+            startTime:"",
+            finishTime:""
+        }
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): void {
         const {workshopID} = this.props.match.params;
-    }
+        const toSend = {workshopId:workshopID};
+        console.log(toSend);
+        await axios.post("http://localhost:8000/user/workshop/page", toSend).then(res => {
+
+            this.setState({teacher: res.data.body.teacher});
+            this.setState({workshop: res.data.body.workshop,startTime:res.data.body.workshop.startTime,finishTime:res.data.body.workshop.startTime});
+            this.setState({role: res.data.body.role});
+        }).catch(e => {
+            console.log(e)
+        })    }
 
     timeFormat = (timePattern) => {
         const array = timePattern.split("-");
@@ -77,56 +93,56 @@ class StudentWorkshop extends React.Component {
                                 <Card.Header>
                                     <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
                                     <a className={'text-inherit mx-2'}
-                                       href={"/profile/" + details.teacher.username}><b
-                                        className={'mr-2'}> Teacher </b> {details.teacher.fullName}</a>
+                                       href={"/profile/" + this.state.teacher.username}><b
+                                        className={'mr-2'}> Teacher </b> {this.state.teacher.fullName}</a>
                                 </Card.Header>
                                 <Card.Body>
                                     <Grid.Row>
                                         <Grid.Col>
                                             <List unstyled seperated>
-                                                <List.Item> <b className={'mr-2'}> Start Time </b> {this.timeFormat(details.workshop.startTime)} </List.Item>
+                                                <List.Item> <b className={'mr-2'}> Start Time </b> {this.timeFormat(this.state.startTime)} </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Finish Time </b> {this.timeFormat(details.workshop.finishTime)} </List.Item>
+                                                    Finish Time </b> {this.timeFormat(this.state.finishTime)} </List.Item>
                                                 <List.Item className={'mt-5'}> <b
-                                                    className={'mr-2'}> Place </b> {details.workshop.place} </List.Item>
+                                                    className={'mr-2'}> Place </b> {this.state.workshop.place} </List.Item>
 
                                             </List>
                                         </Grid.Col>
                                         <Grid.Col>
                                             <List unstyled seperated>
                                                 <List.Item> <b
-                                                    className={'mr-2'}> Price </b> {details.workshop.value} $ </List.Item>
+                                                    className={'mr-2'}> Price </b> {this.state.workshop.value} $ </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Capacity </b> {details.workshop.capacity} </List.Item>
+                                                    Capacity </b> {this.state.workshop.capacity} </List.Item>
                                             </List>
                                         </Grid.Col>
                                     </Grid.Row>
                                     <Grid.Row>
                                         <Grid.Col className={'line-height-larger'}>
-                                            <b className={'mr-2'}> Description </b> {details.workshop.description}
+                                            <b className={'mr-2'}> Description </b> {this.state.workshop.description}
                                         </Grid.Col>
                                     </Grid.Row>
                                 </Card.Body>
                             </Card>
                         </Grid.Col>
-                        <Card title={"Forms (" + details.forms.length + ")"} className={'px-2'}>
-                            <Table responsive>
-                                <Table.Header>
-                                    <Table.ColHeader>Writer</Table.ColHeader>
-                                    <Table.ColHeader>Date</Table.ColHeader>
-                                    <Table.ColHeader>{null}</Table.ColHeader>
-                                </Table.Header>
-                                <Table.Body>
-                                    {details.forms.map((item) => (
-                                        <Table.Row>
-                                            <Table.Col>{item.writer}</Table.Col>
-                                            <Table.Col>{this.timeFormat(item.date)}</Table.Col>
-                                            <Table.Col><Button outline size="sm" color="primary"> Read </Button></Table.Col>
-                                        </Table.Row>
-                                    ))}
-                                </Table.Body>
-                            </Table>
-                        </Card>
+                        {/*<Card title={"Forms (" + this.state.forms.length + ")"} className={'px-2'}>*/}
+                        {/*    <Table responsive>*/}
+                        {/*        <Table.Header>*/}
+                        {/*            <Table.ColHeader>Writer</Table.ColHeader>*/}
+                        {/*            <Table.ColHeader>Date</Table.ColHeader>*/}
+                        {/*            <Table.ColHeader>{null}</Table.ColHeader>*/}
+                        {/*        </Table.Header>*/}
+                        {/*        <Table.Body>*/}
+                        {/*            {this.state.forms.map((item) => (*/}
+                        {/*                <Table.Row>*/}
+                        {/*                    <Table.Col>{item.writer}</Table.Col>*/}
+                        {/*                    <Table.Col>{this.timeFormat(item.date)}</Table.Col>*/}
+                        {/*                    <Table.Col><Button outline size="sm" color="primary"> Read </Button></Table.Col>*/}
+                        {/*                </Table.Row>*/}
+                        {/*            ))}*/}
+                        {/*        </Table.Body>*/}
+                        {/*    </Table>*/}
+                        {/*</Card>*/}
                     </Grid.Row>
                 </Page.Content>
             </SiteTemplate>

@@ -44,7 +44,7 @@ class SiteTemplate extends React.Component {
                                          {icon: "send", value: "Messages", badge: "6", to: "/messages"},
                                          {isDivider: true},
                                          {icon: "help-circle", value: "Need help?", to: "/help"},
-                                         {icon: "log-out", value: "Sign out", to: "/signout"}]}
+                                         {icon: "log-out", value: "Sign out", to: "/"}]}
                                  />
                              }
                 />

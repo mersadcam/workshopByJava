@@ -573,7 +573,7 @@ public class App extends AbstractVerticle {
         String roleId = ctx.get("roleId");
         JsonObject toResponse = new JsonObject();
 
-        if (roleId == null){//user don't have role in the workshop
+        if (roleId.equals("")){//user don't have role in the workshop
 
           client.find(Const.enteredCourse , new JsonObject().put("_id",clientJson.getString("workshopId")),res ->{
 
@@ -609,17 +609,9 @@ public class App extends AbstractVerticle {
 
                 client.find(Const.role, new JsonObject().put("_id" , roleId) , resFindRole->{
                   if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
-//                    response.put("roleName",resFindRole.result().get(0).getString("roleName"));
 
-//                    if ( resFindRole.result().get(0).getString("roleName").equals("Teacher")){
-//                      Form.findForm(client , new ArrayList<JsonObject>() , resFindRole.result().get(0).getJsonArray("form") , 0 , resFindForm->{
-//                          response.put("formBody",resFindForm.result().get(0));
-//                      });
-//                    }
-//                    else {
-                      response.put("body", resSetTeacher.result().get(0).put("role",resFindRole.result().get(0).getString("roleName"))
+                      response.put("body", resSetTeacher.result().get(0).put("role",resFindRole.result().get(0))
                       );
-//                    }
                     toResponse.put("status", "true");
                     ctx.response().end(response.put("status","true").toString());
                   }
@@ -709,6 +701,16 @@ public class App extends AbstractVerticle {
 
       });
 
+    router.route(Const.courses)
+      .handler(ctx->{
+
+        client.find(Const.course,new JsonObject(),res->{
+
+          ctx.response().end(res.result().toString());
+
+        });
+
+      });
 
     router.route(Const.dashboard)
       .handler(ctx ->{
@@ -879,7 +881,7 @@ public class App extends AbstractVerticle {
       });
 
 
-    router.get(Const.adminEnterNewWorkshop)
+    router.route(Const.adminEnterNewWorkshop)
       .handler(ctx ->{
 
         HttpServerResponse response = ctx.response();

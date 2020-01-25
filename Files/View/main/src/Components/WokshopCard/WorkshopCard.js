@@ -24,7 +24,7 @@ class WorkshopCard extends React.Component {
         return {
             id: props.id,
             title : props.title,
-            imageURL: props.imageURL,
+            imageURL: '/banner/default.jpg',
             avatarURL: props.avatarURL,
             teacher: props.teacher,
             teacherUsername: props.teacherUsername,

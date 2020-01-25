@@ -181,7 +181,8 @@ public class EnteredCourse {
 
   public static void enterNewWorkshop(MongoClient client, JsonObject json , Handler<AsyncResult<JsonObject>> handler){
 
-	  int value = json.getInteger("value");
+	  String price = json.getString("value");
+	  int value = Integer.parseInt(price);
 	  JsonObject paymentParts = json.getJsonObject("paymentParts");
 	  String courseName = json.getString("course").toUpperCase();
 	  String startTime = json.getString("startTime");
@@ -189,7 +190,8 @@ public class EnteredCourse {
 	  String place = json.getString("place");
 	  String name = json.getString("name");
 	  String description = json.getString("description");
-	  int capacity = json.getInteger("capacity");
+	  price = json.getString("capacity");
+	  int capacity = Integer.parseInt(price);
 
 	  client.find(Const.course,new JsonObject().put("name",courseName),resSC->{
 

@@ -53,18 +53,18 @@ class Home extends React.Component {
                                         <p className={'text-large'}>
                                             <List unstyled>
                                                 <List.Item>
-                                                    <Button icon={'code'} size={'sm'} color={'red'}>Programming</Button>
+                                                    <Button icon={'code'} color={'red'}>Programming</Button>
                                                 </List.Item>
                                                 <List.Item>
-                                                    <Button size={'sm'} color={'yellow'}>
+                                                    <Button color={'yellow'}>
                                                         <FontAwesomeIcon icon={'pen-nib'}/>Graphic Design</Button>
                                                 </List.Item>
                                                 <List.Item>
-                                                    <Button size={'sm'} color={'green'}>
+                                                    <Button color={'green'}>
                                                         <FontAwesomeIcon icon={'atom'}/>Science</Button>
                                                 </List.Item>
                                                 <List.Item>
-                                                    <Button outline icon={'plus'} size={'sm'} color={'primary'}>More</Button>
+                                                    <Button outline icon={'plus'} color={'primary'}>More</Button>
                                                 </List.Item>
                                             </List>
                                         </p>

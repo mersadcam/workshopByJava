@@ -45,7 +45,9 @@ public class Course {
 
 	  this.name = json.getString("name").toUpperCase();
 	  this.description = json.getString("description");
-	  this.category = json.getString("category").toUpperCase();
+	  this.category = json.getString("category");
+	  if(this.category == null)
+	    this.category = "";
 
 	  JsonArray coursesName = json.getJsonArray("neededCourses");
 

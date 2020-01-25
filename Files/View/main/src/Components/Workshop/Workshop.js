@@ -10,22 +10,56 @@ class Workshop extends React.Component {
         this.state = {
             teacher: {},
             workshop: {},
-            role: ""
+            role: "",
+            startTime:"",
+            finishTime:""
         }
     }
 
-    async componentDidMount(): void {
+    async componentWillMount(): void {
         const {workshopID} = this.props.match.params;
-        await axios.post("http://localhost:8000/user/workshop/page", {workshopId: workshopID}).then(res => {
+        const toSend = {workshopId:workshopID};
+        console.log(toSend);
+        await axios.post("http://localhost:8000/user/workshop/page", toSend).then(res => {
+
             this.setState({teacher: res.data.body.teacher});
-            this.setState({workshop: res.data.body.workshop});
+            this.setState({workshop: res.data.body.workshop,startTime:res.data.body.workshop.startTime,finishTime:res.data.body.workshop.startTime});
             this.setState({role: res.data.body.role});
         }).catch(e => {
             console.log(e)
         })
     }
 
+    enroll(){
+
+        const toSend = {workshopId: this.state.workshop._id,
+        course:this.state.workshop.course,
+        paymentType:"cash"}
+
+        axios.post("http://localhost:8000/user/workshop/studentRequest",toSend).then(res=>{
+            this.props.history.push("/dashboard");
+        }).catch(e=>console.log(e))
+
+    }
+
+    graderRequest(){
+
+        const toSend = {
+            enteredCourseId:this.state.workshop._id
+        }
+
+        axios.post("http://localhost:8000/user/workshop/graderRequest",toSend).then(
+            res=>{
+                if(res.data.status){
+                    this.props.history.push("/dashboard");
+                }
+            }
+        ).catch(e=>console.log(e))
+
+    }
+
     timeFormat = (timePattern) => {
+        console.log(timePattern)
         const array = timePattern.split("-");
         const monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         const time = array[0];
@@ -44,7 +78,7 @@ class Workshop extends React.Component {
                             <Card>
                                 <img
                                     alt={"Cover"}
-                                    src={'/demo/photos/illustrator.jpg'}/>
+                                    src={'/banner/' + this.state.workshop.name + '.jpg'}/>
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3
@@ -58,7 +92,8 @@ class Workshop extends React.Component {
                                             <Grid.Row>
                                                 <Grid.Col>
                                                     <Button className={'px-7 text-large'}
-                                                            color={'primary'}> Enroll </Button>
+                                                            color={'primary'}
+                                                    onClick={e=>this.enroll()}> Enroll </Button>
                                                 </Grid.Col>
                                             </Grid.Row>
                                             <Grid.Row>
@@ -79,7 +114,9 @@ class Workshop extends React.Component {
                                        href={"/profile/" + this.state.teacher.username}><b
                                         className={'mr-2'}> Teacher </b> {this.state.teacher.fullName}</a>
                                     <Card.Options>
-                                        <Button outline color={'primary'}> Grading Request </Button>
+                                        <Button outline color={'primary'}
+                                        onClick={e=>this.graderRequest()}
+                                        > Grading Request </Button>
                                     </Card.Options>
                                 </Card.Header>
                                 <Card.Body>
@@ -87,10 +124,11 @@ class Workshop extends React.Component {
                                         <Grid.Col>
                                             <List unstyled seperated>
                                                 <List.Item> <b className={'mr-2'}> Start
-                                                    Time </b> {this.timeFormat(this.state.workshop.startTime)}
+                                                    Time </b> {
+                                                    this.timeFormat(this.state.startTime)}
                                                 </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Finish Time </b> {this.timeFormat(this.state.workshop.finishTime)}
+                                                    Finish Time </b> {this.timeFormat(this.state.finishTime)}
                                                 </List.Item>
                                                 <List.Item className={'mt-5'}> <b
                                                     className={'mr-2'}> Place </b> {this.state.workshop.place}
