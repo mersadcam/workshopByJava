@@ -3,9 +3,6 @@ import {Card, Grid, Button, Avatar, Header, Text} from "tabler-react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 class WorkshopCard extends React.Component {
-
-
-{coursename + '.jpg'}
     constructor(props) {
         super(props);
         this.state = {
