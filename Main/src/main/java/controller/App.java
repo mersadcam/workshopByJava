@@ -609,17 +609,9 @@ public class App extends AbstractVerticle {
 
                 client.find(Const.role, new JsonObject().put("_id" , roleId) , resFindRole->{
                   if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
-//                    response.put("roleName",resFindRole.result().get(0).getString("roleName"));
 
-//                    if ( resFindRole.result().get(0).getString("roleName").equals("Teacher")){
-//                      Form.findForm(client , new ArrayList<JsonObject>() , resFindRole.result().get(0).getJsonArray("form") , 0 , resFindForm->{
-//                          response.put("formBody",resFindForm.result().get(0));
-//                      });
-//                    }
-//                    else {
-                      response.put("body", resSetTeacher.result().get(0).put("role",resFindRole.result().get(0).getString("roleName"))
+                      response.put("body", resSetTeacher.result().get(0).put("role",resFindRole.result().get(0))
                       );
-//                    }
                     toResponse.put("status", "true");
                     ctx.response().end(response.put("status","true").toString());
                   }

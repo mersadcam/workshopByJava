@@ -42,6 +42,22 @@ class Workshop extends React.Component {
 
     }
 
+    graderRequest(){
+
+        const toSend = {
+            enteredCourseId:this.state.workshop._id
+        }
+
+        axios.post("http://localhost:8000/user/workshop/graderRequest",toSend).then(
+            res=>{
+                if(res.data.status){
+                    this.props.history.push("/dashboard");
+                }
+            }
+        ).catch(e=>console.log(e))
+
+    }
+
     timeFormat = (timePattern) => {
         console.log(timePattern)
         const array = timePattern.split("-");
@@ -98,7 +114,9 @@ class Workshop extends React.Component {
                                        href={"/profile/" + this.state.teacher.username}><b
                                         className={'mr-2'}> Teacher </b> {this.state.teacher.fullName}</a>
                                     <Card.Options>
-                                        <Button outline color={'primary'}> Grading Request </Button>
+                                        <Button outline color={'primary'}
+                                        onClick={e=>this.graderRequest()}
+                                        > Grading Request </Button>
                                     </Card.Options>
                                 </Card.Header>
                                 <Card.Body>
