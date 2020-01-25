@@ -732,8 +732,6 @@ public class App extends AbstractVerticle {
                   client.find(Const.contactPoint,new JsonObject()
                     .put("_id",user.getContactPointId()),resCP->{
 
-                    client.find(Const.messegeRelation,new JsonObject().put("sender",user.getUsername()),resSender->{
-
                       client.find(Const.messegeRelation,new JsonObject().put("receiver",user.getUsername()),resReceiver->{
 
                         client.find(Const.enteredCourse,new JsonObject(),resWorkshops->{
@@ -759,9 +757,7 @@ public class App extends AbstractVerticle {
                               .put("contactPoint",resCP.result().get(0))
                               .put("username",userJson.getString("username"))
                               .put("newWorkshops",newWorkshops)
-                              .put("messeges",new JsonObject()
-                                .put("sender",resSender.result())
-                                .put("receiver",resReceiver.result()));
+                              .put("messages",resReceiver.result());
                             ctx.response().end(new JsonObject().put("status","true")
                               .put("body",body).toString());
 
@@ -778,7 +774,6 @@ public class App extends AbstractVerticle {
                       });
 
 
-                    });
 
 
 
