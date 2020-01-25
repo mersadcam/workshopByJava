@@ -55,7 +55,6 @@ npm start
 - but what about Transactional
 - And it's developed so FAST
 - support Files
-- Migrational
 
 ### ODM for Mongodb?
 - morphia? Jongo?
