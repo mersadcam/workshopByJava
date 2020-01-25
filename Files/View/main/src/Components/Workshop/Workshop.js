@@ -32,7 +32,7 @@ class Workshop extends React.Component {
                         <Grid.Col lg={5}>
                             <Card>
                                 <img
-                                    alt={details.workshop.name + " Cover"}
+                                    alt={"Cover"}
                                     src={'/demo/photos/illustrator.jpg'}/>
                                 <Card.Header>
                                     <Card.Title>

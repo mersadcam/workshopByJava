@@ -1,59 +1,29 @@
 {
-
-
-  "role": {
-    "roleName": "Teacher",
-    "_id": "5e26cb4ae604e51a3f6e100e",
-    "form": [],
-    "enteredCourse": "1923180577"
+"courses" : [
+  {
+    "_id": "5e2a08f4f7b15e56144f7af6",
+    "name": "Photoshop",
+    "neededCourses": [],
+    "category": "Graphic Design"
   },
-
-
-
-  "workshop": {
-    "_id": "1923180577",
-
-    "name": "Illustrator Beginner",
-    "startTime": "12:30-01-02-2018",
-    "finishTime": "15:30-01-06-2018",
-    "place": "shriaz",
-    "capacity": 23,
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "value": 120,
-    "paymentParts": {
-      "cash": {
-        "time": "10-2-2009"
-      },
-      "installment": [
-        {
-          "name": "a",
-          "value": 70,
-          "time": "30-11-98"
-        },
-        {
-          "name": "b",
-          "value": 50,
-          "time": "30-01-99"
-        }
-      ]
-    },
-    "course": "Illustrator",
-    "category": "Graphic Design",
-    "groups": [
-      "5e26cb4ae604e51a3f6e100d"
-    ]
+  {
+    "_id": "5e2a08f4f7b15e56144f7af6",
+    "name": "Illustrator",
+    "neededCourses": [],
+    "category": "Graphic Design"
   },
-  "teacher": {
-    "_id": "5e26cb3be604e51a3f6e100c",
-
-    "username": "kaji78",
-    "fullName": "Ehsan Kajism",
-    "password": "kaji78",
-    "token": "G7_Rd64mN-H3xqgIPTQFjkUw7Roa_YNk",
-    "userType": "user",
-    "roles": [
-      "5e26cb4ae604e51a3f6e100e"
-    ],
-    "contactPoint": "5e26cb3be604e51a3f6e100a"
+  {
+    "_id": "5e2a08f4f7b15e56144f7af6",
+    "name": "React JS",
+    "neededCourses": [],
+    "category": "Programming"
+  },
+  {
+    "_id": "5e2a08f4f7b15e56144f7af6",
+    "name": "Digital Marketing",
+    "neededCourses": [],
+    "category": "Business"
   }
+]
+
 }
