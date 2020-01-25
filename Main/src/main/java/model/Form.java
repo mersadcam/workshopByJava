@@ -71,8 +71,9 @@ public class Form {
 
     else {
       client.find(Const.form , new JsonObject().put("_id",formsId.getValue(counter)) , resFind->{
-        arr.add(new JsonObject().put("_id",resFind.result().get(0).getString("_id"))
-        .put("formBody",resFind.result().get(0).getJsonObject("formBody")));
+        if (resFind.succeeded() && !resFind.result().isEmpty())
+          arr.add(new JsonObject().put("_id", resFind.result().get(0).getString("_id"))
+            .put("formBody", resFind.result().get(0).getJsonObject("formBody")));
         findForm(client,arr,formsId,counter+1,handler);
       });
     }
