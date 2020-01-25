@@ -39,7 +39,7 @@ class TeacherWorkshop extends React.Component {
                             <Card>
                                 <img
                                     alt={details.workshop.name + " Cover"}
-                                    src={'/demo/photos/illustrator.jpg'}/>
+                                    src={'/banner/default.jpg'}/>
                                 <Card.Header>
                                     <Card.Title className={'my-4'}>
                                         <Header.H3
