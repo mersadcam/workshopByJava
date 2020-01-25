@@ -64,7 +64,7 @@ class Home extends React.Component {
                                                         <FontAwesomeIcon icon={'atom'}/>Science</Button>
                                                 </List.Item>
                                                 <List.Item>
-                                                    <Button outline icon={'plus'} color={'primary'}>More</Button>
+                                                    <Button icon={'plus'} color={'primary'}>More</Button>
                                                 </List.Item>
                                             </List>
                                         </p>

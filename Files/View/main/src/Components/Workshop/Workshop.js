@@ -78,7 +78,7 @@ class Workshop extends React.Component {
                             <Card>
                                 <img
                                     alt={"Cover"}
-                                    src={'/banner/' + this.state.workshop.name + '.jpg'}/>
+                                    src={'/banner/default.jpg'}/>
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3
@@ -109,7 +109,7 @@ class Workshop extends React.Component {
                         <Grid.Col>
                             <Card>
                                 <Card.Header>
-                                    <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
+                                    <Avatar imageURL={'/default-avatar.png'}/>
                                     <a className={'text-inherit mx-2'}
                                        href={"/profile/" + this.state.teacher.username}><b
                                         className={'mr-2'}> Teacher </b> {this.state.teacher.fullName}</a>

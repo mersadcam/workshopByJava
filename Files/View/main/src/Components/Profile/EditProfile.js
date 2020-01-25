@@ -15,8 +15,8 @@ class EditProfile extends React.Component {
         this.state = {
             selectedProfile: null,
             selectedCover: null ,
-            profileImageURL: profile.avatarURL ,
-            coverImageURL: profile.coverURL ,
+            profileImageURL: '/default-avatar.png' ,
+            coverImageURL: '/default-cover.jpg' ,
             user:{},
             contactPoint:{},
             msg:"",
@@ -111,7 +111,7 @@ class EditProfile extends React.Component {
                                             src={this.state.profileImageURL}
                                             className={'rounded-circle avatar-big'}/>
                                         <Form.Group className={'image-upload-wrapper mt-5'}>
-                                            <Form.Input type={'file'} className={'image-upload-input'} name="avatar"
+                                            <Form.Input type={'filae'} className={'image-upload-input'} name="avatar"
                                                         accept='image/*' onChange={this.fileChangedHandler}/>
                                             <Button className={'image-upload-button'} outline
                                                     size={'sm'} color={'secondary'}>Change</Button>

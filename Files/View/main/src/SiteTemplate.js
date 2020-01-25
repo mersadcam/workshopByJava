@@ -35,7 +35,7 @@ class SiteTemplate extends React.Component {
                 <Site.Header imageURL={'/logo.png'}
                              navItems={
                                  <AccountDropdown
-                                     avatarURL={profile.avatarURL}
+                                     avatarURL={'/default-avatar.png'}
                                      name={this.state.fullName}
                                      description={this.state.userType !== "user" ? this.state.userType.toUpperCase() : ""}
                                      options={[

@@ -90,7 +90,7 @@ class Profile extends React.Component {
                     <Page.Content>
                         <img
                             alt={user.username + " Cover"}
-                            src={profile.coverURL}
+                            src={'/default-cover.jpg'}
                         />
                         <Grid.Row className={'justify-content-center'}>
                             <Grid.Col>
@@ -146,7 +146,7 @@ class Profile extends React.Component {
                                     <WorkshopCard
                                         title={item.workshop.name}
                                         imageURL={item.workshop.imageURL}
-                                        avatarURL={item.workshop.avatarURL}
+                                        avatarURL={'/default-avatar.png'}
                                         teacher={item.teacher.fullName}
                                         date={item.workshop.startTime}
                                         place={item.workshop.place}

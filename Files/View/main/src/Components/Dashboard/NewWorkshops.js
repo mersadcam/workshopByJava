@@ -22,7 +22,7 @@ class NewWorkshops extends React.Component {
                         <WorkshopCard
                             title={item.workshop.name}
                             imageURL={item.imageURL}
-                            avatarURL={item.avatarURL}
+                            avatarURL={'/default-avatar.png'}
                             teacherUsername={item.teacher.username}
                             teacher={item.teacher.fullName}
                             date={item.workshop.startTime}

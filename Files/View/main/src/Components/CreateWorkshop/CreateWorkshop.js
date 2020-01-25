@@ -67,7 +67,7 @@ class Workshop extends React.Component {
                             <Card>
                                 <img
                                     alt={"Cover"}
-                                    src={'/demo/photos/illustrator.jpg'}/>
+                                    src={'/banner/default.jpg'}/>
 
                                 <Card.Header>
                                     <Card.Title>

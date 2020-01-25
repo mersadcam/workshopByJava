@@ -39,7 +39,7 @@ class TeacherWorkshop extends React.Component {
                             <Card>
                                 <img
                                     alt={details.workshop.name + " Cover"}
-                                    src={'/demo/photos/illustrator.jpg'}/>
+                                    src={'/banner/default.jpg'}/>
                                 <Card.Header>
                                     <Card.Title className={'my-4'}>
                                         <Header.H3
@@ -90,7 +90,7 @@ class TeacherWorkshop extends React.Component {
 
                             <Card>
                                 <Card.Header>
-                                    <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
+                                    <Avatar imageURL={'/default-avatar.png'}/>
                                     <a className={'text-inherit mx-2'}
                                        href={"/profile/" + details.teacher.username}><b
                                         className={'mr-2'}> Teacher </b> {details.teacher.fullName}</a>
