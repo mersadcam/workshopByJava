@@ -37,12 +37,13 @@ class Workshop extends React.Component {
         paymentType:"cash"}
 
         axios.post("http://localhost:8000/user/workshop/studentRequest",toSend).then(res=>{
-            this.props.history.push("/dashboard/");
+            this.props.history.push("/dashboard");
         }).catch(e=>console.log(e))
 
     }
 
     timeFormat = (timePattern) => {
+        console.log(timePattern)
         const array = timePattern.split("-");
         const monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         const time = array[0];
@@ -61,7 +62,7 @@ class Workshop extends React.Component {
                             <Card>
                                 <img
                                     alt={"Cover"}
-                                    src={'/demo/photos/illustrator.jpg'}/>
+                                    src={'/banner/' + this.state.workshop.name + '.jpg'}/>
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3
