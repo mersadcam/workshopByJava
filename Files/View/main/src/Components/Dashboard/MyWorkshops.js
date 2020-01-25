@@ -29,7 +29,7 @@ class MyWorkshops extends React.Component {
                                 <Table.Col><a href={'?'}>{item.workshop.name}</a></Table.Col>
                                 <Table.Col>{item.teacher.fullName}</Table.Col>
                                 <Table.Col>{item.workshop.startTime}</Table.Col>
-                                <Table.Col><Button outline size="sm" color="primary" RootComponenet={'a'} href={'/studentworkshop/'+ item._id}> Manage </Button></Table.Col>
+                                <Table.Col><Button outline size="sm" color="primary" RootComponenet={'a'} href={'/rootworkshop/'+ item._id}> Manage </Button></Table.Col>
                             </Table.Row>
                         ))}
                     </Table.Body>

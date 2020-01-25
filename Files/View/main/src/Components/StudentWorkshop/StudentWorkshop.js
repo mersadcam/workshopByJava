@@ -11,24 +11,39 @@ class StudentWorkshop extends React.Component {
         this.state = {
             teacher: {},
             workshop: {},
-            role: "",
-            startTime:"",
-            finishTime:""
+            role: {},
+            startTime: "",
+            finishTime: ""
         }
     }
 
-    async componentDidMount(): void {
+    static getDerivedStateFromProps(props, state) {
+        return {
+            teacher: props.teacher,
+            workshop: props.workshop,
+            role: props.role,
+            startTime: props.startTime,
+            finishTime: props.finishTime,
+        };
+    }
+
+    async componentWillMount(): void {
         const {workshopID} = this.props.match.params;
-        const toSend = {workshopId:workshopID};
+        const toSend = {workshopId: workshopID};
         console.log(toSend);
         await axios.post("http://localhost:8000/user/workshop/page", toSend).then(res => {
 
             this.setState({teacher: res.data.body.teacher});
-            this.setState({workshop: res.data.body.workshop,startTime:res.data.body.workshop.startTime,finishTime:res.data.body.workshop.startTime});
+            this.setState({
+                workshop: res.data.body.workshop,
+                startTime: res.data.body.workshop.startTime,
+                finishTime: res.data.body.workshop.startTime
+            });
             this.setState({role: res.data.body.role});
         }).catch(e => {
             console.log(e)
-        })    }
+        })
+    }
 
     timeFormat = (timePattern) => {
         const array = timePattern.split("-");
@@ -100,18 +115,22 @@ class StudentWorkshop extends React.Component {
                                     <Grid.Row>
                                         <Grid.Col>
                                             <List unstyled seperated>
-                                                <List.Item> <b className={'mr-2'}> Start Time </b> {this.timeFormat(this.state.startTime)} </List.Item>
+                                                <List.Item> <b className={'mr-2'}> Start
+                                                    Time </b> {this.timeFormat(this.state.startTime)} </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Finish Time </b> {this.timeFormat(this.state.finishTime)} </List.Item>
+                                                    Finish Time </b> {this.timeFormat(this.state.finishTime)}
+                                                </List.Item>
                                                 <List.Item className={'mt-5'}> <b
-                                                    className={'mr-2'}> Place </b> {this.state.workshop.place} </List.Item>
+                                                    className={'mr-2'}> Place </b> {this.state.workshop.place}
+                                                </List.Item>
 
                                             </List>
                                         </Grid.Col>
                                         <Grid.Col>
                                             <List unstyled seperated>
                                                 <List.Item> <b
-                                                    className={'mr-2'}> Price </b> {this.state.workshop.value} $ </List.Item>
+                                                    className={'mr-2'}> Price </b> {this.state.workshop.value} $
+                                                </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
                                                     Capacity </b> {this.state.workshop.capacity} </List.Item>
                                             </List>

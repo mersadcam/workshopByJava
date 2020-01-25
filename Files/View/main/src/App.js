@@ -10,12 +10,10 @@ import Workshops from "./Components/Workshops/Workshops";
 import Profile from "./Components/Profile/Profile";
 import EditProfile from "./Components/Profile/EditProfile";
 import Login from "./Components/Home/Login";
-import Workshop from "./Components/Workshop/Workshop";
-import StudentWorkshop from "./Components/StudentWorkshop/StudentWorkshop";
-import TeacherWorkshop from "./Components/TeacherWorkshop/TeacherWorkshop";
 
 import axios from "axios";
 import CreateWorkshop from "./Components/CreateWorkshop/CreateWorkshop";
+import RootWorkshop from "./Components/RootWorkshop/RootWorkshop";
 axios.defaults.headers.common['token'] = localStorage.getItem("token");
 axios.defaults.headers.common['userType'] = localStorage.getItem("userType");
 
@@ -40,10 +38,7 @@ class App extends React.Component {
                     <Route path="/profile/:usernameURL" component={Profile}/>
                     <Route path="/editprofile" component={EditProfile}/>
                     <Route path="/login" component={Login}/>
-                    <Route path="/rootworkshop/:workshopID" component={Workshop}/>
-                    <Route path="/workshop/:workshopID" component={Workshop}/>
-                    <Route path="/studentworkshop/:workshopID" component={StudentWorkshop}/>
-                    <Route path="/teacherworkshop/:workshopID" component={TeacherWorkshop}/>
+                    <Route path="/rootworkshop/:workshopID" component={RootWorkshop}/>
                     <Route path="/createworkshop" component={CreateWorkshop}/>
 
                 </Switch>

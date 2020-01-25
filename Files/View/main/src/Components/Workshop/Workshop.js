@@ -10,10 +10,20 @@ class Workshop extends React.Component {
         this.state = {
             teacher: {},
             workshop: {},
-            role: "",
+            role: {},
             startTime:"",
             finishTime:""
         }
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        return {
+            teacher: props.teacher,
+            workshop: props.workshop,
+            role: props.role,
+            startTime: props.startTime,
+            finishTime: props.finishTime,
+        };
     }
 
     async componentWillMount(): void {

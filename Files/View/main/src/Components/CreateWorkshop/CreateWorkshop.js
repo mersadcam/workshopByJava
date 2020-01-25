@@ -6,7 +6,7 @@ import './CreateWorkshop.css'
 import axios from "axios"
 
 
-class Workshop extends React.Component {
+class CreateWorkshop extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -221,4 +221,4 @@ class Workshop extends React.Component {
     }
 }
 
-export default Workshop;
+export default CreateWorkshop;
