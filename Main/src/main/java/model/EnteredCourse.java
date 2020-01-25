@@ -338,7 +338,7 @@ public class EnteredCourse {
   public static void workshopStar(MongoClient client , JsonObject clientJson , String roleId ,
                                   User user , Handler<AsyncResult<String>> handler){
 
-    EnteredCourse workshopId = new EnteredCourse(clientJson.getString("enteredCourseId"));
+    EnteredCourse workshopId = new EnteredCourse(clientJson.getString("workshopId"));
     JsonObject searchWorkshop = new JsonObject().put("_id" , workshopId.get_id());
 
     client.find(Const.enteredCourse , searchWorkshop , resSearchWorkshop ->{
@@ -346,7 +346,7 @@ public class EnteredCourse {
 
         EnteredCourse findedWorkshop = new EnteredCourse(resSearchWorkshop.result().get(0));
 
-        if(roleId.equals("")){ //we don't have role id
+        if(roleId == null){ //we don't have role id
           //should find it
           User.findRoleId(client, user , findedWorkshop , handler);
 
