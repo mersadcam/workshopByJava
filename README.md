@@ -37,7 +37,7 @@ npm start
 ### why Vertx ?
 - at first we start Spring Boot but
 - Vertx vs Spring( )
-- Multi languages
+- Multi languages( JavaScript, Java, Ruby, Kotlin, Scala, Groovy )
 - Sync and Async
 - SIMPLE
 
