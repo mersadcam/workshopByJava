@@ -604,18 +604,27 @@ public class App extends AbstractVerticle {
 
               EnteredCourse.setTeacherOnWorkshop(client, new ArrayList<JsonObject>(), res.result(), 0, resSetTeacher -> {
                 JsonObject response = new JsonObject();
-                response.put("body", resSetTeacher.result().get(0));
+//                response.put("body", resSetTeacher.result().get(0));
+
 
                 client.find(Const.role, new JsonObject().put("_id" , roleId) , resFindRole->{
-                  response.put("roleName",resFindRole.result().get(0).getString("roleName"));
                   if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
-                    Form.findForm(client , new ArrayList<JsonObject>() , resFindRole.result().get(0).getJsonArray("form") , 0 , resFindForm->{
-                      response.put("formBody",resFindForm.result().toString());
-                    });
+//                    response.put("roleName",resFindRole.result().get(0).getString("roleName"));
+
+//                    if ( resFindRole.result().get(0).getString("roleName").equals("Teacher")){
+//                      Form.findForm(client , new ArrayList<JsonObject>() , resFindRole.result().get(0).getJsonArray("form") , 0 , resFindForm->{
+//                          response.put("formBody",resFindForm.result().get(0));
+//                      });
+//                    }
+//                    else {
+                      response.put("body", resSetTeacher.result().get(0).put("role",resFindRole.result().get(0).getString("roleName"))
+                      );
+//                    }
+                    toResponse.put("status", "true");
+                    ctx.response().end(response.put("status","true").toString());
                   }
                 });
-                toResponse.put("status", "true");
-                ctx.response().end(toResponse.put("body",response).toString());
+
               });
             }
             else {//we don't find workshop in entered course

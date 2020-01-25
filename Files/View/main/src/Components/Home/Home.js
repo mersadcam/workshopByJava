@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from "./Navbar";
 import Slideshow from "./Slideshow";
 import Login from "./Login";
-import {Button, Form, Grid} from "tabler-react";
+import {Button, Form, Grid, List} from "tabler-react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Search from "../Workshops/Search";
 
@@ -10,46 +10,13 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeSlide: 1,
-            slideCount: 2,
             loginShow: false,
-            // outline: true,
         }
     }
-
-    goToSlide = (dest) => {
-        this.setState({activeSlide: dest})
-    };
 
     toggleLogin = () => {
         this.setState({loginShow: !this.state.loginShow})
     };
-
-    slideshowArray = [
-        //Slideshow 1
-        <Slideshow image="/image1-mask.png">
-            {/*<img className={'logo-outline'} src={this.state.outline ? '/logo-outline.svg' : '/logo-color.svg'} alt={' '}/>*/}
-            <h2> Learn More, Earn More </h2>
-            <p>
-                Explore Workshops and Pick One To Learn. <br/>
-                Choose between Best Teachers and Best Lessons. </p>
-            <p className={'mt-8'}>
-                <Button className={'px-7 text-large'} color={'danger'}> Get Started </Button>
-            </p>
-        </Slideshow>,
-
-        //Slideshow 2
-        <Slideshow image="/image2-mask.png">
-            <h2> Missingid Oido Otsui </h2>
-            <p>
-                Explore Workshops and Pick One To Learn. <br/>
-                Choose between Best Teachers and Best Lessons. </p>
-            <p className={'mt-8'}>
-                <Button pill className={"btn-hover"} color="primary" outline onClick={() => this.goToSlide(1)}> Next </Button>
-            </p>
-        </Slideshow>,
-
-    ]
 
     render() {
         return (
@@ -57,7 +24,56 @@ class Home extends React.Component {
                 <Navbar toggleLogin={this.toggleLogin}/>
                 <Login history={this.props.history} show={this.state.loginShow} toggleLogin={this.toggleLogin}/>
                 <div className={"slideshow-container"}>
-                    {this.slideshowArray[this.state.activeSlide - 1]}
+                    <div className="slideshow row">
+                        <div className="slide-txt col-6">
+                            <div className="row justify-content-end">
+                                <div className="col-10 text-large">
+                                    <h1 className={'text-weight-light'}> Learn More, Earn More </h1>
+                                    <p className={'text-large'}>
+                                        Explore Workshops and Pick One To Learn. <br/>
+                                        Choose between Best Teachers and Best Lessons. </p>
+                                    <p className={'mt-8'}>
+                                        <Button className={'px-7 text-large'} color={'danger'} onClick={this.toggleLogin}> Get Started </Button>
+                                    </p>
+                                </div>
+                                <div className="slide-img mt-8">
+                                    <img src={'/image2-mask.png'} alt={' '}/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="slide-img col-6">
+                            <img src={'/image1-mask.png'} alt={' '}/>
+                            <div className="slide-txt">
+                                <div className="row justify-content-end">
+                                    <div className="col-10 text-large">
+                                        <h1 className={'text-weight-light'}> Wide Subjects To Learn </h1>
+                                        <p className={'text-large'}>
+                                            Just Signup Now and Enjoy from Learning!
+                                        </p>
+                                        <p className={'text-large'}>
+                                            <List unstyled>
+                                                <List.Item>
+                                                    <Button icon={'code'} size={'sm'} color={'red'}>Programming</Button>
+                                                </List.Item>
+                                                <List.Item>
+                                                    <Button size={'sm'} color={'yellow'}>
+                                                        <FontAwesomeIcon icon={'pen-nib'}/>Graphic Design</Button>
+                                                </List.Item>
+                                                <List.Item>
+                                                    <Button size={'sm'} color={'green'}>
+                                                        <FontAwesomeIcon icon={'atom'}/>Science</Button>
+                                                </List.Item>
+                                                <List.Item>
+                                                    <Button outline icon={'plus'} size={'sm'} color={'primary'}>More</Button>
+                                                </List.Item>
+                                            </List>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         );

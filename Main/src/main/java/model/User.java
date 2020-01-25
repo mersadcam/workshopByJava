@@ -278,7 +278,7 @@ public class User {
 
     else{
 
-      System.out.println(rolesId);
+//      System.out.println(rolesId);
       client.find(Const.role,new JsonObject().put("_id",rolesId.get(counter)), res->{
 
         if (!res.result().isEmpty())
@@ -435,28 +435,26 @@ public class User {
           handler.handle(Future.succeededFuture(teacherRoleId));
         }
         else {
-          handler.handle(Future.failedFuture("You are not teacher of the workshop."));
-        }
-      }
-      else {
-        client.find(Const.group,new JsonObject().put("_id",enteredCourse.getGroups().get(0).get_id()), resFind ->{
+          client.find(Const.group,new JsonObject().put("_id",enteredCourse.getGroups().get(0).get_id()), resFind ->{
 
-          if(resFind.succeeded() && !resFind.result().isEmpty()){
-            JsonArray identities = resFind.result().get(0).getJsonArray("identities");
-            String  roleId = null;
-            roleId = isIdentityInRole(identities , user.getRoles() );
-            if(roleId != null){
-              handler.handle(Future.succeededFuture(roleId));//output
+            if(resFind.succeeded() && !resFind.result().isEmpty()){
+              JsonArray identities = resFind.result().get(0).getJsonArray("identities");
+              String  roleId = null;
+              roleId = isIdentityInRole(identities , user.getRoles() );
+              if(roleId != null){
+                handler.handle(Future.succeededFuture(roleId));//output
+              }
+              else {
+                handler.handle(Future.failedFuture("You are not in the workshop."));//output
+              }
             }
             else {
-              handler.handle(Future.failedFuture("You are not in the workshop."));//output
+              handler.handle(Future.failedFuture("workshop don't have group."));//output
             }
-          }
-          else {
-            handler.handle(Future.failedFuture("workshop don't have group."));//output
-          }
-        });
+          });
+        }
       }
+
     });
 
   }
@@ -464,7 +462,7 @@ public class User {
   public static String isIdentityInRole(JsonArray identities, ArrayList<Role> roles){
     if(identities == null)
       return null;
-    System.out.println(roles.get(0).get_id());
+//    System.out.println(roles.get(0).get_id());
     for (int i = 0 ; i < identities.size() ; i++){
       for (int j = 0 ; j < roles.size() ; j++){
         if(identities.getString(i).equals(roles.get(j).get_id()))

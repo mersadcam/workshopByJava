@@ -26,16 +26,11 @@ class EditProfile extends React.Component {
     }
 
     async componentDidMount(): void {
-
         await axios.post("http://localhost:8000/user/info").then(res=>{
-
             this.setState({user:res.data.body.user,contactPoint:res.data.body.contactPoint})
-
-
         }).catch(e=>{
             console.log(e)
         })
-
     }
 
     onApply(){
