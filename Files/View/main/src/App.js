@@ -40,6 +40,7 @@ class App extends React.Component {
                     <Route path="/profile/:usernameURL" component={Profile}/>
                     <Route path="/editprofile" component={EditProfile}/>
                     <Route path="/login" component={Login}/>
+                    <Route path="/rootworkshop/:workshopID" component={Workshop}/>
                     <Route path="/workshop/:workshopID" component={Workshop}/>
                     <Route path="/studentworkshop/:workshopID" component={StudentWorkshop}/>
                     <Route path="/teacherworkshop/:workshopID" component={TeacherWorkshop}/>
