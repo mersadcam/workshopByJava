@@ -34,7 +34,7 @@ now run this code on your cmd :
 npm start
 ```
 
-### why Vetx ?
+### why Vertx ?
 - at first we start Spring Boot but
 - Vertx vs Spring( )
 - Multi languages
