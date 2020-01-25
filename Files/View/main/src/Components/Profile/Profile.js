@@ -90,7 +90,7 @@ class Profile extends React.Component {
                     <Page.Content>
                         <img
                             alt={user.username + " Cover"}
-                            src={'/default-cover.jpg'}
+                            src={'/git.jpg'}
                         />
                         <Grid.Row className={'justify-content-center'}>
                             <Grid.Col>
