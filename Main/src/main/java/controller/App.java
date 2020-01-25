@@ -617,7 +617,7 @@ public class App extends AbstractVerticle {
 //                      });
 //                    }
 //                    else {
-                      response.put("body", resSetTeacher.result().get(0).put("roleName",resFindRole.result().get(0).getString("roleName"))
+                      response.put("body", resSetTeacher.result().get(0).put("role",resFindRole.result().get(0).getString("roleName"))
                       );
 //                    }
                     toResponse.put("status", "true");
