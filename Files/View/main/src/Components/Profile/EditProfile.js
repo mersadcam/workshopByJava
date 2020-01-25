@@ -100,7 +100,7 @@ class EditProfile extends React.Component {
                 <Page.Content>
 
                     <div onSubmit={(event) => console.log(event.target.name + 'clicked')}>
-                        <img alt={user.username + " Cover"} src={profile.coverURL}/>
+                        <img alt={user.username + " Cover"} src={'/default-cover.jpg'}/>
 
                         <Card>
                             <Card.Body>
@@ -110,12 +110,12 @@ class EditProfile extends React.Component {
                                             alt={user.username + " Cover"}
                                             src={this.state.profileImageURL}
                                             className={'rounded-circle avatar-big'}/>
-                                        <Form.Group className={'image-upload-wrapper mt-5'}>
-                                            <Form.Input type={'filae'} className={'image-upload-input'} name="avatar"
-                                                        accept='image/*' onChange={this.fileChangedHandler}/>
-                                            <Button className={'image-upload-button'} outline
-                                                    size={'sm'} color={'secondary'}>Change</Button>
-                                        </Form.Group>
+                                        {/*<Form.Group className={'image-upload-wrapper mt-5'}>*/}
+                                        {/*    <Form.Input type={'filae'} className={'image-upload-input'} name="avatar"*/}
+                                        {/*                accept='image/*' onChange={this.fileChangedHandler}/>*/}
+                                        {/*    <Button className={'image-upload-button'} outline*/}
+                                        {/*            size={'sm'} color={'secondary'}>Change</Button>*/}
+                                        {/*</Form.Group>*/}
                                     {/*    <ReactCrop src={this.state.imagePreviewUrl}*/}
                                     {/*    crop={this.state.crop}  circularCrop    onChange={newCrop => this.changeCrop(newCrop)}/>*/}
                                     </Grid.Col>

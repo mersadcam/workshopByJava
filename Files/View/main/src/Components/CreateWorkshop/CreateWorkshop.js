@@ -52,6 +52,8 @@ class Workshop extends React.Component {
 
         axios.post("http://localhost:8000/admin/enterNewWorkshop",toSend).then(res=>{
             this.setState({msg:res.data.msg})
+            this.props.history.push("/dashboard");
+
         }).catch(e=>{
             console.log(e)
         })
@@ -205,7 +207,7 @@ class Workshop extends React.Component {
                                             <Button icon="check" color="blue"
                                             onClick={e=>this.createWorkshop()}
                                             >Create</Button>
-                                            <Button color="secondary" className={'ml-3'}>Cancel</Button>
+                                            <Button color="secondary" className={'ml-3'} RootComponent={'a'} href={'/dashboard'}>Cancel</Button>
                                         </Grid.Col>
                                     </Grid.Row>
                                 </Card.Body>

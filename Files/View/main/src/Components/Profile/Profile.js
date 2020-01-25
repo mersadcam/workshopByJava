@@ -90,7 +90,7 @@ class Profile extends React.Component {
                     <Page.Content>
                         <img
                             alt={user.username + " Cover"}
-                            src={'/git.jpg'}
+                            src={'/default-cover.jpg'}
                         />
                         <Grid.Row className={'justify-content-center'}>
                             <Grid.Col>
@@ -100,7 +100,7 @@ class Profile extends React.Component {
                                             <Grid.Col lg={2} className={'text-center'}>
                                                 <img
                                                     alt={user.username + " Cover"}
-                                                    src={profile.avatarURL}
+                                                    src={'/default-avatar.png'}
                                                     className={'rounded-circle avatar-big'}
                                                 />
                                             </Grid.Col>
@@ -137,7 +137,7 @@ class Profile extends React.Component {
                                 </Card>
                             </Grid.Col>
                         </Grid.Row>
-                        <Card>
+                        {this.state.teacherWorkshops.length !== 0 && <Card>
                             <Card.Header>
                                 <Card.Title> Teaching Workshops </Card.Title>
                             </Card.Header>
@@ -155,9 +155,9 @@ class Profile extends React.Component {
                                         buttonColor="secondary"/>
                                 ))}
                             </Carousel>
-                        </Card>
+                        </Card>}
 
-                        <Card>
+                        {this.state.graderWorkshops.length !== 0 && <Card>
                             <Card.Header>
                                 <Card.Title> Grading Workshops </Card.Title>
                             </Card.Header>
@@ -175,9 +175,9 @@ class Profile extends React.Component {
                                         buttonColor="secondary"/>
                                 ))}
                             </Carousel>
-                        </Card>
+                        </Card>}
 
-                        <Card>
+                        {this.state.studentWorkshops.length !== 0 &&<Card>
                             <Card.Header>
                                 <Card.Title> Enrolled Workshops </Card.Title>
                             </Card.Header>
@@ -195,7 +195,7 @@ class Profile extends React.Component {
                                         buttonColor="secondary"/>
                                 ))}
                             </Carousel>
-                        </Card>
+                        </Card>}
 
 
                     </Page.Content>

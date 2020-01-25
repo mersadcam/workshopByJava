@@ -52,7 +52,12 @@ class SiteTemplate extends React.Component {
                     <Nav>
                         <Nav.Item value="Dashboard" icon="home" to={'/dashboard'}/>
                         <Nav.Item value="Workshops" icon="box" to={'/workshops'}/>
-                        <Nav.Item value="Create Workshops" icon="plus" to={'/createworkshop'}/>
+                        {this.state.userType!="user"?
+                            <Nav.Item value="Create Workshops" icon="plus" to={'/createworkshop'}/>
+                            :
+                            <div></div>
+                        }
+
                         <Nav.Item value="Help" icon="" to={'/help'}/>
                     </Nav>
                 </Site.Nav>

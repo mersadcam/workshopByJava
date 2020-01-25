@@ -474,8 +474,12 @@ public class EnteredCourse {
       client.find(
         Const.role,query,resFindTeacher->{
           Teacher teacher = new Teacher(resFindTeacher.result().get(0));
+          System.out.println(teacher.get_id());
           Controller.findIn(client,"user","roles",teacher.get_id(),resFindIn->{
+
+            System.out.println(resFindIn);
             client.find(Const.contactPoint,new JsonObject().put("_id",resFindIn.result().get(0).getString("contactPoint")),resFindCP->{
+
 
               arr.add(list.get(counter).put("teacher",resFindIn.result().get(0)
                 .put("fullName",resFindCP.result().get(0).getString("fullName"))));

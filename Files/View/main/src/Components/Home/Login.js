@@ -41,10 +41,10 @@ class Login extends React.Component {
 
 
 
-    sendUser(api){
+    async sendUser(api){
 
 
-        axios.post("http://localhost:8000"+api, this.state.user )
+        await axios.post("http://localhost:8000"+api, this.state.user )
             .then((res)=>{
 
                 if( res.data.status == "true"){

@@ -23,7 +23,7 @@ class Dashboard extends React.Component {
 
         await axios.get("http://localhost:8000/user/dashboard").then(res=>{
             this.setState({myWorkshops:res.data.body.workshops,newWorkshops:res.data.body.newWorkshops,messages:res.data.body.messages})
-
+                console.log(this.state.myWorkshops)
         }).catch(e=>{
 
             console.log(e)
