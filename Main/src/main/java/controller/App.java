@@ -541,20 +541,6 @@ public class App extends AbstractVerticle {
 
       });
 
-    router.route(Const.workshopPage)
-      .handler(ctx->{
-
-        JsonObject clientJson = ctx.get("clientJson");
-        String roleId = ctx.get("roleId");
-
-        client.find(Const.enteredCourse,new JsonObject().put("_id",clientJson.getString("workshopId")),res->{
-
-
-
-        });
-
-      });
-
     //new added (for teacher needed debug)
     router.route(Const.workshopStar)
       .handler(ctx ->{
@@ -566,15 +552,16 @@ public class App extends AbstractVerticle {
 
         //else part have problem because print stack trace
         EnteredCourse.workshopStar(client , clientJson , roleId , user , handler ->{
-          if(handler.succeeded()){
-            ctx.put("roleId",handler.result());
+          if(handler.succeeded() && !handler.result().isEmpty()){
+            ctx.put("roleId",handler.result().toString());
+            ctx.next();
           }
-          else
-            ctx.put("roleId","");
-
-          ctx.next();
+          else {
+            ctx.put("roleId", "");
+            ctx.next();
+          }
         });
-        ctx.next();
+
       });
 
     //new added
@@ -586,18 +573,16 @@ public class App extends AbstractVerticle {
         String roleId = ctx.get("roleId");
         JsonObject toResponse = new JsonObject();
 
-        if (roleId.equals("")){//user don't have role in the workshop
+        if (roleId == null){//user don't have role in the workshop
 
           client.find(Const.enteredCourse , new JsonObject().put("_id",clientJson.getString("workshopId")),res ->{
 
             if (res.succeeded() && !res.result().isEmpty()){
 
               EnteredCourse.setTeacherOnWorkshop(client, new ArrayList<JsonObject>() , res.result() , 0 , resSetTeacher ->{
-                JsonObject response = new JsonObject();
-                response.put("body",resSetTeacher.result().toString())
-                .put("roleName","");
                 toResponse.put("status","true")
-                  .put("msg",response);
+                  .put("body",resSetTeacher.result().get(0).put("role",""));
+                ctx.response().end(toResponse.toString());
               });
             }
 
@@ -605,6 +590,7 @@ public class App extends AbstractVerticle {
 
               toResponse.put("status","false")
                 .put("msg","Workshop doesn't exist in database");
+              ctx.response().end(toResponse.toString());
 
             }
           });
@@ -618,28 +604,29 @@ public class App extends AbstractVerticle {
 
               EnteredCourse.setTeacherOnWorkshop(client, new ArrayList<JsonObject>(), res.result(), 0, resSetTeacher -> {
                 JsonObject response = new JsonObject();
-                response.put("body", resSetTeacher.result().toString());
+                response.put("body", resSetTeacher.result().get(0));
 
                 client.find(Const.role, new JsonObject().put("_id" , roleId) , resFindRole->{
+                  response.put("roleName",resFindRole.result().get(0).getString("roleName"));
                   if (resFindRole.succeeded() && !resFindRole.result().isEmpty()){
                     Form.findForm(client , new ArrayList<JsonObject>() , resFindRole.result().get(0).getJsonArray("form") , 0 , resFindForm->{
-                      response.put("roleName",resFindRole.result().get(0).getString("roleName"));
                       response.put("formBody",resFindForm.result().toString());
                     });
                   }
                 });
-                toResponse.put("status", "true")
-                  .put("msg", response);
+                toResponse.put("status", "true");
+                ctx.response().end(toResponse.put("body",response).toString());
               });
             }
             else {//we don't find workshop in entered course
               toResponse.put("status", "false")
                 .put("msg", "Workshop doesn't exist in database");
+              ctx.response().end(toResponse.toString());
             }
           });
         }
 
-        ctx.response().end(toResponse.toString());
+//        ctx.response().end(toResponse.toString());
       });
 
     //new added
