@@ -29,7 +29,7 @@ class NewWorkshops extends React.Component {
                             place={item.workshop.place}
                             price={item.workshop.value}
                             buttonText="View"
-                            id={item.workshop.id}
+                            id={item.workshop._id}
                             buttonColor="primary"/>
                     ))}
                 </Carousel>

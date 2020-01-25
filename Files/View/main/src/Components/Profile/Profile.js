@@ -128,9 +128,6 @@ class Profile extends React.Component {
                                                                     : <div></div>
                                                             }
 
-
-                                                            <Button size={'sm'} color={'secondary'}>Send Message</Button>
-                                                            <Button size={'sm'} color={'secondary'}>Report</Button>
                                                         </Button.List>
                                                     </List.Item>
                                                 </List>

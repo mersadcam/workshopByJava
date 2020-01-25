@@ -10,19 +10,36 @@ class Workshop extends React.Component {
         this.state = {
             teacher: {},
             workshop: {},
-            role: ""
+            role: "",
+            startTime:"",
+            finishTime:""
         }
     }
 
-    async componentDidMount(): void {
+    async componentWillMount(): void {
         const {workshopID} = this.props.match.params;
-        await axios.post("http://localhost:8000/user/workshop/page", {workshopId: workshopID}).then(res => {
+        const toSend = {workshopId:workshopID};
+        console.log(toSend);
+        await axios.post("http://localhost:8000/user/workshop/page", toSend).then(res => {
+
             this.setState({teacher: res.data.body.teacher});
-            this.setState({workshop: res.data.body.workshop});
+            this.setState({workshop: res.data.body.workshop,startTime:res.data.body.workshop.startTime,finishTime:res.data.body.workshop.startTime});
             this.setState({role: res.data.body.role});
         }).catch(e => {
             console.log(e)
         })
+    }
+
+    enroll(){
+
+        const toSend = {workshopId: this.state.workshop._id,
+        course:this.state.workshop.course,
+        paymentType:"cash"}
+
+        axios.post("http://localhost:8000/user/workshop/studentRequest",toSend).then(res=>{
+            this.props.history.push("/dashboard/");
+        }).catch(e=>console.log(e))
+
     }
 
     timeFormat = (timePattern) => {
@@ -58,7 +75,8 @@ class Workshop extends React.Component {
                                             <Grid.Row>
                                                 <Grid.Col>
                                                     <Button className={'px-7 text-large'}
-                                                            color={'primary'}> Enroll </Button>
+                                                            color={'primary'}
+                                                    onClick={e=>this.enroll()}> Enroll </Button>
                                                 </Grid.Col>
                                             </Grid.Row>
                                             <Grid.Row>
@@ -87,10 +105,11 @@ class Workshop extends React.Component {
                                         <Grid.Col>
                                             <List unstyled seperated>
                                                 <List.Item> <b className={'mr-2'}> Start
-                                                    Time </b> {this.timeFormat(this.state.workshop.startTime)}
+                                                    Time </b> {
+                                                    this.timeFormat(this.state.startTime)}
                                                 </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Finish Time </b> {this.timeFormat(this.state.workshop.finishTime)}
+                                                    Finish Time </b> {this.timeFormat(this.state.finishTime)}
                                                 </List.Item>
                                                 <List.Item className={'mt-5'}> <b
                                                     className={'mr-2'}> Place </b> {this.state.workshop.place}

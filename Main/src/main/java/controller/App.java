@@ -573,7 +573,7 @@ public class App extends AbstractVerticle {
         String roleId = ctx.get("roleId");
         JsonObject toResponse = new JsonObject();
 
-        if (roleId == null){//user don't have role in the workshop
+        if (roleId.equals("")){//user don't have role in the workshop
 
           client.find(Const.enteredCourse , new JsonObject().put("_id",clientJson.getString("workshopId")),res ->{
 
