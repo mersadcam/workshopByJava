@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form,Avatar, Button, Card, Grid, Header, List, Page, Tag, Text} from "tabler-react";
+import {Form, Avatar, Button, Card, Grid, Header, List, Page, Tag, Text, Dropdown} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
 import details from "./details.json";
 import './CreateWorkshop.css'
@@ -12,7 +12,7 @@ class Workshop extends React.Component {
     }
 
     componentDidMount(): void {
-        const {workshopID} = this.props.match.params ;
+        const {workshopID} = this.props.match.params;
     }
 
     timeFormat = (timePattern) => {
@@ -29,26 +29,26 @@ class Workshop extends React.Component {
         return (
             <SiteTemplate>
                 <Page.Content>
-                    <Grid.Row cards deck>
+                    <Grid.Row cards>
                         <Grid.Col lg={5}>
                             <Card>
                                 <img
-                                    alt={details.workshop.name + " Cover"}
+                                    alt={"Cover"}
                                     src={'/demo/photos/illustrator.jpg'}/>
 
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3 className={'text-weight-light'}>
-                                                <Form.Input
-                                                    className={'text-large border-none'}
-                                                    name="workshopName"
-                                                    placeholder="Workshop Name..."
-                                                />
+                                            <Form.Input
+                                                className={'text-large border-none'}
+                                                name="workshopName"
+                                                placeholder="Workshop Name..."
+                                            />
                                             <Form.Input
                                                 className={'border-none'}
                                                 name="teacher"
                                                 placeholder="Teacher Username..."
-                                                />
+                                            />
                                         </Header.H3>
                                     </Card.Title>
 
@@ -65,35 +65,60 @@ class Workshop extends React.Component {
                                 <Card.Body>
                                     <Grid.Row>
                                         <Grid.Col>
-                                            <List unstyled seperated>
-                                                <List.Item>
-                                                    <Form.Input
-                                                        label={'Start Time'}
-                                                        name="startTime"
-                                                        placeholder="HH:MM-DD-MM-YYYY"
-                                                    />
-                                                </List.Item>
+                                            <Form.Select label={'Course'}>
+                                                {details.courses.map((item) => (
+                                                    <option> {item.name} </option>
+                                                ))}
+                                            </Form.Select>
 
+                                            <Form.Input
+                                                label={'Start Time'}
+                                                name="startTime"
+                                                placeholder="Format: HH:MM-DD-MM-YYYY"
+                                            />
 
-                                                <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Finish Time </b> {this.timeFormat(details.workshop.finishTime)} </List.Item>
-                                                <List.Item className={'mt-5'}> <b
-                                                    className={'mr-2'}> Place </b> {details.workshop.place} </List.Item>
-
-                                            </List>
+                                            <Form.Input
+                                                label={'Finish Time'}
+                                                name="finishTime"
+                                                placeholder="Format: HH:MM-DD-MM-YYYY"
+                                            />
                                         </Grid.Col>
                                         <Grid.Col>
-                                            <List unstyled seperated>
-                                                <List.Item> <b
-                                                    className={'mr-2'}> Price </b> {details.workshop.value} $ </List.Item>
-                                                <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Capacity </b> {details.workshop.capacity} </List.Item>
-                                            </List>
+                                            <Form.Select label={'Category'}>
+                                                {details.courses.map((item) => (
+                                                    <option> {item.category} </option>
+                                                ))}
+                                            </Form.Select>
+                                            <Form.Input
+                                                label={'Place'}
+                                                name="place"
+                                                placeholder="ex: Mollasadra,Shiraz"
+                                            />
+
+                                            <Form.Group label="Price">
+                                                <Form.InputGroup>
+                                                    <Form.InputGroupPrepend>
+                                                        <Form.InputGroupText>
+                                                            $
+                                                        </Form.InputGroupText>
+                                                    </Form.InputGroupPrepend>
+                                                    <Form.Input placeholder="ex: 120"/>
+                                                </Form.InputGroup>
+                                            </Form.Group>
                                         </Grid.Col>
                                     </Grid.Row>
                                     <Grid.Row>
-                                        <Grid.Col className={'line-height-larger'}>
-                                            <b className={'mr-2'}> Description </b> {details.workshop.description}
+                                        <Grid.Col>
+                                            <Form.Group label={'Description'}>
+                                                <Form.Textarea name="description"
+                                                               placeholder="Enter Workshop Description..."/>
+                                            </Form.Group>
+                                        </Grid.Col>
+                                    </Grid.Row>
+                                    <Grid.Row>
+                                        <Grid.Col className={'text-center'}>
+                                            <Button icon="check" color="blue">Create</Button>
+                                            <Button color="secondary" className={'ml-3'}>Cancel</Button>
                                         </Grid.Col>
                                     </Grid.Row>
                                 </Card.Body>
@@ -102,7 +127,8 @@ class Workshop extends React.Component {
                     </Grid.Row>
                 </Page.Content>
             </SiteTemplate>
-        );
+        )
+            ;
     }
 }
 

@@ -43,7 +43,7 @@ class App extends React.Component {
                     <Route path="/workshop/:workshopID" component={Workshop}/>
                     <Route path="/studentworkshop/:workshopID" component={StudentWorkshop}/>
                     <Route path="/teacherworkshop/:workshopID" component={TeacherWorkshop}/>
-                    <Route path="/createworkshop/" component={CreateWorkshop}/>
+                    <Route path="/createworkshop" component={CreateWorkshop}/>
 
                 </Switch>
             </Router>
