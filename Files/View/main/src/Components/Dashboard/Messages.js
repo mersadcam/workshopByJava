@@ -4,7 +4,13 @@ import {Button, Card, Table} from "tabler-react";
 import enrolledWorkshops from "./EnrolledWorkshops";
 
 class Messages extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
+        const {messages} = this.props;
+
         return (
             <Card title="My Messages" className={'px-2'}>
                 <Table responsive>
@@ -15,7 +21,7 @@ class Messages extends React.Component {
                         <Table.ColHeader>{null}</Table.ColHeader>
                     </Table.Header>
                     <Table.Body>
-                        {messages.items.map((item, key) => (
+                        {messages.map(item => (
                             <Table.Row>
                                 <Table.Col>{item.sender}</Table.Col>
                                 <Table.Col>{item.text}</Table.Col>
@@ -23,6 +29,7 @@ class Messages extends React.Component {
                                 <Table.Col><Button outline size="sm" color="primary"> View </Button></Table.Col>
                             </Table.Row>
                         ))}
+
                     </Table.Body>
                 </Table>
             </Card>

@@ -15,6 +15,7 @@ import StudentWorkshop from "./Components/StudentWorkshop/StudentWorkshop";
 import TeacherWorkshop from "./Components/TeacherWorkshop/TeacherWorkshop";
 
 import axios from "axios";
+import CreateWorkshop from "./Components/CreateWorkshop/CreateWorkshop";
 axios.defaults.headers.common['token'] = localStorage.getItem("token");
 axios.defaults.headers.common['userType'] = localStorage.getItem("userType");
 
@@ -42,6 +43,7 @@ class App extends React.Component {
                     <Route path="/workshop/:workshopID" component={Workshop}/>
                     <Route path="/studentworkshop/:workshopID" component={StudentWorkshop}/>
                     <Route path="/teacherworkshop/:workshopID" component={TeacherWorkshop}/>
+                    <Route path="/createworkshop/" component={CreateWorkshop}/>
 
                 </Switch>
             </Router>
