@@ -13,6 +13,7 @@ class Home extends React.Component {
             activeSlide: 1,
             slideCount: 2,
             loginShow: false,
+            // outline: true,
         }
     }
 
@@ -27,23 +28,13 @@ class Home extends React.Component {
     slideshowArray = [
         //Slideshow 1
         <Slideshow image="/image1-mask.png">
+            {/*<img className={'logo-outline'} src={this.state.outline ? '/logo-outline.svg' : '/logo-color.svg'} alt={' '}/>*/}
             <h2> Learn More, Earn More </h2>
             <p>
                 Explore Workshops and Pick One To Learn. <br/>
                 Choose between Best Teachers and Best Lessons. </p>
-            <p>
-                <Button.List>
-                    <Button pill className={"btn-hover"} size={'sm'} color={'red'}> <FontAwesomeIcon icon={"code"}/> Programming </Button>
-                    <Button pill className={"btn-hover"} size={'sm'} color={'yellow'}> <FontAwesomeIcon icon={"pen-nib"}/> Graphic Design
-                    </Button>
-                    <Button pill className={"btn-hover"} size={'sm'} color={'green'}> <FontAwesomeIcon icon={"atom"}/> Science
-                    </Button>
-                    <Button pill className={"btn-hover"} size={'sm'} color="primary" outline> <FontAwesomeIcon icon={"plus"}/> More
-                    </Button>
-                </Button.List>
-            </p>
             <p className={'mt-8'}>
-                <Button pill className={"btn-hover"} color="primary" outline onClick={() => this.goToSlide(2)}> Next </Button>
+                <Button className={'px-7 text-large'} color={'danger'}> Get Started </Button>
             </p>
         </Slideshow>,
 

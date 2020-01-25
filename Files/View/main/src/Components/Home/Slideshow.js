@@ -19,15 +19,16 @@ class Slideshow extends React.Component {
     render() {
         return (
                 <div className="slideshow row">
-                    <div className="slide-txt col-7 my-auto">
+                    <div className="slide-txt col-6 my-auto">
                         <div className="row justify-content-end">
                             <div className="col-10">
                                 {this.props.children}
                             </div>
                         </div>
                     </div>
-                    <div className="slide-img col-5"
-                       style={{backgroundImage: 'url("' + this.state.image + '")'}}/>
+                    <div className="slide-img col-6">
+                         <img src={this.state.image} alt={' '}/>
+                    </div>
                 </div>
         )
     }

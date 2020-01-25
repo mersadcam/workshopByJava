@@ -1,8 +1,5 @@
-.slideshow .slide-img {
-  height: 100vh;
-  display: block;
-  background-size: cover;
-  background-position: 50%;
+.slide-img img {
+  height: available;
 }
 
 .slide-txt {
@@ -13,7 +10,11 @@
 
 .slideshow-container {
   position: absolute;
-  width: 98vw;
   top: 0;
+  right:0;
   z-index: 1;
+}
+
+.logo-outline {
+  width: 25%;
 }

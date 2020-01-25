@@ -1,71 +1,12 @@
 import * as React from "react";
 
-import type, {
-    Site,
-    Nav,
-    Grid,
-    List,
-    Button,
-    RouterContextProvider,
-} from "tabler-react";
+import {Site, Nav, AccountDropdown} from "tabler-react";
 
 import "tabler-react/dist/Tabler.css";
-import {NavLink, withRouter} from "react-router-dom";
 import Search from "./Components/Workshops/Search";
 import profile from "./Components/Profile/Profile.json";
 
 class SiteTemplate extends React.Component {
-
-    accountDropdownProps = {
-        avatarURL: profile.avatarURL,
-        name: profile.fullName,
-        description: profile.userType !== "user" ? profile.userType.toUpperCase() : "Welcome Back",
-        options: [
-            {icon: "user", value: "Profile", to: "/profile"},
-            {icon: "settings", value: "Settings",to: "/settings"},
-            {icon: "send", value: "Messages", badge: "6", to: "/messages"},
-            {isDivider: true},
-            {icon: "help-circle", value: "Need help?",to: "/help"},
-            {icon: "log-out", value: "Sign out", to: "/signout"},
-        ],
-    };
-
-    headerProps = {
-        href: "/",
-        alt: "XSITE",
-        imageURL: "/logo.png",
-        accountDropdown: this.accountDropdownProps,
-        navItems: (
-            <Nav.Item type="div" className="d-none d-md-flex">
-                <Search/>
-            </Nav.Item>
-        ),
-    };
-
-    navBarItems = [
-        {
-            value: "Dashboard",
-            to: "/dashboard",
-            icon: "home",
-            LinkComponent: withRouter(NavLink),
-            useExact: true,
-        },
-        {
-            value: "Workshops",
-            to: "/workshops",
-            icon: "box",
-        },
-        {
-            value: "Blog",
-            to: "/page3",
-            icon: "file",
-        },
-        {
-            value: "About Us",
-            to: "/page4",
-            icon: "star",
-        },
-    ];
 
     footerProps = {
         links: [
@@ -91,14 +32,38 @@ class SiteTemplate extends React.Component {
 
     render() {
         return (
-            <Site.Wrapper
-                navProps={{itemsObjects: this.navBarItems}}
-                headerProps={this.headerProps}
-                routerContextComponentType={withRouter(RouterContextProvider)}
-                footerProps={this.footerProps}
+            <Site
+                // headerProps={this.headerProps}
+                // footerProps={this.footerProps}
             >
+                <Site.Header imageURL={'/logo.png'}
+                             navItems={
+                                     <AccountDropdown
+                                         avatarURL="./demo/faces/female/25.jpg"
+                                         name="Jane Pearson"
+                                         description="Administrator"
+                                         options={[
+                                             {icon: "settings", value: "Settings", to: "/settings"},
+                                             "mail",
+                                             "message",
+                                             "divider",
+                                             "help",
+                                             "logout",
+                                         ]}
+                                     />
+                             }
+                             />
+
+                <Site.Nav>
+                    <Nav>
+                        <Nav.Item value="Dashboard" icon="home" to={'/dashboard'}/>
+                        <Nav.Item value="Workshops" icon="box" to={'/workshops'}/>
+                        <Nav.Item value="Create Workshops" icon="plus" to={'/workshops'}/>
+                        <Nav.Item value="Help" icon="" to={'/help'}/>
+                    </Nav>
+                </Site.Nav>
                 {this.props.children}
-            </Site.Wrapper>
+            </Site>
         )
     }
 }
