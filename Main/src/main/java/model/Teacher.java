@@ -119,7 +119,7 @@ public class Teacher implements Role,FormWriter{
     Form form = new Form(jsonForm.getJsonObject("formBody"));
     form.addToDB(client,resAddToDB ->{
 
-      String formId = resAddToDB.result();
+      String formId = form.get_id();
       JsonArray formsId = jsonTeacher.getJsonArray("formsId");
 
       if( formsId == null)

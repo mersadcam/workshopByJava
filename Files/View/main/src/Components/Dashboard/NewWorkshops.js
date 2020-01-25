@@ -23,6 +23,7 @@ class NewWorkshops extends React.Component {
                             title={item.workshop.name}
                             imageURL={item.imageURL}
                             avatarURL={item.avatarURL}
+                            teacherUsername={item.teacher.username}
                             teacher={item.teacher.fullName}
                             date={item.workshop.startTime}
                             place={item.workshop.place}
