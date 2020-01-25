@@ -13,6 +13,8 @@ import Login from "./Components/Home/Login";
 import Workshop from "./Components/Workshop/Workshop";
 import StudentWorkshop from "./Components/StudentWorkshop/StudentWorkshop";
 import TeacherWorkshop from "./Components/TeacherWorkshop/TeacherWorkshop";
+import CreateForm from "./Components/Forms/CreateForm";
+import ViewForm from "./Components/Forms/ViewForm";
 
 import axios from "axios";
 import CreateWorkshop from "./Components/CreateWorkshop/CreateWorkshop";
@@ -45,6 +47,8 @@ class App extends React.Component {
                     <Route path="/studentworkshop/:workshopID" component={StudentWorkshop}/>
                     <Route path="/teacherworkshop/:workshopID" component={TeacherWorkshop}/>
                     <Route path="/createworkshop" component={CreateWorkshop}/>
+                    <Route path="/createform" component={CreateForm}/>
+                    <Route path="/viewform" component={ViewForm}/>
 
                 </Switch>
             </Router>

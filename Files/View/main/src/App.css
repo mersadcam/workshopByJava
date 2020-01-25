@@ -33,11 +33,10 @@ a:hover {
     border-radius: 100px !important;
 }
 
-.btn-x- {
-    font-weight: 100 !important;
-    padding: 3px 25px !important;
+.btn-default {
+    padding: 0 3px !important;
     transition: 0.3s !important;
-    border-radius: 100px !important;
+    border-radius: 2px !important;
 }
 
 .btn-hover:hover {
