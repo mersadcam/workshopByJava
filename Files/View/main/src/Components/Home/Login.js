@@ -41,10 +41,10 @@ class Login extends React.Component {
 
 
 
-    sendUser(api){
+    async sendUser(api){
 
 
-        axios.post("http://localhost:8000"+api, this.state.user )
+        await axios.post("http://localhost:8000"+api, this.state.user )
             .then((res)=>{
 
                 if( res.data.status == "true"){
@@ -126,16 +126,6 @@ class Login extends React.Component {
                                     <Form.Group isRequired label="Password"> <Form.Input name="password" type="password" onChange={(e)=>{
                                         this.setPassword(e.target.value)
                                     }}/> </Form.Group>
-                                </Grid.Col>
-                            </Grid.Row>
-                            <Grid.Row alignItem={'center'} className={'justify-content-center'}>
-                                <Grid.Col>
-                                    <Form.Checkbox isInline label="Keep Me Signed In" name="keepMeSignedIn"/>
-                                </Grid.Col>
-                                <Grid.Col>
-                                    <Text.Small>
-                                        <a href={'#'} id={"forgetPasswordButton"} onClick={this.forgetPasswordSwitch}> Forgot your password? </a>
-                                    </Text.Small>
                                 </Grid.Col>
                             </Grid.Row>
 

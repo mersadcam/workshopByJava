@@ -25,7 +25,7 @@ class WorkshopCard extends React.Component {
             id: props.id,
             title : props.title,
             imageURL: '/banner/default.jpg',
-            avatarURL: props.avatarURL,
+            avatarURL: '/default-avatar.png',
             teacher: props.teacher,
             teacherUsername: props.teacherUsername,
             date: props.date,
@@ -69,7 +69,7 @@ class WorkshopCard extends React.Component {
                                 <a className={'text-inherit text-nowrap text-gray mx-2'} href={"/profile/" + this.state.teacherUsername}>{this.state.teacher}</a>
                             </Grid.Col>
                             <Grid.Col lg={2} md={10} sm={10}>
-                                <Button color={this.state.buttonColor} size="sm" RootComponent={'a'} href={"/workshop/" + this.state.id}>{this.state.buttonText}</Button>
+                                <Button color={this.state.buttonColor} size="sm" RootComponent={'a'} href={"/rootworkshop/" + this.state.id}>{this.state.buttonText}</Button>
                             </Grid.Col>
                         </Grid.Row>
                     </Card.Body>

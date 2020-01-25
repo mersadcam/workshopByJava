@@ -357,11 +357,11 @@ public class App extends AbstractVerticle {
 
               if (clientJson.getString("paymentType").equals("cash")) {
 
-                String paymentTime = paymentParts.getJsonObject("cash").getString("time");
+//                String paymentTime = paymentParts.getJsonObject("cash").getString("time");
 
 
                 payment = new Payment("",
-                  paymentTime,
+                  "10-10",
                   workshopValue);
 
                 paymentStatus.addPayment(payment);
@@ -722,7 +722,6 @@ public class App extends AbstractVerticle {
           EnteredCourse.setRolesOnWorkshops(client, new ArrayList<>(),
             user.getRolesId(),
             0,resSetRoles->{
-
 
               EnteredCourse.myWorkshops(client,new ArrayList<JsonObject>(),resSetRoles.result(),0,resMyWorkshop->{
 

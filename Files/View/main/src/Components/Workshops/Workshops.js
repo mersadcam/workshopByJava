@@ -62,6 +62,7 @@ class Workshops extends React.Component {
                         {workshops.map((item) => (
                             <Grid.Col md={6} lg={4} xl={3}>
                                 <WorkshopCard
+                                    id={item.workshop._id}
                                     title={item.workshop.name}
                                     imageURL={item.imageURL}
                                     avatarURL={item.avatarURL}

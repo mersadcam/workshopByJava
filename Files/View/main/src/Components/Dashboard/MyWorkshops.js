@@ -7,15 +7,14 @@ class MyWorkshops extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            workshopsNumber : enrolledWorkshops.items.length
+            workshopsNumber : this.props.workshops.length
         }
     }
     render() {
 
         const {workshops} = this.props;
-
         return (
-            <Card title={"My Workshops (" + this.state.workshopsNumber + ")"} className={'px-2'}>
+            <Card title={"My Workshops (" + workshops.length + ")"} className={'px-2'}>
                 <Table responsive>
                     <Table.Header>
                         <Table.ColHeader>Workshop</Table.ColHeader>
@@ -26,10 +25,10 @@ class MyWorkshops extends React.Component {
                     <Table.Body>
                         {workshops.map(item => (
                             <Table.Row>
-                                <Table.Col><a href={'?'}>{item.workshop.name}</a></Table.Col>
+                                <Table.Col><a href={'/rootworkshop/'+ item.workshop._id}>{item.workshop.name}</a></Table.Col>
                                 <Table.Col>{item.teacher.fullName}</Table.Col>
                                 <Table.Col>{item.workshop.startTime}</Table.Col>
-                                <Table.Col><Button outline size="sm" color="primary" RootComponenet={'a'} href={'/studentworkshop/'+ item._id}> Manage </Button></Table.Col>
+                                <Table.Col><Button outline size="sm" color="primary" RootComponent={'a'} href={'/rootworkshop/'+ item.workshop._id}> Manage </Button></Table.Col>
                             </Table.Row>
                         ))}
                     </Table.Body>

@@ -10,10 +10,20 @@ class Workshop extends React.Component {
         this.state = {
             teacher: {},
             workshop: {},
-            role: "",
+            role: {},
             startTime:"",
             finishTime:""
         }
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        return {
+            teacher: props.teacher,
+            workshop: props.workshop,
+            role: props.role,
+            startTime: props.startTime,
+            finishTime: props.finishTime,
+        };
     }
 
     async componentWillMount(): void {
@@ -109,7 +119,7 @@ class Workshop extends React.Component {
                         <Grid.Col>
                             <Card>
                                 <Card.Header>
-                                    <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
+                                    <Avatar imageURL={'/default-avatar.png'}/>
                                     <a className={'text-inherit mx-2'}
                                        href={"/profile/" + this.state.teacher.username}><b
                                         className={'mr-2'}> Teacher </b> {this.state.teacher.fullName}</a>

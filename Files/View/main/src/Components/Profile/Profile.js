@@ -90,7 +90,7 @@ class Profile extends React.Component {
                     <Page.Content>
                         <img
                             alt={user.username + " Cover"}
-                            src={profile.coverURL}
+                            src={'/default-cover.jpg'}
                         />
                         <Grid.Row className={'justify-content-center'}>
                             <Grid.Col>
@@ -100,7 +100,7 @@ class Profile extends React.Component {
                                             <Grid.Col lg={2} className={'text-center'}>
                                                 <img
                                                     alt={user.username + " Cover"}
-                                                    src={profile.avatarURL}
+                                                    src={'/default-avatar.png'}
                                                     className={'rounded-circle avatar-big'}
                                                 />
                                             </Grid.Col>
@@ -137,7 +137,7 @@ class Profile extends React.Component {
                                 </Card>
                             </Grid.Col>
                         </Grid.Row>
-                        <Card>
+                        {this.state.teacherWorkshops.length !== 0 && <Card>
                             <Card.Header>
                                 <Card.Title> Teaching Workshops </Card.Title>
                             </Card.Header>
@@ -146,18 +146,18 @@ class Profile extends React.Component {
                                     <WorkshopCard
                                         title={item.workshop.name}
                                         imageURL={item.workshop.imageURL}
-                                        avatarURL={item.workshop.avatarURL}
+                                        avatarURL={'/default-avatar.png'}
                                         teacher={item.teacher.fullName}
                                         date={item.workshop.startTime}
                                         place={item.workshop.place}
                                         price={item.workshop.value}
                                         buttonText="View"
-                                        buttonColor="secondary"/>
+                                        buttonColor="blue"/>
                                 ))}
                             </Carousel>
-                        </Card>
+                        </Card>}
 
-                        <Card>
+                        {this.state.graderWorkshops.length !== 0 && <Card>
                             <Card.Header>
                                 <Card.Title> Grading Workshops </Card.Title>
                             </Card.Header>
@@ -172,12 +172,12 @@ class Profile extends React.Component {
                                         place={item.workshop.place}
                                         price={item.workshop.value}
                                         buttonText="View"
-                                        buttonColor="secondary"/>
+                                        buttonColor="blue"/>
                                 ))}
                             </Carousel>
-                        </Card>
+                        </Card>}
 
-                        <Card>
+                        {this.state.studentWorkshops.length !== 0 &&<Card>
                             <Card.Header>
                                 <Card.Title> Enrolled Workshops </Card.Title>
                             </Card.Header>
@@ -192,10 +192,10 @@ class Profile extends React.Component {
                                         place={item.workshop.place}
                                         price={item.workshop.value}
                                         buttonText="View"
-                                        buttonColor="secondary"/>
+                                        buttonColor="blue"/>
                                 ))}
                             </Carousel>
-                        </Card>
+                        </Card>}
 
 
                     </Page.Content>
