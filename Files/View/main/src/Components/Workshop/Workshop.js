@@ -1,17 +1,28 @@
 import React from 'react';
 import {Avatar, Button, Card, Grid, Header, List, Page, Tag, Text} from "tabler-react";
 import SiteTemplate from "../../SiteTemplate";
-import details from "./details.json";
+import axios from "axios";
 
 
 class Workshop extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            teacher: {},
+            workshop: {},
+            role: ""
+        }
     }
 
-    componentDidMount(): void {
-        const {workshopID} = this.props.match.params ;
+    async componentDidMount(): void {
+        const {workshopID} = this.props.match.params;
+        await axios.post("http://localhost:8000/user/workshop/page", {workshopId: workshopID}).then(res => {
+            this.setState({teacher: res.data.body.teacher});
+            this.setState({workshop: res.data.body.workshop});
+            this.setState({role: res.data.body.role});
+        }).catch(e => {
+            console.log(e)
+        })
     }
 
     timeFormat = (timePattern) => {
@@ -37,9 +48,9 @@ class Workshop extends React.Component {
                                 <Card.Header>
                                     <Card.Title>
                                         <Header.H3
-                                            className={'text-weight-light'}>{details.workshop.name}</Header.H3>
-                                        <Tag className={'mr-2'}> #{details.workshop.category}</Tag>
-                                        <Tag className={'mr-2'}> #{details.workshop.course}</Tag>
+                                            className={'text-weight-light'}>{this.state.workshop.name}</Header.H3>
+                                        <Tag className={'mr-2'}> #{this.state.workshop.category}</Tag>
+                                        <Tag className={'mr-2'}> #{this.state.workshop.course}</Tag>
                                     </Card.Title>
 
                                     <Card.Options className={'mt-3'}>
@@ -52,7 +63,7 @@ class Workshop extends React.Component {
                                             </Grid.Row>
                                             <Grid.Row>
                                                 <Grid.Col className={'text-center'}>
-                                                    <h3 className={'text-dark mt-3'}> {details.workshop.value} $ </h3>
+                                                    <h3 className={'text-dark mt-3'}> {this.state.workshop.value} $ </h3>
                                                 </Grid.Col>
                                             </Grid.Row>
                                         </Grid.Col>
@@ -65,7 +76,8 @@ class Workshop extends React.Component {
                                 <Card.Header>
                                     <Avatar imageURL={'/demo/faces/male/33.jpg'}/>
                                     <a className={'text-inherit mx-2'}
-                                       href={"/profile/" + details.teacher.username}><b className={'mr-2'}> Teacher </b> {details.teacher.fullName}</a>
+                                       href={"/profile/" + this.state.teacher.username}><b
+                                        className={'mr-2'}> Teacher </b> {this.state.teacher.fullName}</a>
                                     <Card.Options>
                                         <Button outline color={'primary'}> Grading Request </Button>
                                     </Card.Options>
@@ -74,26 +86,31 @@ class Workshop extends React.Component {
                                     <Grid.Row>
                                         <Grid.Col>
                                             <List unstyled seperated>
-                                                <List.Item> <b className={'mr-2'}> Start Time </b> {this.timeFormat(details.workshop.startTime)} </List.Item>
+                                                <List.Item> <b className={'mr-2'}> Start
+                                                    Time </b> {this.timeFormat(this.state.workshop.startTime)}
+                                                </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Finish Time </b> {this.timeFormat(details.workshop.finishTime)} </List.Item>
+                                                    Finish Time </b> {this.timeFormat(this.state.workshop.finishTime)}
+                                                </List.Item>
                                                 <List.Item className={'mt-5'}> <b
-                                                    className={'mr-2'}> Place </b> {details.workshop.place} </List.Item>
+                                                    className={'mr-2'}> Place </b> {this.state.workshop.place}
+                                                </List.Item>
 
                                             </List>
                                         </Grid.Col>
                                         <Grid.Col>
                                             <List unstyled seperated>
                                                 <List.Item> <b
-                                                    className={'mr-2'}> Price </b> {details.workshop.value} $ </List.Item>
+                                                    className={'mr-2'}> Price </b> {this.state.workshop.value} $
+                                                </List.Item>
                                                 <List.Item className={'mt-5'}> <b className={'mr-2'}>
-                                                    Capacity </b> {details.workshop.capacity} </List.Item>
+                                                    Capacity </b> {this.state.workshop.capacity} </List.Item>
                                             </List>
                                         </Grid.Col>
                                     </Grid.Row>
                                     <Grid.Row>
                                         <Grid.Col className={'line-height-larger'}>
-                                            <b className={'mr-2'}> Description </b> {details.workshop.description}
+                                            <b className={'mr-2'}> Description </b> {this.state.workshop.description}
                                         </Grid.Col>
                                     </Grid.Row>
                                 </Card.Body>
