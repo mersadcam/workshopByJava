@@ -13,14 +13,16 @@ class SiteTemplate extends React.Component {
         super(props);
         this.state = {
             userType: "",
-            fullName: ""
+            fullName: "",
+            username:""
 
         }
     }
 
     componentWillMount(): void {
         axios.get("http://localhost:8000/user/info").then(res => {
-            this.setState({userType: res.data.body.user.userType, fullName: res.data.body.contactPoint.fullName})
+            this.setState({userType: res.data.body.user.userType, fullName: res.data.body.contactPoint.fullName
+            ,username:res.data.body.user.username})
 
         }).catch(e => {
             console.log(e)
@@ -35,9 +37,9 @@ class SiteTemplate extends React.Component {
                                  <AccountDropdown
                                      avatarURL={profile.avatarURL}
                                      name={this.state.fullName}
-                                     description={this.state.userType !== "user" ? this.state.userType.toUpperCase() : "Welcome Back"}
+                                     description={this.state.userType !== "user" ? this.state.userType.toUpperCase() : ""}
                                      options={[
-                                         {icon: "user", value: "Profile", to: "/profile"},
+                                         {icon: "user", value: "Profile", to: "/profile/"+this.state.username},
                                          {icon: "settings", value: "Settings", to: "/settings"},
                                          {icon: "send", value: "Messages", badge: "6", to: "/messages"},
                                          {isDivider: true},

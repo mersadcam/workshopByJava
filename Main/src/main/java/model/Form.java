@@ -52,6 +52,7 @@ public class Form {
 
   public void addToDB(MongoClient client , Handler<AsyncResult<String>> handler){
 
+
     client.insert(Const.form,toJson(),res->{
       handler.handle(Future.succeededFuture(res.result()));
     });
