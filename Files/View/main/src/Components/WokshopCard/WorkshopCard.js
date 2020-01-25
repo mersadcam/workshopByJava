@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 class WorkshopCard extends React.Component {
 
+
+{coursename + '.jpg'}
     constructor(props) {
         super(props);
         this.state = {

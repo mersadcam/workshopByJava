@@ -9,7 +9,7 @@ class Navbar extends React.Component {
                 <a className="navbar-brand nav-item mr-5" href="#">
                     <img className="navbar-logo" src="./logo.png" alt={"logo"}/></a>
                 <ul className="navbar-nav">
-                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> Workshops </Button> </li>
+                    <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} RootComponent='a' color={"primary"} href={"/workshops"}> Workshops </Button> </li>
                     <li className="nav-item"><Button pill className={"btn-hover text-large text-weight-light"} color={"primary"} href={"#"}> About Us </Button> </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
