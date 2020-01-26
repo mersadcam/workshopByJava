@@ -14,7 +14,8 @@ class TeacherWorkshop extends React.Component {
             role: {},
             startTime:"",
             finishTime:"",
-            forms:[]
+            forms:[],
+            graders:[]
         }
     }
 
@@ -33,11 +34,16 @@ class TeacherWorkshop extends React.Component {
     async componentDidMount(): void {
 
             const toSend = {form:this.state.role.form}
-            axios.post("http://localhost:8000/user/forms",toSend).then(res=>{
-                this.setState({forms:res.data})
-            }).catch(e=>{
-                console.log(e)
-            })
+        axios.all([axios.post('http://localhost:8000/user/forms',toSend),
+            axios.post('http://localhost:8000/user/grader/request',{workshopId:this.state.workshop._id})])
+            .then(axios.spread((firstResponse, secondResponse) => {
+
+                this.setState({forms:firstResponse.data,graders:secondResponse.data})
+                console.log("grader",this.state.graders)
+                console.log("forms",this.state.forms)
+
+            }))
+            .catch(error => console.log(error));
 
 
         // let allStudentsNumber = 0;
@@ -233,14 +239,26 @@ class TeacherWorkshop extends React.Component {
                                         <Table.ColHeader>{null}</Table.ColHeader>
                                     </Table.Header>
                                     <Table.Body>
+                                        {
+                                            this.state.graders.map(item=>(
 
-                                        <Table.Row>
-                                            <Table.Col>ssss</Table.Col>
-                                            <Table.Col>ssss</Table.Col>
-                                            <Table.Col>ssss</Table.Col>
-                                            <Table.Col><Button outline size="sm" color="success"> Accept </Button></Table.Col>
-                                            <Table.Col><Button outline size="sm" color="secondary"> Reject </Button></Table.Col>
-                                        </Table.Row>
+                                                <Table.Row>
+                                                    <Table.Col ><a href={"/profile/"+item.user.username}>{item.user.username}</a></Table.Col>
+                                                    <Table.Col>{item.user.fullName}</Table.Col>
+                                                    <Table.Col>{item.requestDate}</Table.Col>
+
+                                                    {item.status=="NOT_ACCEPTED"?
+                                                    <Table.Col><Button outline size="sm" color="success" onClick={e => this.accept()}> Accept </Button></Table.Col>
+                                                    :
+                                                    <Table.Col><Button outline size="sm" color="muted"> Accepted </Button></Table.Col>
+                                                      }
+
+                                                </Table.Row>
+
+                                            ))
+
+                                        }
+
 
                                     </Table.Body>
                                 </Table>

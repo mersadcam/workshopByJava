@@ -3,6 +3,7 @@ package model;
 import controller.Const;
 import dev.morphia.annotations.Id;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -42,6 +43,17 @@ public class Group {
   public Group(String _id){
 
     this._id = _id;
+
+  }
+
+  public ArrayList<String> getIdentitiesId(){
+
+    ArrayList<String> ids = new ArrayList<String>();
+
+    for (int i = 0 ; i < this.identities.size() ; i++ )
+      ids.add(this.identities.get(i).get_id());
+
+    return ids;
 
   }
 
@@ -108,5 +120,23 @@ public class Group {
     Identity id = new Identity(string);
     addIdentity(id);
   }
-  public static void returnGroupIdentities(MongoClient client,Group group,ne)
+  public static void returnGroupIdentities(MongoClient client,String roleName,ArrayList<JsonObject> arr,ArrayList<String> identities,int counter,Handler<AsyncResult<ArrayList<JsonObject>>> handler) {
+
+    if( identities.size() == counter)
+      handler.handle(Future.succeededFuture(arr));
+    else{
+
+
+      client.find(Const.role,new JsonObject().put("_id",identities.get(counter)),resFind->{
+
+        if( resFind.result().get(0).getString("roleName").equals(roleName))
+          arr.add(resFind.result().get(0));
+
+        returnGroupIdentities(client,roleName,arr,identities,counter+1,handler);
+
+      });
+
+    }
+
+  }
 }

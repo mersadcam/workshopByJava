@@ -46,7 +46,7 @@ public class Grader implements RequestType , FormWriter {
   }
 
   public Grader(){
-    this.requestDate = new SimpleDateFormat("yyyy-MM-dd-HH:mm").format(new java.util.Date());
+    this.requestDate = new SimpleDateFormat("mm:HH-dd-MM-yyyy").format(new java.util.Date());
 	  this._id = new ObjectId().toString();
     this.status = Status.NOT_ACCEPTED;
   }

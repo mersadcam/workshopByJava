@@ -340,7 +340,20 @@ public class App extends AbstractVerticle {
 
 
             Group gr = new Group(findGroup.result().get(0));
-            Group.r
+            Group.returnGroupIdentities(client,"Grader",new ArrayList<>(),gr.getIdentitiesId(),0,handle->{
+
+              User.returnRoleUser(client,new ArrayList<>(),handle.result(),0,resRolesUser->{
+
+
+                User.setGraderStatus(client,new ArrayList<>(),resRolesUser.result(),0,resFinal->{
+
+                  ctx.response().end(resFinal.result().toString());
+
+                });
+
+              });
+
+            });
 
           });
 

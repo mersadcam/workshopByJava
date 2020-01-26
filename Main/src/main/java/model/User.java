@@ -1,6 +1,7 @@
 package model;
 
 import controller.Const;
+import controller.Controller;
 import dev.morphia.annotations.Id;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -470,6 +471,54 @@ public class User {
       }
     }
    return null;
+  }
+
+  public static void returnRoleUser(MongoClient client,ArrayList<JsonObject> arr,ArrayList<JsonObject> roles,int counter,Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+
+    if(roles.size() == counter)
+      handler.handle(Future.succeededFuture(arr));
+    else{
+
+      Controller.findIn(client,"user","roles",roles.get(counter).getString("_id"), resFindIn->{
+
+        client.find(Const.contactPoint,new JsonObject().put("_id",resFindIn.result().get(0).getString("contactPoint")),resFindCP->{
+          arr.add(roles.get(counter).put("user",resFindIn.result().get(0)
+            .put("fullName",resFindCP.result().get(0).getString("fullName"))));
+          returnRoleUser(client,arr,roles,counter+1,handler);
+
+        });
+
+      });
+
+    }
+
+  }
+
+  public static void setGraderStatus(
+    MongoClient client,
+    ArrayList<JsonObject> arr,
+    ArrayList<JsonObject> roles,
+    int counter,Handler<AsyncResult<ArrayList<JsonObject>>> handler){
+
+    if(roles.size() == counter)
+      handler.handle(Future.succeededFuture(arr));
+
+    else{
+
+      if(roles.get(counter).getString("roleName").equals("Grader")){
+
+        client.find(Const.grader,new JsonObject().put("_id",roles.get(counter).getString("requestType")),findGrader->{
+
+          arr.add(roles.get(counter).put("status",findGrader.result().get(0).getString("status"))
+          .put("requestDate",findGrader.result().get(0).getString("requestDate")));
+          setGraderStatus(client, arr, roles, counter+1,handler);
+
+        });
+
+      }
+
+    }
+
   }
 
   public static void dashboard(MongoClient client , User user , Handler<AsyncResult<String>> handler){
