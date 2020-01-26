@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -257,6 +258,31 @@ public class App extends AbstractVerticle {
 
       });
 
+    router.route(Const.returnForms)
+      .handler(ctx->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        JsonArray formsId = clientJson.getJsonArray("form");
+
+        Form.findForm(client,new ArrayList<>(),formsId,0,res->{
+
+          ctx.response().end(res.result().toString());
+
+        });
+
+      });
+
+    router.route(Const.oneForm)
+      .handler(ctx->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        client.find(Const.form,new JsonObject().put("_id",clientJson.getString("formId")),res->{
+
+          ctx.response().end(res.result().get(0).toString());
+
+        });
+
+      });
 
     router.route(Const.userProfileEdit)
       .handler(ctx ->{
@@ -301,6 +327,26 @@ public class App extends AbstractVerticle {
         });
 
     });
+
+    router.route(Const.graderRequest)
+      .handler(ctx->{
+
+        JsonObject clientJson = ctx.get("clientJson");
+        String workshopId = clientJson.getString("workshopId");
+        client.find(Const.enteredCourse,new JsonObject().put("_id",workshopId),res->{
+
+          String group = res.result().get(0).getJsonArray("groups").getString(0);
+          client.find(Const.group, new JsonObject().put("_id",group),findGroup->{
+
+
+            Group gr = new Group(findGroup.result().get(0));
+            Group.r
+
+          });
+
+        });
+
+      });
 
 
     router.route(Const.userWorkshopGraderRequest)

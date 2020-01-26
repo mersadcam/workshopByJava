@@ -7,34 +7,46 @@ class ViewForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            form: [
-                {number: 1, question: "question one?", answer: "answer one"},
-                {number: 2, question: "question two?", answer: "answer two"},
-                {number: 3, question: "question three?", answer: "answer two"},
-            ]
+            form: {},
+            name:"",
+            workshopId:""
         }
     }
 
+    componentDidMount(): void {
+
+        const {formID,workshopID} = this.props.match.params
+        this.setState({workshopId:workshopID})
+        axios.post("http://localhost:8000/user/form",{formId:formID}).then(res=>{
+
+            this.setState({form:res.data.formBody,name:res.data.name})
+
+        }).catch(e=>{
+            console.log(e)
+        })
+
+    }
+
     render() {
+
+        const {form,workshopId} = this.state
+
         return (
             <SiteTemplate>
                 <Page.Content>
-                    {this.state.form.map((item) => (
+                    {Object.keys(form).map((item) => (
                         <Card>
                             <Card.Status color="blue" side />
                             <Card.Header>
                                 <Card.Title>
-                                    {item.question}
+                                    {parseInt(item)+1} : {form[item]}
                                 </Card.Title>
                             </Card.Header>
-                            <Card.Body>
-                                    {item.answer}
-                            </Card.Body>
                         </Card>
                     ))}
                     <Grid.Row className={'text-center'}>
                         <Grid.Col>
-                            <Button color='blue'>Go Back</Button>
+                            <Button color='blue' RootComponent={'a'} href={"/rootworkshop/"+workshopId}>Go Back</Button>
                         </Grid.Col>
                     </Grid.Row>
                 </Page.Content>

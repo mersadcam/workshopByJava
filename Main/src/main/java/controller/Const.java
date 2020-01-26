@@ -59,6 +59,9 @@ public class Const {
   public static final String profile = "/user/profile";
   public static final String info = "/user/info";
   public static final String courses = "/user/course";
+  public static final String returnForms="/user/forms";
+  public static final String oneForm = "/user/form";
+  public static final String graderRequest = "/user/grader/request";
 
   public static final String uploadBackgroundImage = "/img/profile/background";
   public static final String uploadProfileImage = "/img/profile/main";

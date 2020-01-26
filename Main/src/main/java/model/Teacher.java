@@ -116,11 +116,11 @@ public class Teacher implements Role,FormWriter{
     JsonObject jsonForm,
     Handler<AsyncResult<MongoClientUpdateResult>> handler) {
 
-    Form form = new Form(jsonForm.getJsonObject("formBody"));
+    Form form = new Form(jsonForm.getJsonObject("formBody"),jsonForm.getString("name"));
     form.addToDB(client,resAddToDB ->{
 
       String formId = form.get_id();
-      JsonArray formsId = jsonTeacher.getJsonArray("formsId");
+      JsonArray formsId = jsonTeacher.getJsonArray("form");
 
       if( formsId == null)
         formsId = new JsonArray();

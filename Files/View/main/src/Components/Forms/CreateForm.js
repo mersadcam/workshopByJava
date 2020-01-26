@@ -7,15 +7,42 @@ class CreateForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            form: [
-                {number: 1, question: ""}
-            ]
+            name:"",
+            form:{},
+            questionNumber:1,
+            workshopId:""
         }
     }
 
+    componentWillMount(): void {
+        const {workshopID} = this.props.match.params;
+        console.log(workshopID)
+        this.setState({workshopId:workshopID})
+    }
+
     addQuestion = () => {
-        this.setState({questions: [...this.state.questions, {number: this.state.questions.length + 1, text: ""}]});
+        this.setState({questionNumber:this.state.questionNumber+1})
     };
+
+    sendForm(){
+        const toSend={
+            workshopId:this.state.workshopId,
+            formBody:this.state.form,
+            name:this.state.name
+        }
+
+
+        axios.post("http://localhost:8000/user/workshop/newForm",toSend).then(
+            res=>{
+
+                this.props.history.push("/rootworkshop/"+this.state.workshopId)
+                console.log(res)
+            }
+        ).catch(e=>{
+            console.log(e)
+        })
+
+    }
 
     render() {
         return (
@@ -31,26 +58,53 @@ class CreateForm extends React.Component {
                             </Card.Options>
                         </Card.Header>
                         <Card.Body>
+
                             <Grid.Row>
+                                <Grid.Col lg={3}>
+                                    <Form.Input
+                                        label={'Form Name :'}
+                                        name="formName"
+                                        placeholder={"Form Name "}
+                                        onChange={e=>{
+                                            this.setState({name:e.target.value})
+                                        }}
+
+                                    />
+                                </Grid.Col>
+
+                            </Grid.Row>
+                            <Grid.Row>
+
+
+
                                 <Grid.Col>
-                                    {this.state.form.map((item) => (
-                                        <Form.Group>
+                                    <Form.Group label={"Form Body :"}>
+                                    {[...Array(this.state.questionNumber).keys()].map((item) => (
+
                                             <Form.InputGroup>
                                                 <Form.InputGroupPrepend>
                                                     <Form.InputGroupText>
-                                                        {item.number}
+                                                        {item+1}
                                                     </Form.InputGroupText>
                                                 </Form.InputGroupPrepend>
-                                                <Form.Input placeholder="Enter Question..."/>
+                                                <Form.Input placeholder="Enter Question..."
+                                                onChange={e=>{
+                                                    this.setState({form:{...this.state.form,[item]:e.target.value}})
+                                                }}
+                                                />
                                             </Form.InputGroup>
-                                        </Form.Group>
+
                                     ))}
+                                    </Form.Group>
                                 </Grid.Col>
                             </Grid.Row>
                             <Grid.Row className={'text-center'}>
                                 <Grid.Col>
-                                    <Button icon='check' type='submit' color='blue'>Create</Button>
-                                    <Button color='secondary' className={'ml-2'}>Cancel</Button>
+                                    <Button icon='check' type='submit' color='blue' onClick={e=>this.sendForm()} >Create</Button>
+                                    <Button color='secondary' className={'ml-2'}
+                                            RootComponent={'a'}
+                                            href={"/rootworkshop/"+this.state.workshopId}
+                                    >Cancel</Button>
                                 </Grid.Col>
                             </Grid.Row>
                         </Card.Body>

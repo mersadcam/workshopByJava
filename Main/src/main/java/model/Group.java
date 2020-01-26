@@ -108,4 +108,5 @@ public class Group {
     Identity id = new Identity(string);
     addIdentity(id);
   }
+  public static void returnGroupIdentities(MongoClient client,Group group,ne)
 }

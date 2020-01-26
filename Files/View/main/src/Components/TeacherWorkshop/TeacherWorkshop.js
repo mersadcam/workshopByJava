@@ -13,7 +13,8 @@ class TeacherWorkshop extends React.Component {
             workshop: {},
             role: {},
             startTime:"",
-            finishTime:""
+            finishTime:"",
+            forms:[]
         }
     }
 
@@ -29,23 +30,19 @@ class TeacherWorkshop extends React.Component {
     }
     
 
-    async componentWillMount(): void {
-        const {workshopID} = this.props.match.params;
-        const toSend = {workshopId:workshopID};
-        console.log(toSend);
-        await axios.post("http://localhost:8000/user/workshop/page", toSend).then(res => {
+    async componentDidMount(): void {
 
-            this.setState({teacher: res.data.body.teacher});
-            this.setState({workshop: res.data.body.workshop,startTime:res.data.body.workshop.startTime,finishTime:res.data.body.workshop.startTime});
-            this.setState({role: res.data.body.role});
-        }).catch(e => {
-            console.log(e)
-        })
+            const toSend = {form:this.state.role.form}
+            axios.post("http://localhost:8000/user/forms",toSend).then(res=>{
+                this.setState({forms:res.data})
+            }).catch(e=>{
+                console.log(e)
+            })
 
 
-        let allStudentsNumber = 0;
-        this.state.groups.map((item) => allStudentsNumber += item.identities.length);
-        this.setState({allStudentsNumber:allStudentsNumber});
+        // let allStudentsNumber = 0;
+        // this.state.groups.map((item) => allStudentsNumber += item.identities.length);
+        // this.setState({allStudentsNumber:allStudentsNumber});
     }
 
     timeFormat = (timePattern) => {
@@ -77,7 +74,7 @@ class TeacherWorkshop extends React.Component {
                                     </Card.Title>
 
                                     <Card.Options className={'pr-2'}>
-                                        <Button color={'blue'}> Final Report </Button>
+                                        <Button color={'blue'} RootComponent={'a'} href={"/createform/" + this.state.workshop._id}> Create new form </Button>
                                     </Card.Options>
                                 </Card.Header>
                             </Card>
@@ -111,8 +108,6 @@ class TeacherWorkshop extends React.Component {
 
 
                         </Grid.Col>
-
-
                         <Grid.Col>
 
 
@@ -152,6 +147,9 @@ class TeacherWorkshop extends React.Component {
                                 </Card.Body>
                             </Card>
 
+
+
+
                             {/*<Card>*/}
                             {/*    <Card.Header>*/}
                             {/*        <Card.Title className={'my-4'}>*/}
@@ -190,6 +188,67 @@ class TeacherWorkshop extends React.Component {
 
                         </Grid.Col>
                     </Grid.Row>
+
+                    <Grid.Row>
+
+                        <Grid.Col lg={5}>
+
+                            <Card title="My Forms" className={'px-2'}>
+                                <Table responsive>
+                                    <Table.Header>
+                                        <Table.ColHeader>id</Table.ColHeader>
+                                        <Table.ColHeader>name</Table.ColHeader>
+                                        <Table.ColHeader>{null}</Table.ColHeader>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        {
+                                            this.state.forms.map((item,index)=>(
+
+                                                <Table.Row>
+                                                    <Table.Col>{index+1}</Table.Col>
+                                                    <Table.Col>{item.name}</Table.Col>
+
+                                                    <Table.Col><Button outline size="sm" color="primary" RootComponent={'a'} href={"/viewform/"+item._id+"/"+this.state.workshop._id}> View </Button></Table.Col>
+                                                </Table.Row>
+
+                                            ))
+
+                                        }
+
+
+                                    </Table.Body>
+                                </Table>
+                            </Card>
+                        </Grid.Col>
+
+                        <Grid.Col>
+
+                            <Card title="Grader Requests" className={'px-2'}>
+                                <Table responsive>
+                                    <Table.Header>
+                                        <Table.ColHeader>username</Table.ColHeader>
+                                        <Table.ColHeader>full name</Table.ColHeader>
+                                        <Table.ColHeader>Date</Table.ColHeader>
+                                        <Table.ColHeader>{null}</Table.ColHeader>
+                                        <Table.ColHeader>{null}</Table.ColHeader>
+                                    </Table.Header>
+                                    <Table.Body>
+
+                                        <Table.Row>
+                                            <Table.Col>ssss</Table.Col>
+                                            <Table.Col>ssss</Table.Col>
+                                            <Table.Col>ssss</Table.Col>
+                                            <Table.Col><Button outline size="sm" color="success"> Accept </Button></Table.Col>
+                                            <Table.Col><Button outline size="sm" color="secondary"> Reject </Button></Table.Col>
+                                        </Table.Row>
+
+                                    </Table.Body>
+                                </Table>
+                            </Card>
+                        </Grid.Col>
+
+                    </Grid.Row>
+
                 </Page.Content>
             </SiteTemplate>
         );

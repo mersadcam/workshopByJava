@@ -44,8 +44,9 @@ class App extends React.Component {
                     <Route path="/login" component={Login}/>
                     <Route path="/rootworkshop/:workshopID" component={RootWorkshop}/>
                     <Route path="/createworkshop" component={CreateWorkshop}/>
-                    <Route path="/createform" component={CreateForm}/>
-                    <Route path="/viewform" component={ViewForm}/>
+                    <Route path="/createform/:workshopID" component={CreateForm}/>
+                    <Route path="/viewform/:formID/:workshopID" component={ViewForm}/>
+
 
                 </Switch>
             </Router>
