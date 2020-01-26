@@ -61,6 +61,12 @@ class TeacherWorkshop extends React.Component {
         return time + ' | ' + day + ' ' + month + ' ' + year;
     };
 
+    accept(item){
+
+        axios.post("http://localhost:8000/user/workshop/acceptGrader",{_id:item._id,status:"ACCEPTED"})
+
+    }
+
     render() {
         return (
             <SiteTemplate>
@@ -248,7 +254,7 @@ class TeacherWorkshop extends React.Component {
                                                     <Table.Col>{item.requestDate}</Table.Col>
 
                                                     {item.status=="NOT_ACCEPTED"?
-                                                    <Table.Col><Button outline size="sm" color="success" onClick={e => this.accept()}> Accept </Button></Table.Col>
+                                                    <Table.Col><Button outline size="sm" color="success" onClick={e => this.accept(item)}> Accept </Button></Table.Col>
                                                     :
                                                     <Table.Col><Button outline size="sm" color="muted"> Accepted </Button></Table.Col>
                                                       }
